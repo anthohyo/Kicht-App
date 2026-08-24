@@ -569,6 +569,23 @@ export default function ProfileScreen() {
         )}
       </View>
 
+      {/* Confidentialité — mise en avant : c'est un argument de confiance,
+          pas une mention légale à enterrer en bas de page. */}
+      <TouchableOpacity
+        style={styles.privacyRow}
+        onPress={() => navigation.navigate('Confidentialite')}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel="Confidentialité et gestion de mes données"
+      >
+        <Text style={styles.privacyEmoji}>🔒</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.privacyTitle}>Confidentialité</Text>
+          <Text style={styles.privacyDesc}>Tes données restent sur ton appareil</Text>
+        </View>
+        <Text style={styles.chevron}>›</Text>
+      </TouchableOpacity>
+
       {/* Reset */}
       <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
         <Text style={styles.resetText}>Recommencer l'onboarding</Text>
@@ -587,6 +604,15 @@ function InfoRow({ label, value, valueColor }: { label: string; value: string; v
 }
 
 const styles = StyleSheet.create({
+  privacyRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: 'rgba(16, 185, 129, 0.07)',
+    borderRadius: radius.lg, borderWidth: 1, borderColor: 'rgba(16, 185, 129, 0.3)',
+    paddingVertical: 14, paddingHorizontal: spacing.md, marginBottom: spacing.sm,
+  },
+  privacyEmoji: { fontSize: 20 },
+  privacyTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
+  privacyDesc: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.md, paddingBottom: 40 },
   emptyText: { color: colors.textMuted, fontSize: 15 },

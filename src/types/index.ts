@@ -211,6 +211,7 @@ export type RootStackParamList = {
   MesDocuments: undefined;
   Agenda: undefined;
   Profile: undefined;
+  Confidentialite: undefined;
   Explorer: undefined;
 };
 
