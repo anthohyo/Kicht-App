@@ -48,11 +48,22 @@ function getSuggestedQuestions(profile: UserProfile | null): string[] {
     questions.push("J'ai reçu une lettre des impôts");
   }
 
-  // Fiche de paie — pour ceux qui ont un salaire
+  // Quatrième question — calée sur la situation réelle.
+  // Proposer « c'est quoi un ETF ? » à quelqu'un sans revenu n'est pas neutre :
+  // ça signale une app qui ne l'a pas écouté.
   if (profile?.status === 'apprenti' || profile?.status === 'salarie') {
     questions.push("Comment lire ma fiche de paie ?");
+  } else if (profile?.status === 'recherche_emploi') {
+    questions.push("Je n'ai pas d'emploi, à quoi j'ai droit ?");
   } else {
-    questions.push("C'est quoi un ETF ?");
+    // Le critère est le reste à vivre, pas le salaire : quelqu'un qui gagne
+    // 400 € et dépense 508 € n'a rien à placer. Lui proposer un ETF signale
+    // une app qui n'a pas lu ce qu'il vient de saisir.
+    const depenses = profile?.expenses
+      ? Object.values(profile.expenses).reduce((a, b) => a + b, 0)
+      : 0;
+    const reste = (profile?.monthlySalary ?? 0) - depenses;
+    questions.push(reste >= 150 ? "C'est quoi un ETF ?" : "Comment faire mon premier budget ?");
   }
 
   // Prime d'activité — spécifique alternant

@@ -118,7 +118,7 @@ export default function AidesScreen() {
   const introLine = vedette
     ? friendlyAmount
       ? `Tu pourrais toucher ${friendlyAmount} ${deElision(shortVedetteName)}.`
-      : `Ta première priorité : vérifier ${deElision(shortVedetteName)}.`
+      : `Ta première priorité : ${shortVedetteName}.`
     : 'On n\'a pas trouvé d\'aide évidente — mais ça vaut toujours le coup de vérifier.';
 
   const ELIGIBLE_BADGE = { label: '✅ Éligible', color: colors.success, bg: colors.successBg };

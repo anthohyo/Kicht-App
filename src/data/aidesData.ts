@@ -118,12 +118,29 @@ export function simulerAides(profile: UserProfile): AideResult[] {
       lienLabel: 'En savoir plus sur caf.fr',
     });
   } else if (profile.housingType === 'crous') {
+    // Le loyer d'une résidence CROUS est un vrai loyer : il n'y a aucune raison
+    // de laisser cette aide sans montant alors qu'on sait la calculer. Sans
+    // chiffre, l'aide la plus importante de l'utilisateur passe inaperçue.
+    const loyerCrous = profile.expenses.loyer;
+    let estCrous = 0, plafCrous = 0;
+    if (loyerCrous > 0) {
+      if (profile.monthlySalary < 500) { plafCrous = 300; estCrous = Math.min(loyerCrous * 0.6, plafCrous); }
+      else if (profile.monthlySalary < 1000) { plafCrous = 250; estCrous = Math.min(loyerCrous * 0.45, plafCrous); }
+      else if (profile.monthlySalary < 1500) { plafCrous = 200; estCrous = Math.min(loyerCrous * 0.3, plafCrous); }
+      else if (profile.monthlySalary < 2000) { plafCrous = 100; estCrous = Math.min(loyerCrous * 0.15, plafCrous); }
+    }
+    const fCrous = estCrous > 0 ? fourchette(estCrous, plafCrous) : null;
     aides.push({
       id: 'apl',
       name: 'APL (Aide au logement)',
       emoji: '🏠',
-      eligible: 'peut-etre',
-      description: 'En résidence CROUS, tu peux toucher l\'APL résidence. Le montant dépend de ton loyer et de tes revenus. Fais ta demande sur caf.fr dès ton entrée en résidence.',
+      eligible: fCrous ? 'oui' : 'peut-etre',
+      montantEstime: fCrous ? `~${fCrous.label}` : undefined,
+      montantMensuelMin: fCrous ? fCrous.min : undefined,
+      montantMensuelMax: fCrous ? fCrous.max : undefined,
+      description: fCrous
+        ? `En résidence CROUS, l'APL fonctionne comme ailleurs. Sur ton loyer de ${loyerCrous} €, il te resterait environ ${Math.max(0, loyerCrous - fCrous.max)} à ${Math.max(0, loyerCrous - fCrous.min)} € à payer. Fais ta demande sur caf.fr dès ton entrée en résidence — elle n'est pas rétroactive.`
+        : 'En résidence CROUS, tu peux toucher l\'APL résidence. Le montant dépend de ton loyer et de tes revenus. Fais ta demande sur caf.fr dès ton entrée en résidence.',
       conditions: [
         'Être locataire (ou colocataire)',
         'Le logement doit être ta résidence principale',
@@ -472,6 +489,83 @@ export function simulerAides(profile: UserProfile): AideResult[] {
     });
   }
 
+  // --- Contrat d'Engagement Jeune ---
+  // Le dispositif le plus puissant pour un jeune sans emploi ni formation, et
+  // le plus méconnu : il ne se demande pas en ligne mais en mission locale.
+  // Placé avant les autres pour un profil sans ressources : c'est sa priorité.
+  if (profile.age >= 16 && profile.age <= 25 &&
+      ['recherche_emploi', 'autre'].includes(profile.status) &&
+      profile.monthlySalary < 300) {
+    aides.push({
+      id: 'cej',
+      name: 'Contrat d\'Engagement Jeune',
+      emoji: '🤝',
+      eligible: 'oui',
+      montantEstime: "jusqu'à 566 €/mois",
+      montantMensuelMin: 340,
+      montantMensuelMax: 566,
+      description:
+        'Un accompagnement intensif de 15 à 20 h par semaine avec un conseiller dédié, pendant 6 à 18 mois, ' +
+        'ET une allocation mensuelle. Jusqu\'à 566,17 €/mois si ton foyer fiscal n\'est pas imposable, ' +
+        '339,70 € s\'il l\'est dans la première tranche. L\'allocation n\'est pas imposable, et tu peux la ' +
+        'cumuler avec jusqu\'à 300 € nets de revenus d\'activité par mois. C\'est le dispositif le plus ' +
+        'important pour toi aujourd\'hui — et il ne se demande pas en ligne.',
+      conditions: [
+        'Avoir entre 16 et 25 ans (29 ans en situation de handicap)',
+        'Être sans emploi, sans études et sans formation',
+        'S\'engager sur 15 à 20 h d\'activité par semaine — ce n\'est pas une aide passive',
+        'Le montant dépend du caractère imposable de ton foyer fiscal',
+      ],
+      commentFaire: [
+        'Prends rendez-vous avec ta mission locale — c\'est le point d\'entrée principal',
+        'Si tu es inscrit à France Travail, ton conseiller peut aussi te le proposer',
+        'Tu peux amorcer la démarche sur 1jeune1solution.gouv.fr',
+        'Apporte pièce d\'identité, RIB et l\'avis d\'imposition de ton foyer',
+        'Le contrat démarre après un premier entretien de diagnostic',
+      ],
+      lien: 'https://www.1jeune1solution.gouv.fr',
+      lienLabel: 'Trouver ma mission locale',
+    });
+  }
+
+  // --- Mobili-Jeune (alternants) ---
+  // Subvention, pas un prêt : elle ne se rembourse pas. C'est l'aide la plus
+  // rentable d'un alternant, et la fenêtre de demande est étroite — 3 mois avant
+  // le contrat, 6 mois après, pas au-delà.
+  if (profile.status === 'apprenti' && profile.age < 30 && profile.housingType !== 'parents') {
+    const loyerM = profile.expenses.loyer;
+    const plafondSmic = 2187; // 120 % du SMIC brut au 1er janvier 2026
+    aides.push({
+      id: 'mobili-jeune',
+      name: 'Mobili-Jeune',
+      emoji: '🏘️',
+      eligible: profile.monthlySalary <= plafondSmic ? 'oui' : 'non',
+      montantEstime: "jusqu'à 100 €/mois",
+      montantMensuelMin: 10,
+      montantMensuelMax: 100,
+      description:
+        'Action Logement prend en charge une partie de ton loyer pendant ton alternance : de 10 à 100 € ' +
+        'par mois, dans la limite de 1 100 €. C\'est une SUBVENTION, pas un prêt — tu ne rembourses rien. ' +
+        'Et elle se cumule avec l\'APL, la garantie Visale et l\'avance Loca-Pass.' +
+        (loyerM > 0 ? ` Sur ton loyer de ${loyerM} €, ça peut représenter jusqu'à 1 200 € sur l'année.` : ''),
+      conditions: [
+        'Être en contrat d\'apprentissage ou de professionnalisation',
+        'Avoir moins de 30 ans au dépôt de la demande',
+        'Entreprise du secteur privé non agricole',
+        `Salaire brut mensuel ≤ 120 % du SMIC (${plafondSmic} € au 1er janvier 2026)`,
+        'Ne pas avoir déjà un dossier Mobili-Jeune en cours',
+      ],
+      commentFaire: [
+        'Fais ta demande sur actionlogement.fr',
+        'Fenêtre stricte : au plus tôt 3 mois avant ton contrat, au plus tard 6 mois après son début',
+        'Prépare ton contrat d\'alternance, ton bail et un RIB',
+        'Passé les 6 mois, c\'est définitivement perdu pour ce contrat — ne traîne pas',
+      ],
+      lien: 'https://www.actionlogement.fr',
+      lienLabel: 'Demander Mobili-Jeune',
+    });
+  }
+
   // --- Aide au permis ---
   if (profile.age >= 18 && profile.age <= 25) {
     aides.push({
@@ -479,19 +573,26 @@ export function simulerAides(profile: UserProfile): AideResult[] {
       name: 'Aide au permis de conduire',
       emoji: '🚗',
       eligible: 'peut-etre',
-      montantEstime: profile.status === 'apprenti' ? '500 € (automatique)' : 'Jusqu\'à 500 €',
-      description: 'Plusieurs dispositifs existent pour financer ton permis : aide de 500 € pour les apprentis, permis à 1 €/jour, aide Pôle Emploi...',
+      montantEstime: 'Selon les dispositifs',
+      // L'aide nationale de 500 € aux apprentis a été supprimée par la loi de
+      // finances 2026 (publiée au JO le 20 février 2026). L'afficher encore
+      // enverrait des alternants réclamer un droit qui n'existe plus.
+      description:
+        'Attention, l\'aide nationale de 500 € pour les apprentis a été SUPPRIMÉE en février 2026. ' +
+        'Il reste d\'autres leviers, mais aucun n\'est automatique : il faut les demander un par un.',
       conditions: [
-        'Apprentis : aide de 500 € automatique',
-        'Permis à 1 €/jour : prêt à taux zéro pour les 15-25 ans',
-        'Pôle Emploi : aide si le permis est nécessaire pour un emploi',
-        'Certaines régions/départements ont des aides supplémentaires',
+        'Permis à 1 €/jour : prêt à taux zéro pour les 15-25 ans, remboursé 30 €/mois',
+        'France Travail : aide possible si le permis conditionne une embauche',
+        'Ta région ou ton département : beaucoup ont maintenu une aide propre',
+        'Apprenti : ton OPCO de branche peut avoir un fonds de solidarité (BTP, commerce, santé…)',
+        'CPF : mobilisable pour le permis, dans la limite de 900 € depuis 2026',
       ],
       commentFaire: [
-        'Apprenti ? Demande à ton CFA les 500 €',
-        'Permis à 1 €/jour : demande à ton auto-école partenaire',
-        'Pôle Emploi : parles-en à ton conseiller',
-        'Vérifie les aides de ta région sur 1jeune1solution.gouv.fr',
+        'Commence par ta région : c\'est là que subsistent les aides les plus généreuses',
+        'Permis à 1 €/jour : demande directement à une auto-école partenaire',
+        'En apprentissage ? Interroge ton CFA sur le fonds de ton OPCO',
+        'Inscrit à France Travail ? Parles-en à ton conseiller avant de t\'engager',
+        'Vérifie le cumul possible sur 1jeune1solution.gouv.fr',
       ],
       lien: 'https://www.1jeune1solution.gouv.fr',
       lienLabel: 'Voir sur 1jeune1solution.gouv.fr',
