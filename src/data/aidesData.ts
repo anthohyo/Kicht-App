@@ -434,6 +434,44 @@ export function simulerAides(profile: UserProfile): AideResult[] {
     });
   }
 
+  // --- Avance Loca-Pass ---
+  // Le dépôt de garantie est le vrai mur d'un premier emménagement : un ou deux
+  // mois de loyer à sortir d'un coup, avant même le premier salaire. Cette avance
+  // est un prêt à 0 %, mais elle exige un lien à l'emploi — y compris un stage
+  // rémunéré ou une alternance, ce que beaucoup de jeunes ignorent.
+  if (profile.age < 30 && profile.housingType !== 'parents') {
+    const enEmploi = ['salarie', 'apprenti', 'auto_entrepreneur', 'service_civique'].includes(profile.status);
+    aides.push({
+      id: 'loca-pass',
+      name: 'Avance Loca-Pass',
+      emoji: '🔑',
+      eligible: enEmploi ? 'oui' : 'peut-etre',
+      montantEstime: "jusqu'à 1 200 €",
+      description:
+        'Action Logement avance ton dépôt de garantie, jusqu\'à 1 200 €. C\'est un prêt à 0 % : ' +
+        'aucun intérêt, aucun frais de dossier, remboursable sur 25 mois maximum avec 3 mois de ' +
+        'différé et des mensualités à partir de 20 €. ' +
+        (enEmploi
+          ? 'Ta situation professionnelle y donne accès.'
+          : 'Attention : il faut un lien à l\'emploi. Un stage rémunéré, une alternance ou un CDD comptent — un statut purement étudiant, non.'),
+      conditions: [
+        'Avoir moins de 30 ans',
+        'Être en emploi : CDI, CDD, intérim, apprentissage ou stage rémunéré',
+        'Demander AVANT la remise des clés, et au plus tard 2 mois après la signature du bail',
+        'Le logement doit devenir ta résidence principale',
+      ],
+      commentFaire: [
+        'Fais ta demande sur actionlogement.fr, avant de récupérer les clés',
+        'Prépare ton bail, ta pièce d\'identité et ton justificatif d\'emploi',
+        'Le versement se fait au bailleur ou à toi selon les cas',
+        'Le remboursement démarre 3 mois après — le temps de te retourner',
+        'Cumulable avec la garantie Visale : l\'une couvre la caution, l\'autre le garant',
+      ],
+      lien: 'https://www.actionlogement.fr',
+      lienLabel: 'Demander sur actionlogement.fr',
+    });
+  }
+
   // --- Aide au permis ---
   if (profile.age >= 18 && profile.age <= 25) {
     aides.push({
