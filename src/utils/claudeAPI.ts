@@ -106,6 +106,7 @@ function buildSystemPrompt(profile: UserProfile | null): string {
     coloc: 'en colocation',
     crous: 'en résidence CROUS',
     parents: 'chez ses parents (pas de loyer)',
+    futur: 'encore chez ses parents mais emménage bientôt — droits à préparer, pas à exclure',
     foyer: 'en foyer / hébergement social',
   };
 
@@ -171,7 +172,9 @@ Ton rôle : être le grand frère / grande sœur que tout jeune de 18-25 ans dev
 
     // Aides potentielles selon profil
     const aidesPotentielles: string[] = [];
-    if (profile.housingType !== 'parents' && profile.expenses.loyer > 0) {
+    if (profile.housingType === 'futur') {
+      aidesPotentielles.push('APL à préparer (demande le mois de l\'emménagement) + garantie Visale AVANT les visites');
+    } else if (profile.housingType !== 'parents' && profile.expenses.loyer > 0) {
       aidesPotentielles.push('APL (si pas encore demandée)');
     }
     if (profile.status === 'etudiant' && profile.schoolType !== 'prive_non_reconnu') {

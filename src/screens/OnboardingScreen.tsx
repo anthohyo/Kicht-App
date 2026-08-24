@@ -28,6 +28,7 @@ const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
 ];
 
 const HOUSING_OPTIONS: { value: HousingType; label: string; hint: string }[] = [
+  { value: 'futur',   label: '📦 Je vais emménager bientôt', hint: 'Des choses sont à faire AVANT de signer' },
   { value: 'seul',    label: '🏠 Seul·e en appartement', hint: 'APL possible, loyer complet' },
   { value: 'coloc',   label: '🏘️ En colocation',         hint: 'APL sur ta part du loyer' },
   { value: 'crous',   label: '🏫 Résidence CROUS',        hint: 'Loyer réduit, APL spécifique' },
@@ -179,15 +180,17 @@ export default function OnboardingScreen({ navigation }: Props) {
               </TouchableOpacity>
             ))}
 
-            {/* Loyer — si pas chez les parents */}
+            {/* Loyer — réel si déjà logé, visé si emménagement à venir */}
             {housingType !== 'parents' && (
               <View style={{ marginTop: spacing.md }}>
                 <Text style={styles.label}>
-                  💸 Ton loyer mensuel{' '}
+                  {housingType === 'futur' ? '🎯 Le loyer que tu vises' : '💸 Ton loyer mensuel'}{' '}
                   <Text style={{ color: colors.textMuted, fontWeight: 'normal' }}>(charges comprises)</Text>
                 </Text>
                 <Text style={{ fontSize: 12, color: colors.textMuted, marginBottom: 8 }}>
-                  Nécessaire pour calculer ton reste à vivre et ton APL estimée
+                  {housingType === 'futur'
+                    ? 'Même approximatif — on te dira ce que ça te coûtera vraiment une fois l\'APL déduite'
+                    : 'Nécessaire pour calculer ton reste à vivre et ton APL estimée'}
                 </Text>
                 <TextInput
                   style={[styles.input, { fontSize: 20, fontWeight: '600' }]}

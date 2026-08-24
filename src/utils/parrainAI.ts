@@ -49,6 +49,13 @@ const rules: Rule[] = [
   {
     keywords: ['apl', 'aide logement', 'aide au logement'],
     response: (profile) => {
+      // Emménagement à venir → le sujet n'est pas l'éligibilité, c'est le calendrier.
+      // L'APL n'étant pas rétroactive, chaque mois de retard est définitivement perdu.
+      if (profile?.housingType === 'futur') {
+        const text = `🏠 **L'APL quand tu emménages**\n\nTu y auras droit dès que tu auras un bail à ton nom. Le point important, c'est **quand** tu la demandes.\n\n**La règle qui coûte cher :** l'APL n'est **jamais versée rétroactivement**. Si tu emménages en septembre et que tu fais ta demande en novembre, les deux mois sont perdus pour toujours.\n\n**Dans l'ordre :**\n• 🛡️ **Maintenant** — demande ta garantie **Visale** sur visale.fr. C'est gratuit, ça remplace un garant, et c'est ce qui fait accepter ton dossier face aux autres candidats. À faire **avant** les visites.\n• 💻 **Maintenant aussi** — crée ton compte sur caf.fr, ça prend 10 minutes et ça t'évite de le faire dans l'urgence.\n• 📄 **Le mois de l'emménagement** — fais ta demande d'aide au logement avec ton bail et ton RIB.\n• ⏳ **Prévois 2 mois** avant le premier versement. Il faut pouvoir avancer le loyer en attendant.\n\n💡 Dis-moi le loyer que tu vises, je te dirai ce qu'il te restera vraiment à payer une fois l'APL déduite.`;
+        return { text, actionCard: { label: '🎯 Voir toutes mes aides', navigateTo: 'SimulateurAides' } };
+      }
+
       // Chez les parents → pas d'APL
       if (profile?.housingType === 'parents') {
         // La bourse CROUS est inaccessible si école privée non conventionnée

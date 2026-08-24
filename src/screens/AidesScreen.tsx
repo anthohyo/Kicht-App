@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UserProfile, RootStackParamList } from '../types';
 import { loadProfile, saveProfile } from '../utils/storage';
-import { simulerAides, AideResult } from '../data/aidesData';
+import { simulerAides, AideResult, DERNIERE_MAJ_BAREMES, baremesPerimes } from '../data/aidesData';
 import { getAidesLocales, AideLocale } from '../data/aidesLocales';
 import { colors, radius, spacing } from '../theme';
 
@@ -128,6 +128,11 @@ export default function AidesScreen() {
 
   const localAides = aidesLocales.filter((a) => a.eligibilite !== 'non-eligible');
   const allHiddenCount = nonEligible.length + localAides.length;
+
+  // Fraîcheur des barèmes — affichée pour que l'utilisateur sache sur quoi il s'appuie
+  const majFr = new Date(DERNIERE_MAJ_BAREMES).toLocaleDateString('fr-FR', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -393,10 +398,16 @@ export default function AidesScreen() {
         </>
       )}
 
-      {/* ── Disclaimer ── */}
+      {/* ── Disclaimer + fraîcheur des barèmes ── */}
       <View style={styles.disclaimer}>
         <Text style={styles.disclaimerText}>
-          Estimations basées sur ton profil. Pour tes droits exacts, utilise caf.fr ou mesdroitssociaux.fr
+          Ce sont des estimations, pas tes droits définitifs : le montant réel dépend aussi de ta ville
+          et de ta situation exacte. Le chiffre officiel se calcule sur caf.fr ou mesdroitssociaux.gouv.fr.
+        </Text>
+        <Text style={[styles.disclaimerText, { marginTop: 6 }]}>
+          {baremesPerimes()
+            ? `⚠️ Barèmes vérifiés le ${majFr} — ils ont plus d'un an et peuvent avoir changé. Vérifie sur le site officiel.`
+            : `Barèmes vérifiés le ${majFr}.`}
         </Text>
       </View>
 

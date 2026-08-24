@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { ChecklistItem } from '../types';
-import { defaultChecklistItems } from '../data/checklistItems';
-import { saveChecklist, loadChecklist } from '../utils/storage';
+import { getChecklistItems } from '../data/checklistItems';
+import { saveChecklist, loadChecklist, loadProfile } from '../utils/storage';
 import ChecklistItemRow from '../components/ChecklistItemRow';
 import { colors, radius, spacing } from '../theme';
 
 export default function ChecklistScreen() {
-  const [items, setItems] = useState<ChecklistItem[]>(defaultChecklistItems);
+  const [items, setItems] = useState<ChecklistItem[]>([]);
 
   useEffect(() => {
-    loadChecklist().then((saved) => {
-      if (saved) setItems(saved);
+    Promise.all([loadChecklist(), loadProfile()]).then(([saved, profile]) => {
+      // La liste sauvegardée prime — elle porte la progression de l'utilisateur.
+      setItems(saved && saved.length > 0 ? saved : getChecklistItems(profile));
     });
   }, []);
 
   useEffect(() => {
-    saveChecklist(items);
+    // Ne jamais écraser la liste sauvegardée par le tableau vide du premier rendu.
+    if (items.length > 0) saveChecklist(items);
   }, [items]);
 
   const handleToggle = (id: string) => {

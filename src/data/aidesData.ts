@@ -1,5 +1,42 @@
 import { UserProfile } from '../types';
 
+/**
+ * Date de dernière vérification des barèmes.
+ * Les montants des aides sociales changent au moins une fois par an (souvent en janvier
+ * et en octobre). Cette date est affichée à l'utilisateur : passé 12 mois, l'app doit
+ * prévenir que ses estimations peuvent être périmées plutôt que de les présenter
+ * comme à jour. Mettre à jour cette constante à CHAQUE révision des montants.
+ */
+export const DERNIERE_MAJ_BAREMES = '2026-01-01';
+
+/** Vrai si les barèmes n'ont pas été revus depuis plus de 12 mois. */
+export function baremesPerimes(aujourdhui: Date = new Date()): boolean {
+  const maj = new Date(DERNIERE_MAJ_BAREMES);
+  const moisEcoules =
+    (aujourdhui.getFullYear() - maj.getFullYear()) * 12 + (aujourdhui.getMonth() - maj.getMonth());
+  return moisEcoules >= 12;
+}
+
+/**
+ * Transforme une estimation ponctuelle en fourchette honnête.
+ *
+ * Nos formules ne connaissent ni la zone géographique (l'APL varie fortement entre
+ * zone 1, 2 et 3) ni la composition exacte du foyer. Afficher "225 €" laisse croire
+ * à un calcul officiel ; afficher "170 à 280 €" dit la vérité sur ce qu'on sait.
+ */
+export function fourchette(
+  estimation: number,
+  plafond?: number,
+  marge = 0.25,
+): { min: number; max: number; label: string } {
+  const min = Math.max(0, Math.round((estimation * (1 - marge)) / 5) * 5);
+  // Le plafond de l'aide est une borne dure : une fourchette qui le dépasse
+  // promettrait plus que ce que l'aide peut verser.
+  const brut = Math.round((estimation * (1 + marge)) / 5) * 5;
+  const max = plafond !== undefined ? Math.min(brut, Math.round(plafond)) : brut;
+  return { min: Math.min(min, max), max, label: `${Math.min(min, max)} à ${max} €/mois` };
+}
+
 export interface AideResult {
   id: string;
   name: string;
@@ -22,7 +59,53 @@ export function simulerAides(profile: UserProfile): AideResult[] {
 
   // --- APL ---
   const loyer = profile.expenses.loyer;
-  if (profile.housingType === 'parents') {
+  if (profile.housingType === 'futur') {
+    // Emménagement à venir : l'APL n'est pas "non", elle est "pas encore".
+    // Ce qui compte ici c'est le calendrier — la demande se fait dès le bail signé,
+    // et le montant estimé aide à choisir un loyer soutenable AVANT de s'engager.
+    const loyerVise = profile.expenses.loyer;
+    let estimation = 0;
+    let plafond = 0;
+    if (loyerVise > 0) {
+      if (profile.monthlySalary < 500) { plafond = 300; estimation = Math.min(loyerVise * 0.6, plafond); }
+      else if (profile.monthlySalary < 1000) { plafond = 250; estimation = Math.min(loyerVise * 0.45, plafond); }
+      else if (profile.monthlySalary < 1500) { plafond = 200; estimation = Math.min(loyerVise * 0.3, plafond); }
+      else if (profile.monthlySalary < 2000) { plafond = 100; estimation = Math.min(loyerVise * 0.15, plafond); }
+    }
+    const f = estimation > 0 ? fourchette(estimation, plafond) : null;
+    const resteACharge = f && loyerVise > 0
+      ? ` Sur un loyer de ${loyerVise} €, il te resterait environ ${Math.max(0, loyerVise - f.max)} à ${Math.max(0, loyerVise - f.min)} € à payer.`
+      : '';
+
+    aides.push({
+      id: 'apl',
+      name: 'APL (Aide au logement)',
+      emoji: '🏠',
+      eligible: 'oui',
+      montantEstime: f ? `~${f.label}` : '~100 à 300 €/mois',
+      montantMensuelMin: f ? f.min : 100,
+      montantMensuelMax: f ? f.max : 300,
+      description:
+        `Tu y auras droit dès que tu auras un bail à ton nom.${resteACharge} ` +
+        'La demande se fait le mois de ton emménagement — pas avant, pas après : ' +
+        'l\'APL n\'est jamais versée rétroactivement, chaque mois de retard est perdu.',
+      conditions: [
+        'Avoir un bail à ton nom (ou être colocataire déclaré)',
+        'Le logement doit être ta résidence principale',
+        'Faire la demande le mois de l\'emménagement — aucun rattrapage possible',
+        'Le logement doit être conventionné ou décent (la plupart le sont)',
+      ],
+      commentFaire: [
+        'AVANT de chercher : demande ta garantie Visale (caution gratuite de l\'État)',
+        'Crée ton compte sur caf.fr dès maintenant, ça prend 10 minutes',
+        'Garde sous la main : pièce d\'identité, RIB, et le bail dès signature',
+        'Le mois de l\'emménagement : fais la demande d\'aide au logement sur caf.fr',
+        'Compte environ 2 mois avant le premier versement — prévois ta trésorerie',
+      ],
+      lien: 'https://www.caf.fr',
+      lienLabel: 'Créer mon compte sur caf.fr',
+    });
+  } else if (profile.housingType === 'parents') {
     aides.push({
       id: 'apl',
       name: 'APL (Aide au logement)',
@@ -76,21 +159,25 @@ export function simulerAides(profile: UserProfile): AideResult[] {
     if (loyer > 0) {
       // Estimation précise avec le loyer connu
       let montantAPL = 0;
-      if (profile.monthlySalary < 500) montantAPL = Math.min(loyer * 0.6, 300);
-      else if (profile.monthlySalary < 1000) montantAPL = Math.min(loyer * 0.45, 250);
-      else if (profile.monthlySalary < 1500) montantAPL = Math.min(loyer * 0.3, 200);
-      else if (profile.monthlySalary < 2000) montantAPL = Math.min(loyer * 0.15, 100);
+      let plafondAPL = 0;
+      if (profile.monthlySalary < 500) { plafondAPL = 300; montantAPL = Math.min(loyer * 0.6, plafondAPL); }
+      else if (profile.monthlySalary < 1000) { plafondAPL = 250; montantAPL = Math.min(loyer * 0.45, plafondAPL); }
+      else if (profile.monthlySalary < 1500) { plafondAPL = 200; montantAPL = Math.min(loyer * 0.3, plafondAPL); }
+      else if (profile.monthlySalary < 2000) { plafondAPL = 100; montantAPL = Math.min(loyer * 0.15, plafondAPL); }
       montantAPL = Math.round(montantAPL);
+      // Fourchette plutôt qu'un chiffre unique : on ignore la zone géographique,
+      // qui fait varier l'APL du simple au double entre Paris et une petite ville.
+      const fAPL = montantAPL > 0 ? fourchette(montantAPL, plafondAPL) : null;
 
       aides.push({
         id: 'apl',
         name: 'APL (Aide au logement)',
         emoji: '🏠',
         eligible: montantAPL > 0 ? 'oui' : 'peut-etre',
-        montantEstime: montantAPL > 0 ? `~${montantAPL} €/mois` : undefined,
-        montantMensuelMin: montantAPL > 0 ? montantAPL : undefined,
-        montantMensuelMax: montantAPL > 0 ? montantAPL : undefined,
-        description: 'Aide mensuelle pour réduire ton loyer, versée par la CAF.',
+        montantEstime: fAPL ? `~${fAPL.label}` : undefined,
+        montantMensuelMin: fAPL ? fAPL.min : undefined,
+        montantMensuelMax: fAPL ? fAPL.max : undefined,
+        description: 'Aide mensuelle pour réduire ton loyer, versée par la CAF. Le montant exact dépend aussi de ta ville — le simulateur de la CAF te donnera le chiffre définitif.',
         conditions: CONDITIONS_APL,
         commentFaire: COMMENT_FAIRE_APL,
         lien: 'https://www.caf.fr',
@@ -134,7 +221,7 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         ? 'Ton école n\'a pas de convention avec le CROUS. La bourse nationale n\'est pas accessible, mais renseigne-toi sur les aides propres à ton établissement.'
         : school === 'prive_reconnu'
         ? 'Certaines écoles privées reconnues ont une convention CROUS — vérifie auprès de ton école ou directement sur messervices.etudiant.gouv.fr.' + parentsNote
-        : 'Aide financière pour les étudiants, versée sur 10 mois. Le montant dépend des revenus de tes parents.' + parentsNote;
+        : 'Aide financière versée sur 10 mois. Le montant dépend uniquement des revenus de tes parents et du nombre d\'enfants à charge — c\'est ce qui décide de ton échelon, de 0 bis à 7. Le dossier (DSE) se remplit normalement entre janvier et mai pour la rentrée suivante ; si tu es hors délai, fais-le quand même, les demandes tardives sont étudiées.' + parentsNote;
 
     aides.push({
       id: 'bourse',

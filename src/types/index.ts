@@ -3,7 +3,8 @@ export type HousingType =
   | 'seul'       // loue seul
   | 'coloc'      // colocation
   | 'crous'      // résidence CROUS
-  | 'parents'    // chez les parents
+  | 'parents'    // chez les parents, sans projet de déménagement
+  | 'futur'      // chez les parents MAIS emménage bientôt — droits à préparer, pas à exclure
   | 'foyer';     // foyer / hébergement social
 
 export type UserStatus =

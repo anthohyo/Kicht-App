@@ -28,7 +28,9 @@ function getSuggestedQuestions(profile: UserProfile | null): string[] {
   const questions: string[] = [];
 
   // APL — non pertinent si chez les parents
-  if (profile?.housingType !== 'parents') {
+  if (profile?.housingType === 'futur') {
+    questions.push("Je pars vivre seul, par quoi je commence ?");
+  } else if (profile?.housingType !== 'parents') {
     questions.push("Comment demander l'APL ?");
   } else {
     questions.push("Quelles aides puis-je toucher chez mes parents ?");
@@ -482,12 +484,12 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
-      {/* AI indicator — premium users */}
-      {isPremiumUser(profile) && !apiErrorType && (
+      {/* Indicateur IA — affiché UNIQUEMENT quand l'IA tourne réellement.
+          Sans clé API, les réponses viennent du moteur de règles : annoncer
+          "Mode IA activé" dans ce cas serait faux. */}
+      {profile?.claudeApiKey && !apiErrorType && (
         <View style={styles.aiIndicator}>
-          <Text style={styles.aiIndicatorText}>
-            {profile?.claudeApiKey ? '🤖 IA activée — clé API personnelle' : '✨ Mode IA Premium activé'}
-          </Text>
+          <Text style={styles.aiIndicatorText}>🤖 IA activée — clé API personnelle</Text>
         </View>
       )}
 

@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, UserProfile, Transaction, ChecklistItem } from '../types';
 import { loadProfile, loadTransactions, loadChecklist, saveChecklist } from '../utils/storage';
-import { defaultChecklistItems } from '../data/checklistItems';
+import { getChecklistItems } from '../data/checklistItems';
 import { colors, radius, spacing } from '../theme';
 
 export default function HomeScreen() {
@@ -19,10 +19,11 @@ export default function HomeScreen() {
       Promise.all([loadProfile(), loadTransactions(), loadChecklist()]).then(([p, txs, cl]) => {
         setProfile(p);
         setTransactions(txs);
-        // Premier lancement : seed depuis les defaults
+        // Premier lancement : seed selon le moment de vie (emménagement à venir ou déjà installé)
         if (!cl || cl.length === 0) {
-          saveChecklist(defaultChecklistItems);
-          setChecklist(defaultChecklistItems);
+          const seed = getChecklistItems(p);
+          saveChecklist(seed);
+          setChecklist(seed);
         } else {
           setChecklist(cl);
         }
@@ -37,8 +38,14 @@ export default function HomeScreen() {
   const displayIncome = transactions.length > 0 ? income : (profile?.monthlySalary ?? 0);
   const displayExpenses = transactions.length > 0 ? totalExpenses : (profile ? Object.values(profile.expenses).reduce((a, b) => a + b, 0) : 0);
   const reste = displayIncome - displayExpenses;
-  const isSerré = reste >= 0 && reste < 100;
-  const isDépassé = reste < 0;
+  /**
+   * Sans aucun revenu saisi, "reste à vivre" n'a pas de sens : un lycéen qui vient
+   * d'avoir son bac n'est pas en difficulté financière, il n'a simplement rien rempli.
+   * Afficher "-142 € — tu es dans le rouge" dans ce cas est faux et alarmant.
+   */
+  const budgetNonRenseigne = displayIncome === 0 && transactions.length === 0;
+  const isSerré = !budgetNonRenseigne && reste >= 0 && reste < 100;
+  const isDépassé = !budgetNonRenseigne && reste < 0;
 
   // ── Priorité n°1 — une seule action, la plus utile ──
   type Action = { emoji: string; title: string; sub: string; onPress: () => void };
@@ -71,6 +78,17 @@ export default function HomeScreen() {
         title: 'Première priorité : vois clair sur ton mois',
         sub: 'Ajoute tes dépenses principales pour connaître ton vrai reste à vivre.',
         onPress: () => navigation.navigate('Main' as any, { screen: 'Budget' } as any),
+      };
+    }
+
+    // Emménagement à venir — la priorité est Visale, et elle est datée :
+    // demandée après les visites, la garantie ne sert plus à rien.
+    if (profile?.housingType === 'futur') {
+      return {
+        emoji: '📦',
+        title: 'Commence par ta garantie Visale',
+        sub: 'Caution gratuite de l\'État. À obtenir AVANT de visiter — c\'est ce qui fera accepter ton dossier.',
+        onPress: () => navigation.navigate('Aides' as any),
       };
     }
 
@@ -159,9 +177,19 @@ export default function HomeScreen() {
 
         {/* ── Reste à vivre ── */}
         <View style={[styles.resteCard, isDépassé && styles.resteCardDanger, isSerré && styles.resteCardWarning]}>
-          <Text style={styles.resteLabel}>
-            Il te reste <Text style={[styles.resteLabelAmount, { color: resteColor }]}>{reste} €</Text> ce mois-ci
-          </Text>
+          {budgetNonRenseigne ? (
+            <Text style={styles.resteLabel}>Ton budget n'est pas encore rempli</Text>
+          ) : (
+            <Text style={styles.resteLabel}>
+              Il te reste <Text style={[styles.resteLabelAmount, { color: resteColor }]}>{reste} €</Text> ce mois-ci
+            </Text>
+          )}
+
+          {budgetNonRenseigne && (
+            <Text style={styles.resteSubline}>
+              Ajoute ce qui rentre et ce qui sort pour savoir où tu en es. Deux minutes suffisent.
+            </Text>
+          )}
 
           {isDépassé && (
             <Text style={[styles.resteSubline, { color: colors.danger }]}>
@@ -234,7 +262,9 @@ export default function HomeScreen() {
               activeOpacity={0.8}
             >
               <View style={styles.checklistHeader}>
-                <Text style={styles.checklistTitle}>🗓 Premier mois</Text>
+                <Text style={styles.checklistTitle}>
+                  {profile?.housingType === 'futur' ? '📦 Avant d\'emménager' : '🗓 Premier mois'}
+                </Text>
                 <Text style={styles.checklistProgress}>{done}/{total} faits</Text>
               </View>
               <View style={styles.progressBarTrack}>

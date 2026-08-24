@@ -22,6 +22,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const HOUSING_TYPE_LABELS: Record<HousingType, string> = {
+  futur: '📦 J\'emménage bientôt',
   seul: '🏠 Seul·e en appartement',
   coloc: '🏘️ En colocation',
   crous: '🏫 Résidence CROUS',
@@ -46,6 +47,7 @@ const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
 ];
 
 const HOUSING_OPTIONS: { value: HousingType; label: string; hint: string }[] = [
+  { value: 'futur',   label: '📦 Je vais emménager bientôt', hint: 'Des choses sont à faire AVANT de signer' },
   { value: 'seul',    label: '🏠 Seul·e en appartement', hint: 'APL possible, loyer complet' },
   { value: 'coloc',   label: '🏘️ En colocation',         hint: 'APL sur ta part du loyer' },
   { value: 'crous',   label: '🏫 Résidence CROUS',        hint: 'Loyer réduit, APL spécifique' },

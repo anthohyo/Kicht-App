@@ -57,11 +57,22 @@ function computeTasks(profile: UserProfile | null, progress: UserProgress): Week
   }
 
   // APL — masquée si chez les parents (non éligible) ou loyer déjà renseigné
-  if (profile && profile.expenses.loyer === 0 && profile.housingType !== 'parents') {
+  if (profile && profile.expenses.loyer === 0 && profile.housingType !== 'parents' && profile.housingType !== 'futur') {
     pool.push({
       id: 'apl',
       emoji: '🏠',
       text: "As-tu demandé l'APL ? Ça peut te faire économiser 100-300€/mois",
+      screen: 'Aides',
+      urgent: true,
+    });
+  }
+
+  // Emménagement à venir → la garantie Visale d'abord, elle conditionne le reste
+  if (profile?.housingType === 'futur') {
+    pool.push({
+      id: 'visale-avant-visites',
+      emoji: '📦',
+      text: 'Demande ta garantie Visale avant de visiter — c\'est gratuit et ça fait accepter ton dossier',
       screen: 'Aides',
       urgent: true,
     });
