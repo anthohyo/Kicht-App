@@ -370,6 +370,13 @@ export default function AidesScreen() {
                     <View style={{ flex: 1 }}>
                       <Text style={styles.secondaryName}>{aide.nom}</Text>
                       <Text style={styles.secondaryMontantLine}>{aide.montant}</Text>
+                      {/* Un montant sans source vérifiée ne doit pas être présenté
+                          comme un fait : les tarifs locaux changent chaque année. */}
+                      <Text style={aide.verifieLe ? styles.verifOk : styles.verifTodo}>
+                        {aide.verifieLe
+                          ? `Vérifié le ${new Date(aide.verifieLe).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                          : 'Montant indicatif — confirme sur le site'}
+                      </Text>
                     </View>
                     <Text style={styles.chevron}>→</Text>
                   </View>
@@ -525,6 +532,8 @@ const styles = StyleSheet.create({
   secondaryEmoji: { fontSize: 22 },
   secondaryName: { fontSize: 15, fontWeight: '600', color: colors.text },
   secondaryMontantLine: { fontSize: 13, color: colors.primaryLight, fontWeight: '600', marginTop: 3 },
+  verifOk:   { fontSize: 11, color: colors.textMuted, marginTop: 3 },
+  verifTodo: { fontSize: 11, color: colors.warning, marginTop: 3, fontWeight: '500' },
   secondaryDesc: { fontSize: 12, color: colors.textMuted, lineHeight: 18, marginTop: 6 },
   chevron: { fontSize: 12, color: colors.textMuted, marginLeft: 4 },
   expandedContent: { marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border },

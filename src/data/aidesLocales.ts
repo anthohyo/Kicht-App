@@ -6,6 +6,14 @@ export interface AideLocale {
   description: string;
   demarche: string;
   eligibilite: 'eligible' | 'peut-etre' | 'non-eligible';
+  /**
+   * Provenance du montant. Sans ces deux champs, l'app ne doit PAS présenter
+   * le chiffre comme un fait : les tarifs et barèmes locaux changent chaque
+   * année, et un montant périmé affiché avec assurance fait plus de dégâts
+   * qu'un montant absent.
+   */
+  source?: string;      // URL de la page officielle consultée
+  verifieLe?: string;   // date ISO de la dernière vérification (AAAA-MM-JJ)
   villes?: string[];
   departements?: string[];
   regions?: string[];
@@ -18,10 +26,12 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'navigo-imagine-r',
     nom: 'Pass Navigo Imagine R',
     emoji: '🚇',
-    montant: '38 €/mois (au lieu de 86 €)',
-    description: 'Abonnement mensuel illimité sur toute la zone Île-de-France à tarif réduit pour les étudiants. Économise jusqu\'à 576 € par an sur tes trajets quotidiens.',
-    demarche: 'navigo.fr',
+    montant: '401,30 €/an (au lieu de 1 090 €)',
+    description: 'Trajets illimités sur toute l\'Île-de-France pendant l\'année scolaire. Attention : c\'est un engagement à l\'année, payable en 9 mensualités d\'environ 45 € ou en une fois — ce n\'est pas un abonnement mensuel qu\'on arrête quand on veut. Face aux 90,80 €/mois du forfait Navigo Mois, tu économises environ 688 € sur l\'année. En stage ou en alternance, ton employeur doit t\'en rembourser au moins la moitié.',
+    demarche: 'iledefrance-mobilites.fr',
     eligibilite: 'eligible',
+    source: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-imagine-r-etudiant',
+    verifieLe: '2026-08-25',
     villes: ['paris'],
     departements: ['75'],
     regions: ['Île-de-France'],
@@ -44,14 +54,16 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'resto-u-paris',
     nom: 'Resto U Paris',
     emoji: '🍽️',
-    montant: '3,30 € le repas',
-    description: 'Repas complet équilibré (entrée + plat + dessert) à 3,30 € dans les restaurants universitaires du CROUS Paris. Accessible à tout étudiant muni d\'une carte étudiante valide.',
+    montant: '1 € le repas',
+    description: 'Depuis mai 2026, le repas complet (entrée, plat, dessert) est à 1 € pour TOUS les étudiants dans les restaurants universitaires du CROUS — plus besoin d\'être boursier. C\'est le repas le moins cher que tu trouveras.',
     demarche: 'crous-paris.fr',
     eligibilite: 'eligible',
     villes: ['paris'],
     departements: ['75'],
     regions: ['Île-de-France'],
     statuts: ['etudiant'],
+    source: 'https://www.etudiant.gouv.fr/fr/la-rentree-les-crous-proposeront-un-repas-1-euro-706',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'aide-logement-paris-habitat',
@@ -94,14 +106,16 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'tcl-tarif-reduit',
     nom: 'TCL tarif réduit boursier',
     emoji: '🚌',
-    montant: '-75% sur abonnement TCL',
-    description: 'Les étudiants boursiers d\'état bénéficient d\'une réduction de 75% sur leur abonnement mensuel TCL (Transports en Commun Lyonnais). Une économie significative sur tes déplacements quotidiens.',
+    montant: '15 €/mois',
+    description: 'Depuis septembre 2026, les étudiants de moins de 28 ans paient 15 €/mois pour circuler sur tout le réseau TCL (métro, tram, bus, funiculaire). Justificatif de scolarité à fournir.',
     demarche: 'tcl.fr',
     eligibilite: 'peut-etre',
     villes: ['lyon'],
     departements: ['69'],
     regions: ['Auvergne-Rhône-Alpes'],
     statuts: ['etudiant'],
+    source: 'https://www.tcl.fr/titres-et-tarifs/tous-les-titres-et-abonnements',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'aide-permis-aura',
@@ -217,14 +231,16 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'tisseo-etudiant',
     nom: 'Aide transport étudiant Tisséo',
     emoji: '🚌',
-    montant: 'abonnement étudiant réduit',
-    description: 'Tisséo (réseau de transport toulousain) propose des abonnements à tarif réduit pour les étudiants. Accès illimité aux bus, métro et tramway de Toulouse à prix préférentiel.',
+    montant: '16 €/mois (12,80 € si boursier)',
+    description: 'Abonnement étudiant sur tout le réseau Tisséo pour les moins de 26 ans, soit 169,60 € à l\'année. Si tu es boursier, le tarif descend à 12,80 €/mois — et la gratuité totale s\'applique à l\'échelon 7.',
     demarche: 'tisseo.fr',
     eligibilite: 'eligible',
     villes: ['toulouse'],
     departements: ['31'],
     regions: ['Occitanie'],
     statuts: ['etudiant'],
+    source: 'https://www.tisseo.fr/les-tarifs/la-gamme',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'faj-haute-garonne',
@@ -407,14 +423,16 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'cts-etudiant',
     nom: 'Tarif réduit CTS étudiant',
     emoji: '🚌',
-    montant: '-50% sur transports strasbourgeois',
-    description: 'La Compagnie des Transports Strasbourgeois (CTS) propose un abonnement mensuel à tarif réduit de 50% pour les étudiants. Accès illimité aux trams et bus du réseau strasbourgeois.',
+    montant: '32,50 €/mois (au lieu de 57,50 €)',
+    description: 'Abonnement étudiant sur tout le réseau CTS de Strasbourg. En prenant l\'abonnement à l\'année (292,50 €), tu descends à environ 24 €/mois. L\'Eurométropole applique aussi une tarification solidaire selon le quotient familial — vérifie ton cas, ça peut être moins cher.',
     demarche: 'cts-strasbourg.fr',
     eligibilite: 'eligible',
     villes: ['strasbourg'],
     departements: ['67'],
     regions: ['Grand Est'],
     statuts: ['etudiant'],
+    source: 'https://www.cts-strasbourg.eu/fr/Titres-de-transport/tarifs/Abonnements/',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'faj-bas-rhin',
