@@ -40,12 +40,6 @@ const SECTIONS: { title: string; features: Feature[] }[] = [
       { key: 'Badges',   emoji: '🏆', title: 'Mes badges',              desc: 'Ta progression et tes récompenses' },
     ],
   },
-  {
-    title: '🤝 Communauté',
-    features: [
-      { key: 'Parrainage', emoji: '🎁', title: 'Parrainage', desc: 'Invite un ami et gagne 1 mois Premium offert' },
-    ],
-  },
 ];
 
 export default function ExplorerScreen() {
@@ -79,8 +73,7 @@ export default function ExplorerScreen() {
             <View>
               <Text style={styles.headerName}>{firstName}</Text>
               <Text style={styles.headerSub}>
-                {profile.isPremium ? '👑 Premium' : '🆓 Gratuit'}
-                {profile.ville ? ` · 📍 ${profile.ville}` : ''}
+                {profile.ville ? `📍 ${profile.ville}` : ''}
               </Text>
             </View>
           </View>

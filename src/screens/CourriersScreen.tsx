@@ -7,7 +7,6 @@ import { RootStackParamList, UserProfile } from '../types';
 import { courriers, COURRIER_CATEGORIES } from '../data/courriers';
 import { colors, radius, spacing } from '../theme';
 import { loadProfile } from '../utils/storage';
-import { isPremiumUser, isCourrierFree } from '../utils/premium';
 
 type CatKey = keyof typeof COURRIER_CATEGORIES;
 
@@ -31,7 +30,7 @@ export default function CourriersScreen() {
         Des modèles prêts à copier-coller pour tes démarches.
       </Text>
       <Text style={styles.freeNote}>
-        3 modèles gratuits · Reste déblocable avec Premium
+        Tous les modèles sont gratuits — copie, complète, envoie.
       </Text>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
@@ -55,18 +54,11 @@ export default function CourriersScreen() {
       </ScrollView>
 
       {filtered.map((c) => {
-        const locked = !isPremiumUser(profile) && !isCourrierFree(c.id);
         return (
           <TouchableOpacity
             key={c.id}
-            style={[styles.card, locked && styles.cardLocked]}
-            onPress={() => {
-              if (locked) {
-                navigation.navigate('Premium');
-              } else {
-                navigation.navigate('CourrierDetail', { courrierId: c.id });
-              }
-            }}
+            style={styles.card}
+            onPress={() => navigation.navigate('CourrierDetail', { courrierId: c.id })}
             activeOpacity={0.7}
           >
             <Text style={styles.cardEmoji}>{c.emoji}</Text>
@@ -74,11 +66,7 @@ export default function CourriersScreen() {
               <Text style={styles.cardTitle}>{c.title}</Text>
               <Text style={styles.cardDesc}>{c.description}</Text>
             </View>
-            {locked ? (
-              <Text style={styles.lockBadge}>✨ Premium</Text>
-            ) : (
-              <Text style={styles.arrow}>›</Text>
-            )}
+            <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
         );
       })}
@@ -98,11 +86,9 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 13, color: colors.textSecondary },
   chipTextActive: { color: colors.white, fontWeight: '600' },
   card: { backgroundColor: colors.card, borderRadius: radius.lg, padding: spacing.md, flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm, borderWidth: 1, borderColor: colors.border },
-  cardLocked: { opacity: 0.65 },
   cardEmoji: { fontSize: 28, marginRight: 14 },
   cardText: { flex: 1 },
   cardTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
   cardDesc: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
   arrow: { fontSize: 24, color: colors.textMuted, marginLeft: 8 },
-  lockBadge: { fontSize: 11, color: colors.warning, fontWeight: '700', textAlign: 'right' },
 });

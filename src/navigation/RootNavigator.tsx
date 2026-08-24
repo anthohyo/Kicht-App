@@ -20,10 +20,8 @@ import ParcoursScreen from '../screens/ParcoursScreen';
 import CourriersScreen from '../screens/CourriersScreen';
 import CourrierDetailScreen from '../screens/CourrierDetailScreen';
 import BadgesScreen from '../screens/BadgesScreen';
-import PremiumScreen from '../screens/PremiumScreen';
 import SimulateurEpargneScreen from '../screens/SimulateurEpargneScreen';
 import MesDocumentsScreen from '../screens/MesDocumentsScreen';
-import ParrainageScreen from '../screens/ParrainageScreen';
 import AgendaScreen from '../screens/AgendaScreen';
 import BadgeToast from '../components/BadgeToast';
 
@@ -79,10 +77,8 @@ export default function RootNavigator() {
         <Stack.Screen name="Courriers" component={CourriersScreen} options={{ title: 'Courriers' }} />
         <Stack.Screen name="CourrierDetail" component={CourrierDetailScreen} options={{ title: 'Modèle' }} />
         <Stack.Screen name="Badges" component={BadgesScreen} options={{ title: 'Mes badges' }} />
-        <Stack.Screen name="Premium" component={PremiumScreen} options={{ title: 'Premium' }} />
         <Stack.Screen name="SimulateurEpargne" component={SimulateurEpargneScreen} options={{ title: 'Simulateur d\'épargne' }} />
         <Stack.Screen name="MesDocuments" component={MesDocumentsScreen} options={{ title: 'Mes documents clés' }} />
-        <Stack.Screen name="Parrainage" component={ParrainageScreen} options={{ title: 'Parrainage' }} />
         <Stack.Screen name="Agenda" component={AgendaScreen} options={{ title: 'Mon agenda' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Mon profil' }} />
         <Stack.Screen name="Explorer" component={ExplorerScreen} options={{ title: 'Explorer' }} />

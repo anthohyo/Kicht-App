@@ -70,8 +70,12 @@ export default function TabNavigator() {
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => (navigation as any).navigate('Profile')}
-                style={{ marginRight: 16, padding: 4 }}
+                // Zone tactile portée à 44pt : en dessous, la cible est trop
+                // petite pour être atteinte de façon fiable au pouce.
+                style={{ marginRight: 12, padding: 12 }}
                 activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Mon profil"
               >
                 <Text style={{ fontSize: 20, opacity: 0.7 }}>👤</Text>
               </TouchableOpacity>

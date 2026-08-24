@@ -45,6 +45,30 @@ const rules: Rule[] = [
     response: `📋 **Tu n'as pas encore de numéro fiscal ?**\n\nSi c'est ta toute première déclaration :\n1. Va sur impots.gouv.fr > "Vous n'avez pas encore de numéro fiscal"\n2. Remplis le formulaire en ligne\n3. Tu recevras un courrier avec ton numéro fiscal et ton mot de passe\n\nSi tes parents t'avaient déjà déclaré, tu as peut-être déjà un numéro sans le savoir. Demande-leur ou contacte ton centre des impôts.\n\n💡 Garde précieusement ce numéro, tu en auras besoin toute ta vie !`,
   },
 
+  // --- PARTIR VIVRE SEUL — la question d'entrée du jeune qui quitte le foyer ---
+  // Placée AVANT la règle APL : "par quoi je commence" appelle un plan complet,
+  // pas une explication d'une seule aide.
+  {
+    keywords: [
+      'par quoi je commence', 'par où commencer', 'par ou commencer',
+      'pars vivre seul', 'partir vivre seul', 'vivre seul', 'vivre seule',
+      'quitter mes parents', 'quitte mes parents', 'je déménage', 'je demenage',
+      'premier appart', 'premier appartement', 'emménager', 'emmenager',
+      'je pars étudier', 'je pars etudier',
+    ],
+    response: (profile) => {
+      const ville = profile?.ville ? ` à ${profile.ville}` : '';
+      const loyer = profile?.expenses?.loyer ?? 0;
+      const budgetLine = loyer > 0
+        ? `\n\nTu vises ${loyer} € de loyer${ville}. Regarde l'onglet **Mes aides** : je t'ai calculé ce qu'il te resterait vraiment à payer une fois l'APL déduite.`
+        : `\n\nDis-moi le loyer que tu vises et je te dirai ce qu'il te restera vraiment à payer une fois l'APL déduite.`;
+
+      const text = `📦 **Partir vivre seul — l'ordre compte plus que la liste**\n\nLa plupart des galères viennent d'une chose faite trop tard. Voilà l'ordre qui marche :\n\n**1. Avant même de visiter**\n• 🛡️ **Garantie Visale** (visale.fr) — caution gratuite de l'État. Gratuite, valable partout, et c'est souvent elle qui fait accepter ton dossier face aux autres candidats. La demander après avoir visité ne sert à rien.\n• 📁 **Ton dossier** — pièce d'identité, justificatif d'études ou de revenus, avis d'imposition de tes garants. Prépare-le en PDF, tu iras plus vite que les autres.\n\n**2. Pendant les visites**\n• 🔍 Vérifie l'état, la ventilation, l'isolation. Demande le **montant des charges** et la dernière facture d'énergie — un loyer bas avec des charges énormes, c'est un piège classique.\n\n**3. À la signature**\n• 🛡️ **Assurance habitation** — obligatoire, on ne peut pas signer sans. Compte 5 à 12 €/mois.\n• 📸 **État des lieux** — photographie **tout**, même ce qui te semble sans importance. C'est ce qui te rendra ta caution.\n\n**4. Le mois de l'emménagement**\n• 🏠 **Demande d'APL** sur caf.fr. Attention : **elle n'est jamais rétroactive**. Demandée deux mois trop tard, ces deux mois sont perdus.\n• ⚡ Ouvre l'électricité et internet — prévois quelques jours de délai.${budgetLine}\n\n**Ce que tu peux faire aujourd'hui :** ta demande Visale. C'est gratuit, ça prend 20 minutes, et ça change ton dossier.`;
+
+      return { text, actionCard: { label: '📋 Voir ma liste complète, dans l\'ordre', navigateTo: 'Aides' } };
+    },
+  },
+
   // --- APL / LOGEMENT ---
   {
     keywords: ['apl', 'aide logement', 'aide au logement'],

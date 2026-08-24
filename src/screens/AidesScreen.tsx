@@ -219,6 +219,9 @@ export default function AidesScreen() {
             style={styles.ctaExpand}
             onPress={() => setVedetteExpanded(!vedetteExpanded)}
             activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: vedetteExpanded }}
+            accessibilityLabel={`Voir comment obtenir ${vedette.name}`}
           >
             <Text style={styles.ctaExpandText}>
               {vedetteExpanded ? '▲ Masquer' : 'Voir comment l\'obtenir →'}

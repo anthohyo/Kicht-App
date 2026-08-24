@@ -1,18 +1,24 @@
 import { UserProfile } from '../types';
 
-/** Courriers gratuits (les 3 plus importants en situation d'urgence) */
-export const FREE_COURRIER_IDS = [
-  'demande-delai-loyer',
-  'reponse-mise-en-demeure',
-  'preavis-logement',
-];
+/**
+ * KichtApp est entièrement gratuit.
+ *
+ * Le produit s'adresse à des jeunes dont il vient lui-même de calculer qu'il leur
+ * reste parfois moins de zéro à la fin du mois. Faire payer précisément ceux qu'on
+ * cherche à aider est une contradiction : chaque euro demandé retire de l'audience,
+ * et en retire d'abord les plus en difficulté.
+ *
+ * Ces fonctions sont conservées comme point d'accroche unique au cas où un accès
+ * différencié reviendrait un jour — mais le financement viendra alors des
+ * institutions (CROUS, missions locales, mutuelles), jamais de l'utilisateur.
+ */
 
-/** L'user est premium s'il a payé OU s'il a une clé API (beta testeurs) */
-export function isPremiumUser(profile: UserProfile | null): boolean {
-  return !!(profile?.isPremium || profile?.claudeApiKey);
+/** Tout le contenu est accessible à tout le monde. */
+export function isPremiumUser(_profile: UserProfile | null): boolean {
+  return true;
 }
 
-/** Ce courrier est-il accessible gratuitement ? */
-export function isCourrierFree(courrierId: string): boolean {
-  return FREE_COURRIER_IDS.includes(courrierId);
+/** Tous les courriers sont libres d'accès. */
+export function isCourrierFree(_courrierId: string): boolean {
+  return true;
 }

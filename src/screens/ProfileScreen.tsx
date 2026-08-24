@@ -271,11 +271,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <Text style={styles.name}>{profile.firstName}</Text>
         <Text style={styles.statusBadge}>{STATUS_LABELS[profile.status]}</Text>
-        {profile.isPremium && (
-          <View style={styles.premiumBadge}>
-            <Text style={styles.premiumBadgeText}>👑 Premium</Text>
-          </View>
-        )}
       </View>
 
       {/* Quick actions */}
@@ -290,30 +285,30 @@ export default function ProfileScreen() {
           <Text style={styles.actionLabel}>Mes docs</Text>
           <Text style={styles.actionValue}>N° clés</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('Premium')}>
-          <Text style={styles.actionEmoji}>👑</Text>
-          <Text style={styles.actionLabel}>Premium</Text>
-          <Text style={styles.actionValue}>{profile.isPremium ? 'Actif' : 'Voir'}</Text>
+        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('Checklist')}>
+          <Text style={styles.actionEmoji}>✅</Text>
+          <Text style={styles.actionLabel}>Mes démarches</Text>
+          <Text style={styles.actionValue}>Étape par étape</Text>
         </TouchableOpacity>
       </View>
 
       {/* Aller plus loin */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Aller plus loin</Text>
-        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Parrainage')} activeOpacity={0.7}>
-          <Text style={styles.goFurtherEmoji}>🤝</Text>
+        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Courriers')} activeOpacity={0.7}>
+          <Text style={styles.goFurtherEmoji}>✉️</Text>
           <View style={styles.goFurtherText}>
-            <Text style={styles.goFurtherLabel}>Parrainage</Text>
-            <Text style={styles.goFurtherValue}>1 mois offert</Text>
+            <Text style={styles.goFurtherLabel}>Modèles de courriers</Text>
+            <Text style={styles.goFurtherValue}>Prêts à envoyer</Text>
           </View>
           <Text style={styles.goFurtherChevron}>›</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Premium')} activeOpacity={0.7}>
-          <Text style={styles.goFurtherEmoji}>👑</Text>
+        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Guides')} activeOpacity={0.7}>
+          <Text style={styles.goFurtherEmoji}>📖</Text>
           <View style={styles.goFurtherText}>
-            <Text style={styles.goFurtherLabel}>Premium</Text>
-            <Text style={styles.goFurtherValue}>{profile.isPremium ? 'Actif' : 'Débloquer tout'}</Text>
+            <Text style={styles.goFurtherLabel}>Fiches pratiques</Text>
+            <Text style={styles.goFurtherValue}>Tout expliqué simplement</Text>
           </View>
           <Text style={styles.goFurtherChevron}>›</Text>
         </TouchableOpacity>

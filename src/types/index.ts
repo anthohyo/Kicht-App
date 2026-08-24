@@ -39,6 +39,7 @@ export interface UserProfile {
   };
   onboardingComplete: boolean;
   savingsGoal?: { label: string; amount: number; emoji: string };
+  /** @deprecated L'app est entièrement gratuite. Conservé pour lire les anciens profils. */
   isPremium?: boolean;
   claudeApiKey?: string;
   budgetSeeded?: boolean;
@@ -205,11 +206,9 @@ export type RootStackParamList = {
   Courriers: undefined;
   CourrierDetail: { courrierId: string };
   Badges: undefined;
-  Premium: undefined;
   Settings: undefined;
   SimulateurEpargne: undefined;
   MesDocuments: undefined;
-  Parrainage: undefined;
   Agenda: undefined;
   Profile: undefined;
   Explorer: undefined;

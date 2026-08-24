@@ -20,7 +20,6 @@ import { saveChatMessages, loadChatMessages, loadProfile } from '../utils/storag
 import { getParrainResponse, ParrainResult } from '../utils/parrainAI';
 import { askClaude, ClaudeAPIError, ClaudeErrorType } from '../utils/claudeAPI';
 import { trackAction } from '../utils/gamification';
-import { isPremiumUser } from '../utils/premium';
 import { colors, radius, spacing } from '../theme';
 import MarkdownText from '../components/MarkdownText';
 
@@ -249,7 +248,8 @@ export default function ChatScreen() {
         aiText = await askClaude(text, profile, profile.claudeApiKey, history);
         setApiErrorType(null); // succès — on efface l'éventuelle bannière d'erreur
       } else {
-        // keywords fallback (for isPremium without key, also falls back to keywords for now)
+        // Sans clé API : moteur de règles. C'est le mode nominal pour la quasi-totalité
+        // des utilisateurs — personne dans la cible n'a de clé API Anthropic.
         await new Promise((r) => setTimeout(r, 300));
         parrainResult = getParrainResponse(text, profile);
       }
@@ -462,18 +462,6 @@ export default function ChatScreen() {
             <Text style={styles.actionCardText}>{item.actionCard.label}</Text>
           </TouchableOpacity>
         )}
-        {/* Upsell inline — après la première vraie réponse du Parrain */}
-        {!isUser && !isPremiumUser(profile) && item.id === firstParrainReplyId && (
-          <TouchableOpacity
-            style={styles.inlineUpsell}
-            onPress={() => navigation.navigate('Premium')}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.inlineUpsellText}>
-              ✨ Des réponses encore plus personnalisées ? Essaie le Parrain IA →
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
     );
   };
@@ -587,6 +575,9 @@ export default function ChatScreen() {
           style={[styles.sendBtn, (!input.trim() || loading) && { opacity: 0.3 }]}
           onPress={handleSend}
           disabled={!input.trim() || loading}
+          accessibilityRole="button"
+          accessibilityLabel="Envoyer ma question"
+          accessibilityState={{ disabled: !input.trim() || loading }}
         >
           <Text style={styles.sendText}>↑</Text>
         </TouchableOpacity>
