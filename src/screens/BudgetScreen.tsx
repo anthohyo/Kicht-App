@@ -43,6 +43,10 @@ function seedTransactions(profile: UserProfile): Transaction[] {
   }
   EXPENSE_MAP.forEach(({ key, label, category }) => {
     const amount = profile.expenses[key];
+    // Emménagement à venir : le loyer saisi est un loyer VISÉ, pas une dépense
+    // en cours. L'inscrire au budget ferait apparaître un découvert imaginaire
+    // sur un logement que l'utilisateur n'a pas encore.
+    if (key === 'loyer' && profile.housingType === 'futur') return;
     if (amount > 0) txs.push({ id: `seed-${key}`, amount, label, type: 'Dépense', category, date: today });
   });
   return txs;

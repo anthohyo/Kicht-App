@@ -424,8 +424,10 @@ const styles = StyleSheet.create({
 
   // Niveau 1 — intro
   intro: { marginBottom: spacing.lg },
-  introTitle: { fontSize: 22, fontWeight: '800', color: colors.text, marginBottom: 6 },
-  introSub: { fontSize: 16, fontWeight: '600', color: colors.text, lineHeight: 24, marginBottom: 4 },
+  // La salutation n'est pas le message — le montant l'est. Elle passe en amorce
+  // discrète pour que la promesse chiffrée porte seule le haut de l'écran.
+  introTitle: { fontSize: 15, fontWeight: '700', color: colors.textSecondary, marginBottom: 6 },
+  introSub: { fontSize: 24, fontWeight: '800', color: colors.text, lineHeight: 31, marginBottom: 6 },
   introCue: { fontSize: 13, color: colors.textMuted, lineHeight: 19, marginTop: 4 },
 
   // Niveau 2 — vedette
@@ -434,14 +436,16 @@ const styles = StyleSheet.create({
     borderRadius: radius.xl,
     padding: spacing.lg,
     borderWidth: 1.5,
-    borderColor: colors.success,
+    borderColor: 'rgba(16, 185, 129, 0.45)',
     marginBottom: spacing.md,
   },
   vedetteTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: spacing.sm },
-  vedetteEmoji: { fontSize: 32, marginTop: 2 },
+  vedetteEmoji: { fontSize: 26, marginTop: 2 },
   vedetteName: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 6 },
   vedetteBadgeRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  vedetteMontant: { fontSize: 14, fontWeight: '800', color: colors.success },
+  // Blanc plutôt que vert : la bordure et le badge portent déjà le signal
+  // « éligible ». Trois verts empilés ne hiérarchisent plus rien.
+  vedetteMontant: { fontSize: 17, fontWeight: '800', color: colors.text },
   vedetteDesc: { fontSize: 14, color: colors.textSecondary, lineHeight: 21, marginBottom: spacing.sm },
   vedetteActions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md, flexWrap: 'wrap' },
 
@@ -483,10 +487,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1,
     borderColor: colors.border, paddingVertical: 14, paddingHorizontal: spacing.md,
-    marginBottom: spacing.lg,
+    // Pas de marge basse ici : `totalBanner` porte déjà l'écart de section.
+    // Les marges ne fusionnent pas en React Native — les deux cumulaient 48px.
   },
   chatCtaText: { fontSize: 14, fontWeight: '600', color: colors.text, flex: 1 },
-  chatCtaArrow: { fontSize: 16, color: colors.primary, fontWeight: '700', marginLeft: 8 },
+  chatCtaArrow: { fontSize: 16, color: colors.primaryLight, fontWeight: '700', marginLeft: 8 },
 
   // Bandeau total secondaires
   totalBanner: {
@@ -519,7 +524,7 @@ const styles = StyleSheet.create({
   secondaryTop: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   secondaryEmoji: { fontSize: 22 },
   secondaryName: { fontSize: 15, fontWeight: '600', color: colors.text },
-  secondaryMontantLine: { fontSize: 12, color: colors.primary, fontWeight: '600', marginTop: 2 },
+  secondaryMontantLine: { fontSize: 13, color: colors.primaryLight, fontWeight: '600', marginTop: 3 },
   secondaryDesc: { fontSize: 12, color: colors.textMuted, lineHeight: 18, marginTop: 6 },
   chevron: { fontSize: 12, color: colors.textMuted, marginLeft: 4 },
   expandedContent: { marginTop: spacing.sm, paddingTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border },

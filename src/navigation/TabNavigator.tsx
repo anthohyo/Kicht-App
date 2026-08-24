@@ -46,7 +46,7 @@ export default function TabNavigator() {
               paddingTop: 6,
               paddingBottom: Platform.OS !== 'web' ? insets.bottom : 10,
             },
-            tabBarActiveTintColor: colors.primary,
+            tabBarActiveTintColor: colors.primaryLight,
             tabBarInactiveTintColor: colors.textMuted,
             tabBarLabelStyle: {
               fontSize: 11,

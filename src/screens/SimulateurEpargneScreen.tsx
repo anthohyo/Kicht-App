@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   presetLabel:       { fontSize: 11, color: colors.textSecondary, fontWeight: '600' },
   presetLabelActive: { color: colors.primaryLight },
   presetRate:        { fontSize: 12, color: colors.textMuted, marginTop: 2 },
-  presetRateActive:  { color: colors.primary, fontWeight: '700' },
+  presetRateActive:  { color: colors.primaryLight, fontWeight: '700' },
 
   customRateRow:   { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
   customRateLabel: { fontSize: 13, color: colors.textSecondary, flex: 1 },

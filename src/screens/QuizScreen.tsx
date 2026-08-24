@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   resultScore: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: colors.primary,
+    color: colors.primaryLight,
     marginBottom: spacing.md,
   },
   resultMessage: {

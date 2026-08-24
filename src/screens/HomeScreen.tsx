@@ -43,7 +43,10 @@ export default function HomeScreen() {
    * d'avoir son bac n'est pas en difficulté financière, il n'a simplement rien rempli.
    * Afficher "-142 € — tu es dans le rouge" dans ce cas est faux et alarmant.
    */
-  const budgetNonRenseigne = displayIncome === 0 && transactions.length === 0;
+  // Le critère est l'absence de REVENU, pas l'absence de transactions : l'app
+  // pré-remplit elle-même des dépenses depuis l'onboarding, et sans revenu en
+  // face le « reste à vivre » n'est que l'opposé des dépenses — un faux découvert.
+  const budgetNonRenseigne = displayIncome === 0;
   const isSerré = !budgetNonRenseigne && reste >= 0 && reste < 100;
   const isDépassé = !budgetNonRenseigne && reste < 0;
 
@@ -382,7 +385,7 @@ const styles = StyleSheet.create({
   priorityLabel: {
     fontSize: 10,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.primaryLight,
     letterSpacing: 1.5,
   },
   priorityTitle: {
@@ -446,7 +449,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginBottom: 6,
   },
-  checklistCta: { fontSize: 13, fontWeight: '700', color: colors.primary },
+  checklistCta: { fontSize: 13, fontWeight: '700', color: colors.primaryLight },
 
   // Le Parrain
   parrainCard: {
@@ -462,5 +465,5 @@ const styles = StyleSheet.create({
   parrainEmoji: { fontSize: 28 },
   parrainTitle: { fontSize: 15, fontWeight: '600', color: colors.text, marginBottom: 4 },
   parrainSub: { fontSize: 13, color: colors.textMuted, lineHeight: 18, marginBottom: 8 },
-  parrainCta: { fontSize: 13, fontWeight: '700', color: colors.primary },
+  parrainCta: { fontSize: 13, fontWeight: '700', color: colors.primaryLight },
 });

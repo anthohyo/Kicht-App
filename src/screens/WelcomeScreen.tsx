@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   proofQuote: {
     fontSize: 28,
-    color: colors.primary,
+    color: colors.primaryLight,
     lineHeight: 32,
     marginBottom: 4,
   },

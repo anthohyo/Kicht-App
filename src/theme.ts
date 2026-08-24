@@ -7,8 +7,10 @@ export const colors = {
   surface: '#22223A',
 
   // Primary (violet)
+  // `primary` ne passe qu'à 3.21 sur fond sombre : réservé aux FONDS de bouton
+  // (blanc dessus = 5.7, conforme). Pour du texte violet, utiliser `primaryLight`.
   primary: '#7C3AED',
-  primaryLight: '#A78BFA',
+  primaryLight: '#A78BFA', // 6.7 — c'est la variante à utiliser pour le texte
   primaryDark: '#5B21B6',
   primaryGlow: 'rgba(124, 58, 237, 0.15)',
 
@@ -16,9 +18,12 @@ export const colors = {
   accent: '#C084FC',
 
   // Text
-  text: '#F1F1F6',
-  textSecondary: '#9CA3AF',
-  textMuted: '#6B7280',
+  // Contrastes mesurés sur `card` (#14141F). Seuil WCAG AA texte courant : 4.5.
+  text: '#F1F1F6',          // 16.2 — titres et contenu principal
+  textSecondary: '#9CA3AF', //  7.2 — texte de soutien
+  textMuted: '#868D99',     //  5.5 — mentions discrètes. L'ancien #6B7280 tombait
+                            //  à 3.78 : illisible pour beaucoup, et c'est cette
+                            //  couleur qui portait les montants des aides.
 
   // Status
   success: '#10B981',
