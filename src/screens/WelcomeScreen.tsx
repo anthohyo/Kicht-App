@@ -92,7 +92,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         >
           <Text style={styles.ctaText}>Trouver l'argent que je rate →</Text>
         </TouchableOpacity>
-        <Text style={styles.ctaHint}>2 minutes · 3 questions · 0 inscription</Text>
+        <Text style={styles.ctaHint}>2 minutes · 4 questions · 0 inscription</Text>
       </View>
     </View>
   );
