@@ -47,6 +47,36 @@ export const AIDES_LOCALES: AideLocale[] = [
     verifieLe: '2026-08-25',
   },
 
+  {
+    id: 'faj-bouches-du-rhone',
+    nom: 'FAJ Bouches-du-Rhône',
+    emoji: '💶',
+    montant: 'Montant fixé par ton département',
+    description: 'Aide de dernier recours de ton département pour les 18-25 ans en difficulté : alimentation, logement, transport, formation. Le montant est fixé par chaque département et varie fortement — de quelques dizaines d\'euros à plus de 2 000 €/an selon les territoires. Point important : tu ne peux pas la demander seul·e en ligne. Le dossier doit être monté par un travailleur social, en pratique via ta MISSION LOCALE. Une procédure d\'urgence existe, traitée en 48 h pour les besoins vitaux.',
+    demarche: 'mission-locale.fr',
+    eligibilite: 'peut-etre',
+    villes: ['marseille', 'aix-en-provence'],
+    departements: ['13'],
+    regions: ['Provence-Alpes-Côte d\'Azur'],
+    source: 'https://departement13.fr/en-actions/education-jeunesse/jeunes-de-provence/le-fonds-daide-aux-jeunes-faj',
+    verifieLe: '2026-08-25',
+  },
+
+  {
+    id: 'faj-alpes-maritimes',
+    nom: 'FAJ Alpes-Maritimes',
+    emoji: '💶',
+    montant: 'Montant fixé par ton département',
+    description: 'Aide de dernier recours de ton département pour les 18-25 ans en difficulté : alimentation, logement, transport, formation. Le montant est fixé par chaque département et varie fortement — de quelques dizaines d\'euros à plus de 2 000 €/an selon les territoires. Point important : tu ne peux pas la demander seul·e en ligne. Le dossier doit être monté par un travailleur social, en pratique via ta MISSION LOCALE. Une procédure d\'urgence existe, traitée en 48 h pour les besoins vitaux.',
+    demarche: 'mission-locale.fr',
+    eligibilite: 'peut-etre',
+    villes: ['nice'],
+    departements: ['06'],
+    regions: ['Provence-Alpes-Côte d\'Azur'],
+    source: 'https://www.departement06.fr/aides-et-services/fonds-d-aide-aux-jeunes-faj-2632.html',
+    verifieLe: '2026-08-25',
+  },
+
   // --- Nouvelle-Aquitaine / Bordeaux ---
   {
     id: 'tbm-pass-jeune',
@@ -60,6 +90,21 @@ export const AIDES_LOCALES: AideLocale[] = [
     departements: ['33'],
     regions: ['Nouvelle-Aquitaine'],
     source: 'https://www.infotbm.com/fr/tarifs-et-abonnements.html',
+    verifieLe: '2026-08-25',
+  },
+
+  {
+    id: 'faj-paris',
+    nom: 'FAJ Paris',
+    emoji: '💶',
+    montant: 'Montant fixé par ton département',
+    description: 'Aide de dernier recours de ton département pour les 18-25 ans en difficulté : alimentation, logement, transport, formation. Le montant est fixé par chaque département et varie fortement — de quelques dizaines d\'euros à plus de 2 000 €/an selon les territoires. Point important : tu ne peux pas la demander seul·e en ligne. Le dossier doit être monté par un travailleur social, en pratique via ta MISSION LOCALE. Une procédure d\'urgence existe, traitée en 48 h pour les besoins vitaux.',
+    demarche: 'mission-locale.fr',
+    eligibilite: 'peut-etre',
+    villes: ['paris'],
+    departements: ['75'],
+    regions: ['Île-de-France'],
+    source: 'https://www.paris.fr/pages/aides-aux-jeunes-2895',
     verifieLe: '2026-08-25',
   },
 
@@ -222,6 +267,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     regions: ['Provence-Alpes-Côte d\'Azur'],
     source: 'https://www.maregionsud.fr/vos-aides',
     verifieLe: '2026-08-25',
+    statuts: ['etudiant', 'apprenti'],
   },
   {
     id: 'epicerie-crous-marseille',
@@ -377,7 +423,6 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['montpellier'],
     departements: ['34'],
     regions: ['Occitanie'],
-    statuts: ['etudiant'],
     source: 'https://montpellier-mobilite.fr/tarifs-de-transport',
     verifieLe: '2026-08-25',
   },

@@ -427,13 +427,19 @@ export function simulerAides(profile: UserProfile): AideResult[] {
 
   // --- Garantie Visale ---
   if (profile.age < 31) {
+    // Chez les parents sans projet de départ, Visale n'est pas actionnable
+    // aujourd'hui : la présenter comme « éligible » encombre la liste d'une
+    // aide sans usage immédiat. On la garde, mais on la situe dans le temps.
+    const chercheUnLogement = profile.housingType !== 'parents';
     aides.push({
       id: 'visale',
       name: 'Garantie Visale',
       emoji: '🛡️',
-      eligible: 'oui',
+      eligible: chercheUnLogement ? 'oui' : 'peut-etre',
       montantEstime: 'Caution gratuite',
-      description: 'Caution GRATUITE de l\'État pour ton logement. Remplace le garant parental.',
+      description: chercheUnLogement
+        ? 'Caution GRATUITE de l\'État pour ton logement. Remplace le garant parental.'
+        : 'À retenir pour le jour où tu chercheras un logement : c\'est une caution gratuite de l\'État qui remplace le garant parental. Elle se demande AVANT les visites — un dossier avec Visale passe devant les autres.',
       conditions: [
         'Avoir entre 18 et 30 ans',
         'Chercher un logement dans le parc privé',
@@ -599,25 +605,113 @@ export function simulerAides(profile: UserProfile): AideResult[] {
     });
   }
 
+  // --- ACRE (auto-entrepreneurs) ---
+  // Ce n'est pas une aide versée mais des cotisations non payées — donc de
+  // l'argent gardé. Deux changements de 2026 la rendent piégeuse : elle n'est
+  // plus automatique, et le taux a été divisé par deux au 1er juillet.
+  if (profile.status === 'auto_entrepreneur') {
+    const moins26 = profile.age < 26;
+    aides.push({
+      id: 'acre',
+      name: 'ACRE — exonération de cotisations',
+      emoji: '📉',
+      eligible: moins26 ? 'oui' : 'peut-etre',
+      montantEstime: '25 % de cotisations en moins',
+      description:
+        'L\'ACRE allège tes cotisations sociales en début d\'activité : 25 % d\'exonération pour une ' +
+        'micro-entreprise créée depuis le 1er juillet 2026 (50 % avant cette date), jusqu\'à la fin du ' +
+        '3e trimestre civil qui suit ton démarrage. ' +
+        (moins26
+          ? 'Avoir moins de 26 ans y donne directement droit.'
+          : 'Depuis janvier 2026 elle est réservée à certains profils — les moins de 26 ans notamment. Au-delà, vérifie si tu entres dans un autre cas (demandeur d\'emploi indemnisé, bénéficiaire du RSA, création en quartier prioritaire).') +
+        ' Attention : elle n\'est PLUS attribuée automatiquement.',
+      conditions: [
+        'Créer ou reprendre une activité',
+        'Avoir moins de 26 ans, ou relever d\'un autre cas d\'éligibilité',
+        'Déposer la demande dans les 60 JOURS suivant le début d\'activité',
+        'CSG-CRDS, retraite complémentaire et formation professionnelle restent dues',
+      ],
+      commentFaire: [
+        'Fais la demande sur urssaf.fr — le formulaire est court',
+        'Ne dépasse pas 60 jours après le début d\'activité : au-delà, c\'est perdu',
+        'Depuis le 1er janvier 2026, plus aucune attribution automatique : sans demande, rien',
+        'Garde l\'accusé de réception, il te servira en cas de contrôle',
+      ],
+      lien: 'https://www.urssaf.fr',
+      lienLabel: 'Demander l\'ACRE sur urssaf.fr',
+    });
+  }
+
+  // --- Majoration service civique ---
+  // L'indemnité de base est versée d'office ; la majoration, non. Elle se
+  // demande, et beaucoup de volontaires boursiers l'ignorent.
+  if (profile.status === 'service_civique') {
+    aides.push({
+      id: 'majoration-service-civique',
+      name: 'Majoration de ton indemnité',
+      emoji: '➕',
+      eligible: 'peut-etre',
+      montantEstime: '+116 €/mois',
+      montantMensuelMin: 116,
+      montantMensuelMax: 116,
+      description:
+        'Ton indemnité de base est de 619,83 € nets par mois. Une majoration de 116,18 € nets s\'ajoute ' +
+        'si tu es boursier de l\'enseignement supérieur à l\'échelon 5, 6 ou 7, bénéficiaire du RSA ' +
+        '(ou rattaché à un foyer qui l\'est), ou titulaire de l\'AAH — soit environ 736 € au total. ' +
+        'Elle n\'est pas versée d\'office : il faut la demander et fournir le justificatif. ' +
+        'Bon à savoir : cette indemnité n\'est pas imposable et n\'a pas à être déclarée à la CAF, ' +
+        'donc elle ne réduit pas ton APL.',
+      conditions: [
+        'Être boursier de l\'enseignement supérieur échelon 5, 6 ou 7',
+        'ou bénéficiaire du RSA, ou rattaché à un foyer bénéficiaire',
+        'ou titulaire de l\'AAH',
+      ],
+      commentFaire: [
+        'Signale ta situation à ton organisme d\'accueil dès le début de mission',
+        'Fournis ta notification de bourse, ton attestation RSA ou AAH',
+        'Vérifie ensuite que la majoration apparaît bien sur ton versement',
+      ],
+      lien: 'https://www.service-civique.gouv.fr',
+      lienLabel: 'En savoir plus sur service-civique.gouv.fr',
+    });
+  }
+
   // --- Aide au transport ---
+  const aUnEmployeur = ['salarie', 'apprenti'].includes(profile.status);
   aides.push({
     id: 'transport',
-    name: 'Aides au transport',
+    // Le remboursement à 50 % est une obligation de l'EMPLOYEUR. L'annoncer à
+    // quelqu'un qui n'en a pas était du bruit trompeur : il n'a personne à qui
+    // réclamer. Le message se scinde donc selon qu'il y a un employeur ou non.
+    name: aUnEmployeur ? 'Remboursement transport par ton employeur' : 'Tarifs jeunes sur les transports',
     emoji: '🚌',
-    eligible: 'peut-etre',
-    montantEstime: '50% de ton abonnement',
-    description: 'Ton employeur doit rembourser 50% de ton abonnement transport en commun. Des réductions jeunes existent aussi selon ta ville.',
-    conditions: [
-      'Salarié : remboursement 50% obligatoire par l\'employeur',
-      'Étudiant : tarifs réduits sur les abonnements',
-      'Île-de-France : Imagine R à tarif réduit',
-      'Régions : des cartes jeunes existent (TER, car...)',
-    ],
-    commentFaire: [
-      'Salarié : donne ton justificatif d\'abonnement à ton employeur',
-      'Étudiant : renseigne-toi auprès de ton réseau de transport local',
-      'Vérifie les aides de ta région',
-    ],
+    eligible: aUnEmployeur ? 'oui' : 'peut-etre',
+    montantEstime: aUnEmployeur ? '50 % de ton abonnement' : 'Selon ta ville',
+    description: aUnEmployeur
+      ? 'Ton employeur DOIT te rembourser au moins 50 % de ton abonnement de transport en commun — c\'est une obligation légale, pas un geste commercial. Beaucoup de jeunes ne le demandent jamais. En stage ou en alternance aussi.'
+      : 'Sans employeur, le remboursement à 50 % ne s\'applique pas. En revanche presque tous les réseaux ont un tarif jeune ou étudiant, parfois calculé sur le quotient familial — et quelques villes sont carrément gratuites. Regarde la section « aides dans ta ville » juste en dessous.',
+    conditions: aUnEmployeur
+      ? [
+          'Avoir un abonnement de transport en commun pour aller travailler',
+          'Le remboursement est de 50 % minimum, y compris en stage ou en alternance',
+          'Il apparaît sur ta fiche de paie — vérifie qu\'il y est',
+        ]
+      : [
+          'Tarif jeune ou étudiant selon le réseau de ta ville',
+          'Certains réseaux appliquent le quotient familial : l\'écart peut être important',
+          'Quelques métropoles sont gratuites pour leurs habitants',
+        ],
+    commentFaire: aUnEmployeur
+      ? [
+          'Donne ton justificatif d\'abonnement au service RH ou à ton employeur',
+          'Le remboursement est rétroactif sur l\'année en cours si tu ne l\'as jamais demandé',
+          'Vérifie ensuite la ligne sur ta fiche de paie',
+        ]
+      : [
+          'Regarde les aides de ta ville dans la section ci-dessous',
+          'Fais calculer ton quotient familial avant de souscrire — beaucoup paient le tarif haut pour rien',
+          'Si tu es boursier, signale-le : plusieurs réseaux appliquent une réduction supplémentaire',
+        ],
     lien: 'https://www.1jeune1solution.gouv.fr',
     lienLabel: 'Voir les aides transport',
   });
