@@ -14,6 +14,16 @@ export interface AideLocale {
    */
   source?: string;      // URL de la page officielle consultée
   verifieLe?: string;   // date ISO de la dernière vérification (AAAA-MM-JJ)
+  /**
+   * Aide jamais confrontée à une source officielle. Elle n'est PAS affichée.
+   * Ces entrées ont été rédigées de mémoire : sur 7 contrôlées, 7 étaient
+   * fausses — montant périmé, ou public cible erroné (bourses réservées à
+   * une filière présentées comme générales). Envoyer un jeune réclamer une
+   * aide à laquelle il n'a pas droit lui coûte du temps et de la confiance.
+   * Retirer le drapeau uniquement après vérification, en remplissant
+   * `source` et `verifieLe`.
+   */
+  aVerifier?: boolean;
   villes?: string[];
   departements?: string[];
   regions?: string[];
@@ -41,14 +51,16 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'aide-urgence-crous-paris',
     nom: 'Aide d\'urgence CROUS Paris',
     emoji: '🆘',
-    montant: "jusqu'à 600 €",
-    description: 'Aide financière exceptionnelle accordée par le CROUS Paris aux étudiants en difficulté passagère. Accessible aux boursiers comme aux non-boursiers sur critères sociaux.',
+    montant: 'de 1 454 € à 6 335 €/an',
+    description: 'Deux formes existent. L\'aide PONCTUELLE, pour un coup dur passager, va jusqu\'à 3 071 € par versement (6 142 € maximum). L\'aide ANNUELLE, pour une situation durable d\'autonomie ou de rupture familiale, équivaut à une bourse : de 1 454 € à 6 335 € sur l\'année. Boursier ou pas, tu peux demander. Le passage se fait par le service social du CROUS, qui monte ton dossier avant la commission.',
     demarche: 'crous-paris.fr',
     eligibilite: 'peut-etre',
     villes: ['paris'],
     departements: ['75'],
     regions: ['Île-de-France'],
     statuts: ['etudiant'],
+    source: 'https://www.crous-paris.fr/social-et-accompagnement/le-service-social-du-crous-de-paris/lallocation-annuelle/',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'resto-u-paris',
@@ -76,6 +88,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['paris'],
     departements: ['75'],
     regions: ['Île-de-France'],
+    aVerifier: true,
   },
 
   // --- Auvergne-Rhône-Alpes / Lyon / Rhône ---
@@ -83,13 +96,15 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'faj-rhone',
     nom: 'FAJ Rhône (Fonds d\'Aide aux Jeunes)',
     emoji: '💶',
-    montant: "jusqu'à 500 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes du Rhône permet d\'aider les jeunes de 18 à 25 ans en difficulté à financer un projet d\'insertion ou à faire face à une dépense urgente (loyer, permis, formation, matériel).',
-    demarche: 'mda69.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['lyon'],
     departements: ['69'],
     regions: ['Auvergne-Rhône-Alpes'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'aide-mobilite-aura',
@@ -101,10 +116,11 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Auvergne-Rhône-Alpes'],
     statuts: ['apprenti'],
+    aVerifier: true,
   },
   {
     id: 'tcl-tarif-reduit',
-    nom: 'TCL tarif réduit boursier',
+    nom: 'Abonnement TCL étudiant',
     emoji: '🚌',
     montant: '15 €/mois',
     description: 'Depuis septembre 2026, les étudiants de moins de 28 ans paient 15 €/mois pour circuler sur tout le réseau TCL (métro, tram, bus, funiculaire). Justificatif de scolarité à fournir.',
@@ -121,12 +137,14 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'aide-permis-aura',
     nom: 'Aide permis de conduire apprentis AURA',
     emoji: '🚗',
-    montant: "jusqu'à 500 €",
+    montant: '150 € à 17 ans, ou jusqu’à 500 € via le PASS’Région',
     description: 'La région Auvergne-Rhône-Alpes finance une aide spécifique pour passer le permis de conduire, réservée aux apprentis en contrat d\'apprentissage. Indispensable pour faciliter l\'accès à l\'emploi.',
     demarche: 'auvergnerhonealpes.fr',
     eligibilite: 'peut-etre',
     regions: ['Auvergne-Rhône-Alpes'],
     statuts: ['apprenti'],
+    source: 'https://www.auvergnerhonealpes.fr/aides',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'bourse-aura',
@@ -138,6 +156,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Auvergne-Rhône-Alpes'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
 
   // --- PACA / Marseille / Bouches-du-Rhône ---
@@ -152,6 +171,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['marseille', 'nice', 'toulon', 'aix-en-provence'],
     departements: ['13', '06', '83'],
     regions: ['Provence-Alpes-Côte d\'Azur'],
+    aVerifier: true,
   },
   {
     id: 'epicerie-crous-marseille',
@@ -165,6 +185,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     departements: ['13'],
     regions: ['Provence-Alpes-Côte d\'Azur'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
   {
     id: 'aide-mobilite-paca',
@@ -176,6 +197,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Provence-Alpes-Côte d\'Azur'],
     statuts: ['apprenti'],
+    aVerifier: true,
   },
 
   // --- Nouvelle-Aquitaine / Bordeaux / Gironde ---
@@ -189,6 +211,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Nouvelle-Aquitaine'],
     statuts: ['apprenti', 'salarie'],
+    aVerifier: true,
   },
   {
     id: 'pass-sport-bordeaux',
@@ -201,18 +224,21 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['bordeaux'],
     departements: ['33'],
     regions: ['Nouvelle-Aquitaine'],
+    aVerifier: true,
   },
   {
     id: 'faj-gironde',
     nom: 'FAJ Gironde',
     emoji: '💶',
-    montant: "jusqu'à 400 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes de la Gironde accompagne les jeunes de 18 à 25 ans en difficulté dans leur démarche d\'insertion sociale et professionnelle. Aide pour financer des besoins urgents et essentiels.',
-    demarche: 'gironde.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['bordeaux'],
     departements: ['33'],
     regions: ['Nouvelle-Aquitaine'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
 
   // --- Occitanie / Toulouse / Haute-Garonne ---
@@ -220,12 +246,14 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'bourse-occitanie',
     nom: 'Bourse complémentaire région Occitanie',
     emoji: '🎓',
-    montant: "jusqu'à 1 000 €/an",
+    montant: 'Réservée aux filières sanitaires et sociales',
     description: 'La région Occitanie verse une bourse complémentaire aux étudiants boursiers suivant une formation dans la région. Cette aide s\'ajoute aux aides nationales pour améliorer le pouvoir d\'achat des étudiants.',
     demarche: 'laregion.fr',
     eligibilite: 'peut-etre',
     regions: ['Occitanie'],
     statuts: ['etudiant'],
+    source: 'https://www.laregion.fr/bourses-etudes-sanitaires-sociales',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'tisseo-etudiant',
@@ -246,13 +274,15 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'faj-haute-garonne',
     nom: 'FAJ Haute-Garonne',
     emoji: '💶',
-    montant: "jusqu'à 500 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes de Haute-Garonne soutient les jeunes de 18 à 25 ans en situation précaire. L\'aide finance des projets d\'insertion : formation, emploi, logement, mobilité.',
-    demarche: 'haute-garonne.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['toulouse'],
     departements: ['31'],
     regions: ['Occitanie'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
 
   // --- Occitanie / Montpellier / Hérault ---
@@ -267,6 +297,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['montpellier'],
     departements: ['34'],
     regions: ['Occitanie'],
+    aVerifier: true,
   },
   {
     id: 'epicerie-crous-montpellier',
@@ -280,6 +311,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     departements: ['34'],
     regions: ['Occitanie'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
   {
     id: 'tam-etudiant',
@@ -293,6 +325,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     departements: ['34'],
     regions: ['Occitanie'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
 
   // --- Hauts-de-France / Lille / Nord ---
@@ -307,6 +340,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['lille', 'amiens'],
     departements: ['59', '80'],
     regions: ['Hauts-de-France'],
+    aVerifier: true,
   },
   {
     id: 'carte-avantage-mel',
@@ -319,18 +353,21 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['lille'],
     departements: ['59'],
     regions: ['Hauts-de-France'],
+    aVerifier: true,
   },
   {
     id: 'faj-nord',
     nom: 'FAJ Nord',
     emoji: '💶',
-    montant: "jusqu'à 400 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes du Nord aide les jeunes de 18 à 25 ans en difficulté à financer un projet d\'insertion professionnelle ou à couvrir une dépense urgente et nécessaire.',
-    demarche: 'nord.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['lille'],
     departements: ['59'],
     regions: ['Hauts-de-France'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
 
   // --- Bretagne / Rennes / Ille-et-Vilaine ---
@@ -344,6 +381,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Bretagne'],
     statuts: ['apprenti'],
+    aVerifier: true,
   },
   {
     id: 'bourse-bretagne',
@@ -355,18 +393,21 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Bretagne'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
   {
     id: 'faj-ille-et-vilaine',
     nom: 'FAJ Ille-et-Vilaine',
     emoji: '💶',
-    montant: "jusqu'à 500 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes d\'Ille-et-Vilaine soutient les jeunes de 18 à 25 ans résidant dans le département pour financer un projet d\'insertion ou faire face à une situation de précarité.',
-    demarche: 'ille-et-vilaine.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['rennes'],
     departements: ['35'],
     regions: ['Bretagne'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
 
   // --- Pays de la Loire / Nantes / Loire-Atlantique ---
@@ -374,13 +415,15 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'faj-loire-atlantique',
     nom: 'FAJ Loire-Atlantique',
     emoji: '💶',
-    montant: "jusqu'à 500 €",
+    montant: 'jusqu\'à 1 600 €/an',
     description: 'Le Fonds d\'Aide aux Jeunes de Loire-Atlantique accompagne les jeunes de 18 à 25 ans en insertion sociale et professionnelle. Aide financière pour des besoins essentiels ou un projet d\'avenir.',
     demarche: 'loire-atlantique.fr',
     eligibilite: 'peut-etre',
     villes: ['nantes'],
     departements: ['44'],
     regions: ['Pays de la Loire'],
+    source: 'https://www.loire-atlantique.fr/44/jeunesse/le-fonds-d-aide-aux-jeunes-faj-individuel/c_1277824',
+    verifieLe: '2026-08-25',
   },
   {
     id: 'aide-logement-nantes',
@@ -393,6 +436,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['nantes'],
     departements: ['44'],
     regions: ['Pays de la Loire'],
+    aVerifier: true,
   },
   {
     id: 'bourse-pays-de-la-loire',
@@ -404,6 +448,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'peut-etre',
     regions: ['Pays de la Loire'],
     statuts: ['etudiant'],
+    aVerifier: true,
   },
 
   // --- Grand Est / Strasbourg / Bas-Rhin ---
@@ -418,6 +463,7 @@ export const AIDES_LOCALES: AideLocale[] = [
     villes: ['strasbourg', 'metz', 'nancy', 'reims'],
     departements: ['67', '57', '54', '51'],
     regions: ['Grand Est'],
+    aVerifier: true,
   },
   {
     id: 'cts-etudiant',
@@ -438,13 +484,15 @@ export const AIDES_LOCALES: AideLocale[] = [
     id: 'faj-bas-rhin',
     nom: 'FAJ Bas-Rhin',
     emoji: '💶',
-    montant: "jusqu'à 400 €",
+    montant: 'Montant fixé par ton département',
     description: 'Le Fonds d\'Aide aux Jeunes du Bas-Rhin accompagne les jeunes de 18 à 25 ans dans leur parcours d\'insertion. Aide financière pour financer un projet professionnel ou couvrir des besoins urgents.',
-    demarche: 'bas-rhin.fr',
+    demarche: 'mission-locale.fr',
     eligibilite: 'peut-etre',
     villes: ['strasbourg'],
     departements: ['67'],
     regions: ['Grand Est'],
+    source: 'https://drees.solidarites-sante.gouv.fr/sites/default/files/2021-09/Fiche%2031%20-%20Le%20fonds%20d%E2%80%99aide%20aux%20jeunes%20(FAJ).pdf',
+    verifieLe: '2026-08-25',
   },
 ];
 
@@ -481,6 +529,10 @@ export function getAidesLocales(
   const seen = new Set<string>();
 
   for (const aide of AIDES_LOCALES) {
+    // Jamais d'aide non vérifiée à l'écran : mieux vaut ne rien proposer
+    // que d'envoyer quelqu'un réclamer un droit qu'il n'a pas.
+    if (aide.aVerifier) continue;
+
     // Filtre par statut
     if (statut && aide.statuts && aide.statuts.length > 0) {
       if (!aide.statuts.includes(statut)) continue;
