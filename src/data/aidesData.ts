@@ -7,7 +7,7 @@ import { UserProfile } from '../types';
  * prévenir que ses estimations peuvent être périmées plutôt que de les présenter
  * comme à jour. Mettre à jour cette constante à CHAQUE révision des montants.
  */
-export const DERNIERE_MAJ_BAREMES = '2026-01-01';
+export const DERNIERE_MAJ_BAREMES = '2026-09-17';
 
 /** Vrai si les barèmes n'ont pas été revus depuis plus de 12 mois. */
 export function baremesPerimes(aujourdhui: Date = new Date()): boolean {
@@ -219,6 +219,26 @@ export function simulerAides(profile: UserProfile): AideResult[] {
     }
   }
 
+  // --- Restriction APL des étudiants internationaux ---
+  // Loi de finances 2026 (art. 67) et décret n° 2026-552 du 27 juin 2026, en
+  // vigueur depuis le 1er juillet 2026 : les étudiants de nationalité hors
+  // UE/EEE/Suisse non boursiers n'ont plus droit à l'APL. L'app ne demande pas
+  // la nationalité — donnée sensible qu'on refuse de collecter — donc on
+  // prévient dans la fiche au lieu de trier en silence.
+  if (profile.status === 'etudiant') {
+    const apl = aides.find((a) => a.id === 'apl' && a.eligible !== 'non');
+    if (apl) {
+      apl.description +=
+        ' Attention si tu n\'as pas la nationalité d\'un pays de l\'Union européenne, de l\'EEE ou de la Suisse : ' +
+        'depuis le 1er juillet 2026, l\'APL est réservée aux étudiants boursiers — sauf si tu travailles, ' +
+        'es en alternance ou bénéficies d\'une protection internationale. Vérifie ta situation sur caf.fr.';
+      apl.conditions = [
+        ...apl.conditions,
+        'Étudiant·e hors UE/EEE/Suisse : être boursier, en emploi, en alternance ou protégé·e (depuis le 1er juillet 2026)',
+      ];
+    }
+  }
+
   // --- Bourse CROUS ---
   // L'éligibilité dépend du type d'établissement, pas seulement du statut étudiant.
   // Les écoles privées non conventionnées (EFAP, ESG, ISCOM…) ne donnent pas accès à la bourse.
@@ -238,7 +258,7 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         ? 'Ton école n\'a pas de convention avec le CROUS. La bourse nationale n\'est pas accessible, mais renseigne-toi sur les aides propres à ton établissement.'
         : school === 'prive_reconnu'
         ? 'Certaines écoles privées reconnues ont une convention CROUS — vérifie auprès de ton école ou directement sur messervices.etudiant.gouv.fr.' + parentsNote
-        : 'Aide financière versée sur 10 mois. Le montant dépend uniquement des revenus de tes parents et du nombre d\'enfants à charge — c\'est ce qui décide de ton échelon, de 0 bis à 7. Le dossier (DSE) se remplit normalement entre janvier et mai pour la rentrée suivante ; si tu es hors délai, fais-le quand même, les demandes tardives sont étudiées.' + parentsNote;
+        : 'Aide financière versée sur 10 mois. Le montant dépend uniquement des revenus de tes parents et du nombre d\'enfants à charge — c\'est ce qui décide de ton échelon, de 0 bis à 7. Le dossier (DSE) se remplit normalement entre janvier et mai pour la rentrée suivante ; si tu es hors délai, fais-le quand même, les demandes tardives sont étudiées. Si tu es boursier et que tu as eu la mention Très Bien au bac, un complément au mérite de 900 € par an s\'ajoute.' + parentsNote;
 
     aides.push({
       id: 'bourse',
@@ -296,7 +316,10 @@ export function simulerAides(profile: UserProfile): AideResult[] {
   // Requiert un revenu d'ACTIVITÉ PROFESSIONNELLE réelle.
   // Les indemnités service civique, allocs chômage et bourses CROUS ne comptent PAS.
   {
-    const SEUIL_APPRENTI = 1070;
+    // Revenu d'activité minimum pour un étudiant ou apprenti (78 % du SMIC net).
+    // 1 144,21 € depuis la revalorisation du SMIC du 1er juin 2026
+    // (service-public.gouv.fr/particuliers/vosdroits/F33375, vérifié le 17/09/2026).
+    const SEUIL_APPRENTI = 1144;
     const salary = profile.monthlySalary;
     const COMMENT_FAIRE_PRIME = [
       'Va sur caf.fr',
@@ -350,8 +373,8 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         montantMensuelMax: montant > 0 ? montant : undefined,
         description: inRange
           ? 'Si tes revenus viennent d\'un job étudiant (pas de la bourse CROUS), tu pourrais y avoir droit. La bourse seule ne donne pas accès à cette aide.'
-          : 'Accessible uniquement si tu as un job étudiant rapportant plus de ~1 070 €/mois. La bourse CROUS ne compte pas comme revenu d\'activité.',
-        conditions: [...CONDITIONS_PRIME, 'Pour les étudiants : revenu issu d\'un emploi (> ~1 070 €/mois), pas de la bourse'],
+          : 'Accessible uniquement si tu as un job étudiant rapportant plus de 1 144 €/mois. La bourse CROUS ne compte pas comme revenu d\'activité.',
+        conditions: [...CONDITIONS_PRIME, 'Pour les étudiants : revenu issu d\'un emploi (> 1 144 €/mois), pas de la bourse'],
         commentFaire: COMMENT_FAIRE_PRIME,
         lien: LIEN_PRIME,
         lienLabel: 'Simuler sur caf.fr',
@@ -540,7 +563,10 @@ export function simulerAides(profile: UserProfile): AideResult[] {
   // le contrat, 6 mois après, pas au-delà.
   if (profile.status === 'apprenti' && profile.age < 30 && profile.housingType !== 'parents') {
     const loyerM = profile.expenses.loyer;
-    const plafondSmic = 2187; // 120 % du SMIC brut au 1er janvier 2026
+    // 120 % du SMIC brut mensuel. SMIC à 1 867,02 € depuis le 1er juin 2026
+    // (service-public.gouv.fr/particuliers/vosdroits/F2300, vérifié le 17/09/2026).
+    // À recalculer à chaque revalorisation du SMIC.
+    const plafondSmic = 2240;
     aides.push({
       id: 'mobili-jeune',
       name: 'Mobili-Jeune',

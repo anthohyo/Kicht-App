@@ -116,7 +116,7 @@ export default function HomeScreen() {
     }
 
     // Prime d'activité pour apprentis éligibles
-    if (profile?.status === 'apprenti' && (profile?.monthlySalary ?? 0) >= 1070) {
+    if (profile?.status === 'apprenti' && (profile?.monthlySalary ?? 0) > 1144) {
       return {
         emoji: '💶',
         title: 'Tu es éligible à la prime d\'activité',

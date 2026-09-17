@@ -135,7 +135,7 @@ const rules: Rule[] = [
       // École privée non conventionnée → bourse inaccessible
       if (profile?.status === 'etudiant' && profile?.schoolType === 'prive_non_reconnu') {
         return {
-          text: `🎓 **Bourse CROUS — non accessible pour ton école**\n\nTon école n'a pas de convention avec le CROUS, donc la bourse nationale n'est **pas accessible** dans ta situation. Mais des alternatives existent :\n\n**Ce que tu peux faire à la place :**\n• 🏫 **Bourse interne de ton école** — beaucoup d'écoles privées ont un fonds d'aide sociale. Renseigne-toi auprès de ton administration ou du bureau des étudiants.\n• 🗺️ **Bourse régionale** — certaines régions financent les étudiants quelle que soit leur école (renseigne-toi sur le site de ta région)\n• 💊 **CSS** — mutuelle gratuite selon tes revenus, accessible à tous les étudiants\n• 💶 **Prime d'activité** — si tu travailles à côté (salaire > ~1 070 €/mois)\n• 🎯 **FAJ** — si tu as moins de 25 ans et une situation difficile\n\n💡 Renseigne-toi aussi sur les fondations et bourses privées : Fondation de France, fondations d'entreprises de ton secteur, bourses de ta ville.`,
+          text: `🎓 **Bourse CROUS — non accessible pour ton école**\n\nTon école n'a pas de convention avec le CROUS, donc la bourse nationale n'est **pas accessible** dans ta situation. Mais des alternatives existent :\n\n**Ce que tu peux faire à la place :**\n• 🏫 **Bourse interne de ton école** — beaucoup d'écoles privées ont un fonds d'aide sociale. Renseigne-toi auprès de ton administration ou du bureau des étudiants.\n• 🗺️ **Bourse régionale** — certaines régions financent les étudiants quelle que soit leur école (renseigne-toi sur le site de ta région)\n• 💊 **CSS** — mutuelle gratuite selon tes revenus, accessible à tous les étudiants\n• 💶 **Prime d'activité** — si tu travailles à côté (salaire > 1 144 €/mois)\n• 🎯 **FAJ** — si tu as moins de 25 ans et une situation difficile\n\n💡 Renseigne-toi aussi sur les fondations et bourses privées : Fondation de France, fondations d'entreprises de ton secteur, bourses de ta ville.`,
           actionCard: { label: '📋 Trouver une bourse pour mon école', guideId: 'bourses-alternatives-ecole-privee' },
         };
       }
@@ -168,7 +168,7 @@ const rules: Rule[] = [
 
       text += `**Qui y a droit ?**\n`;
       text += `• Les salariés gagnant jusqu'à ~1 800 € net/mois (environ)\n`;
-      text += `• Les apprentis et étudiants salariés (si salaire > ~1 070 €/mois)\n`;
+      text += `• Les apprentis et étudiants salariés (si salaire > 1 144 €/mois)\n`;
       text += `• Avoir + de 18 ans\n\n`;
 
       text += `**Combien ?**\n`;
@@ -182,12 +182,12 @@ const rules: Rule[] = [
       if (profile?.monthlySalary && profile.monthlySalary > 0) {
         const sal = profile.monthlySalary;
         const isApprentietEtudiant = profile.status === 'apprenti' || profile.status === 'etudiant';
-        const SEUIL_APPRENTI = 1070;
+        const SEUIL_APPRENTI = 1144; // 78 % du SMIC net, depuis le 1er juin 2026
 
         if (sal >= 1800) {
           text += `💡 Avec ${sal} €/mois, tu dépasses le plafond (1 800 €). Tu n'es probablement pas éligible, mais simule quand même — ça dépend de ta situation familiale.`;
         } else if (isApprentietEtudiant && sal < SEUIL_APPRENTI) {
-          text += `💡 Avec ${sal} €/mois, tu es **en dessous du seuil minimum pour les apprentis et étudiants** (1 070 €/mois). Tu n'es malheureusement pas éligible à la prime d'activité dans ta situation actuelle.`;
+          text += `💡 Avec ${sal} €/mois, tu es **en dessous du seuil minimum pour les apprentis et étudiants** (1 144 €/mois). Tu n'es malheureusement pas éligible à la prime d'activité dans ta situation actuelle.`;
         } else {
           text += `💡 Avec ${sal} €/mois, tu rentres dans la fourchette éligible ! Fais vite la simulation sur caf.fr — ça prend 5 minutes.`;
         }
