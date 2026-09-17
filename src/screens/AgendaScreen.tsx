@@ -13,6 +13,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AgendaEvent, AgendaCategory } from '../types';
 import { STUDENT_DEADLINES, CATEGORY_CONFIG } from '../data/agendaDefaults';
+import { EtatRappels, etatRappels, activerRappels, desactiverRappels, resynchroniserRappels } from '../utils/notifications';
 import { loadProfile } from '../utils/storage';
 import { colors, spacing, radius } from '../theme';
 
@@ -30,34 +31,6 @@ const EXPENSE_SEED_MAP: {
   { key: 'courses',     label: 'Budget courses',    emoji: '🛒', category: 'autre',      dayOfMonth: 1,  paymentType: 'budget'      },
   { key: 'transport',   label: 'Transport',         emoji: '🚌', category: 'charges',    dayOfMonth: 1,  paymentType: 'budget'      },
 ];
-
-// Les deadlines admin sont affichées 3 jours avant la vraie échéance pour éviter
-// de se retrouver groupées avec les jours de prélèvement (1er, 5, 10 du mois).
-const REGIONAL_DEADLINES: Record<string, { title: string; isoDate: string; emoji: string }> = {
-  'Auvergne-Rhône-Alpes': { title: 'Candidature bourse région AURA', isoDate: '2026-03-30', emoji: '🎓' },
-  'Bretagne': { title: 'Dépôt dossier bourse régionale Bretagne', isoDate: '2026-04-15', emoji: '🎓' },
-  'Occitanie': { title: 'Bourse complémentaire Occitanie — dossier en ligne', isoDate: '2026-03-28', emoji: '🎓' },
-  'Pays de la Loire': { title: 'Bourse régionale Pays de la Loire', isoDate: '2026-04-20', emoji: '🎓' },
-  'Hauts-de-France': { title: 'Aide urgence jeune Hauts-de-France — dossier', isoDate: '2026-04-28', emoji: '📋' },
-  'Nouvelle-Aquitaine': { title: 'Aide jeune actif Nouvelle-Aquitaine', isoDate: '2026-04-30', emoji: '💼' },
-};
-
-function buildRegionalDeadlines(region: string): AgendaEvent[] {
-  const entry = REGIONAL_DEADLINES[region];
-  if (!entry) return [];
-  return [
-    {
-      id: `regional-${region.toLowerCase().replace(/\s+/g, '-')}`,
-      title: entry.title,
-      emoji: entry.emoji,
-      isoDate: entry.isoDate,
-      category: 'deadline' as AgendaCategory,
-      isRecurring: false,
-      isCustom: false,
-      color: 'rgba(59, 130, 246, 0.8)',
-    },
-  ];
-}
 
 const MONTHS_SHORT = ['jan', 'fév', 'mar', 'avr', 'mai', 'juin', 'juil', 'aoû', 'sep', 'oct', 'nov', 'déc'];
 const MONTHS_LONG = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -146,7 +119,6 @@ function groupByMonth(events: AgendaEvent[]): Map<number, AgendaEvent[]> {
 export default function AgendaScreen() {
   const [tab, setTab] = useState<'upcoming' | 'annual'>('upcoming');
   const [customEvents, setCustomEvents] = useState<AgendaEvent[]>([]);
-  const [regionalDeadlines, setRegionalDeadlines] = useState<AgendaEvent[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newEmoji, setNewEmoji] = useState('📌');
@@ -199,17 +171,21 @@ export default function AgendaScreen() {
       }
 
       setCustomEvents(existing);
+      resynchroniserRappels();
+      setRappels(await etatRappels());
 
-      // 3. Deadlines régionales
-      if (profile?.region) {
-        setRegionalDeadlines(buildRegionalDeadlines(profile.region));
-      }
     };
     init();
   }, []);
 
+  const [rappels, setRappels] = useState<EtatRappels>('inactifs');
+  const basculerRappels = async () => {
+    setRappels(rappels === 'actifs' ? await desactiverRappels() : await activerRappels());
+  };
+
   const saveEvents = useCallback(async (events: AgendaEvent[]) => {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    resynchroniserRappels(); // un rappel doit suivre l'agenda, pas une version passée de l'agenda
   }, []);
 
   const handleDelete = useCallback((id: string) => {
@@ -272,8 +248,9 @@ export default function AgendaScreen() {
     setShowAddModal(false);
   };
 
-  const upcomingItems = getUpcomingEvents(customEvents, regionalDeadlines);
-  const groupedAnnual = groupByMonth([...STUDENT_DEADLINES, ...regionalDeadlines]);
+  const upcomingItems = getUpcomingEvents(customEvents);
+  // Vue annuelle : uniquement les échéances datées que l'utilisateur a lui-même ajoutées.
+  const groupedAnnual = groupByMonth(customEvents.filter((e) => !!e.isoDate && !e.isRecurring));
   const sortedMonths = Array.from(groupedAnnual.keys()).sort((a, b) => a - b);
 
   return (
@@ -282,6 +259,23 @@ export default function AgendaScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>📅 Mon agenda</Text>
         <Text style={styles.headerSubtitle}>Tes deadlines et paiements en un coup d'oeil</Text>
+        {rappels === 'indisponible' ? (
+          <Text style={styles.rappelsInfo}>🔔 Les rappels d'échéances fonctionnent dans l'app mobile.</Text>
+        ) : rappels === 'refuses' ? (
+          <Text style={styles.rappelsInfo}>🔕 Notifications refusées — autorise-les dans les réglages du téléphone.</Text>
+        ) : (
+          <TouchableOpacity
+            style={[styles.rappelsBtn, rappels === 'actifs' && styles.rappelsBtnActif]}
+            onPress={basculerRappels}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: rappels === 'actifs' }}
+            accessibilityLabel="Rappels des échéances"
+          >
+            <Text style={styles.rappelsBtnText}>
+              {rappels === 'actifs' ? '🔔 Rappels activés — appuie pour désactiver' : '🔔 Me rappeler mes échéances'}
+            </Text>
+          </TouchableOpacity>
+        )}
         {/* Tabs */}
         <View style={styles.tabRow}>
           <TouchableOpacity
@@ -387,11 +381,21 @@ export default function AgendaScreen() {
 
         {tab === 'annual' && (
           <>
+            {sortedMonths.length === 0 && (
+              <View style={styles.annualEmpty}>
+                <Text style={styles.annualEmptyTitle}>Aucune échéance datée pour l'instant</Text>
+                <Text style={styles.annualEmptyText}>
+                  Les dates officielles — ouverture des demandes de bourse, déclaration d'impôts — changent
+                  chaque année et sont publiées quelques semaines avant. On ne les invente pas : ajoute les
+                  tiennes avec le bouton +, et l'app te les rappellera.
+                </Text>
+              </View>
+            )}
             {sortedMonths.map((month) => {
               const monthEvents = groupedAnnual.get(month) ?? [];
               return (
                 <View key={month} style={styles.monthGroup}>
-                  <Text style={styles.monthHeader}>{MONTHS_LONG[month]} 2026</Text>
+                  <Text style={styles.monthHeader}>{MONTHS_LONG[month]}</Text>
                   {monthEvents.map((event) => {
                     const d = new Date(event.isoDate! + 'T00:00:00');
                     return (
@@ -548,6 +552,19 @@ export default function AgendaScreen() {
 }
 
 const styles = StyleSheet.create({
+  rappelsInfo: { fontSize: 12, color: colors.textMuted, marginTop: 8 },
+  rappelsBtn: {
+    alignSelf: 'flex-start', marginTop: 10, paddingVertical: 8, paddingHorizontal: 12,
+    borderRadius: radius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card,
+  },
+  rappelsBtnActif: { borderColor: 'rgba(16, 185, 129, 0.45)', backgroundColor: colors.successBg },
+  rappelsBtnText: { fontSize: 13, color: colors.text, fontWeight: '600' },
+  annualEmpty: {
+    backgroundColor: colors.card, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border,
+    padding: spacing.md, marginTop: spacing.sm,
+  },
+  annualEmptyTitle: { fontSize: 15, fontWeight: '600', color: colors.text, marginBottom: 6 },
+  annualEmptyText: { fontSize: 13, color: colors.textSecondary, lineHeight: 20 },
   container: {
     flex: 1,
     backgroundColor: colors.bg,

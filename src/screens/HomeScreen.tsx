@@ -283,6 +283,27 @@ export default function HomeScreen() {
           );
         })()}
 
+        {/* ── Agenda ──
+            Seule porte d'entrée vers l'agenda : il n'était accessible que depuis
+            l'écran Explorer, lui-même inaccessible. Les rappels d'échéances en
+            dépendent — un écran introuvable ne rappelle rien à personne. */}
+        <TouchableOpacity
+          style={[styles.parrainCard, { marginBottom: spacing.sm }]}
+          onPress={() => navigation.navigate('Agenda')}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Mes échéances et rappels"
+        >
+          <Text style={styles.parrainEmoji}>📅</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.parrainTitle}>Mes échéances</Text>
+            <Text style={styles.parrainSub}>
+              Loyer, prélèvements, dossiers à rendre : note tes dates, l'app te prévient avant.
+            </Text>
+            <Text style={styles.parrainCta}>Ouvrir mon agenda →</Text>
+          </View>
+        </TouchableOpacity>
+
         {/* ── Le Parrain ── */}
         <TouchableOpacity
           style={styles.parrainCard}

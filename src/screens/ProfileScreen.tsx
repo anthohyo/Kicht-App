@@ -312,6 +312,15 @@ export default function ProfileScreen() {
           </View>
           <Text style={styles.goFurtherChevron}>›</Text>
         </TouchableOpacity>
+        <View style={styles.separator} />
+        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Explorer')} activeOpacity={0.7}>
+          <Text style={styles.goFurtherEmoji}>🧰</Text>
+          <View style={styles.goFurtherText}>
+            <Text style={styles.goFurtherLabel}>Tous les outils</Text>
+            <Text style={styles.goFurtherValue}>Parcours, agenda, quiz, simulateur d'épargne</Text>
+          </View>
+          <Text style={styles.goFurtherChevron}>›</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Info card */}
