@@ -93,6 +93,15 @@ export default function WelcomeScreen({ navigation }: Props) {
           <Text style={styles.ctaText}>Trouver l'argent que je rate →</Text>
         </TouchableOpacity>
         <Text style={styles.ctaHint}>2 minutes · 4 questions · 0 inscription</Text>
+        {/* Nouveau téléphone : restaurer avant l'onboarding, pas après l'avoir refait. */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Confidentialite')}
+          style={styles.restaurerLien}
+          accessibilityRole="link"
+          accessibilityLabel="J'ai déjà une sauvegarde, la restaurer"
+        >
+          <Text style={styles.restaurerTexte}>J'ai déjà une sauvegarde</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -200,4 +209,6 @@ const styles = StyleSheet.create({
   },
   ctaText: { color: colors.white, fontSize: 17, fontWeight: '800', letterSpacing: -0.3 },
   ctaHint: { fontSize: 12, color: colors.textMuted, textAlign: 'center' },
+  restaurerLien: { alignSelf: 'center', marginTop: 10, paddingVertical: 8, paddingHorizontal: 12 },
+  restaurerTexte: { fontSize: 13, color: colors.primaryLight, fontWeight: '600', textDecorationLine: 'underline' },
 });

@@ -1,13 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert, Platform, Linking,
+  View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert, Platform, Linking, Share, TextInput,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, UserProfile } from '../types';
 import { loadProfile } from '../utils/storage';
 import { colors, radius, spacing } from '../theme';
+import { construireSauvegarde, lireSauvegarde, nomFichier, PREFIXE, FichierSauvegarde } from '../utils/sauvegarde';
+import { resynchroniserRappels } from '../utils/notifications';
 
 /**
  * Écran de confidentialité.
@@ -32,6 +35,73 @@ export default function ConfidentialiteScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   useFocusEffect(useCallback(() => { loadProfile().then(setProfile); }, []));
+
+  const [messageSauvegarde, setMessageSauvegarde] = useState<{ ok: boolean; texte: string } | null>(null);
+  const [collage, setCollage] = useState('');
+  const [modeCollage, setModeCollage] = useState(false);
+
+  const creerSauvegarde = async () => {
+    const cles = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(PREFIXE));
+    const valeurs = await AsyncStorage.getMany(cles);
+    const fichier = construireSauvegarde(Object.entries(valeurs), new Date());
+    const contenu = JSON.stringify(fichier, null, 2);
+    if (Platform.OS === 'web') {
+      const url = URL.createObjectURL(new Blob([contenu], { type: 'application/json' }));
+      const lien = document.createElement('a');
+      lien.href = url;
+      lien.download = nomFichier(new Date());
+      lien.click();
+      URL.revokeObjectURL(url);
+      setMessageSauvegarde({ ok: true, texte: 'Sauvegarde téléchargée. Garde ce fichier en lieu sûr.' });
+    } else {
+      await Share.share({ title: nomFichier(new Date()), message: contenu });
+      setMessageSauvegarde({ ok: true, texte: 'Envoie-la-toi par mail ou enregistre-la dans tes notes : c\'est ce texte qu\'il faudra coller pour restaurer.' });
+    }
+  };
+
+  const restaurer = async (fichier: FichierSauvegarde) => {
+    const actuelles = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(PREFIXE));
+    await AsyncStorage.removeMany(actuelles);
+    await AsyncStorage.setMany(fichier.donnees);
+    await resynchroniserRappels();
+    navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Main' }] }));
+  };
+
+  const confirmerRestauration = (texte: string) => {
+    const lu = lireSauvegarde(texte);
+    if (!lu.ok) {
+      setMessageSauvegarde({ ok: false, texte: lu.erreur });
+      return;
+    }
+    const date = new Date(lu.fichier.exporteLe).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const titre = 'Restaurer cette sauvegarde ?';
+    const message = `Sauvegarde de ${lu.profil.firstName ?? 'ton profil'} du ${date}. Elle remplacera toutes les données actuelles de cet appareil.`;
+    if (Platform.OS === 'web') {
+      // eslint-disable-next-line no-restricted-globals
+      if (confirm(`${titre}\n\n${message}`)) restaurer(lu.fichier);
+    } else {
+      Alert.alert(titre, message, [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Restaurer', style: 'destructive', onPress: () => restaurer(lu.fichier) },
+      ]);
+    }
+  };
+
+  const choisirSauvegarde = async () => {
+    setMessageSauvegarde(null);
+    if (Platform.OS === 'web') {
+      const champ = document.createElement('input');
+      champ.type = 'file';
+      champ.accept = 'application/json,.json';
+      champ.onchange = async () => {
+        const fichier = champ.files?.[0];
+        if (fichier) confirmerRestauration(await fichier.text());
+      };
+      champ.click();
+    } else {
+      setModeCollage(true);
+    }
+  };
 
   const effacerTout = async () => {
     await AsyncStorage.clear();
@@ -88,6 +158,7 @@ export default function ConfidentialiteScreen() {
           'Aucun traceur, aucune statistique d\'usage, aucun cookie publicitaire.',
           'Aucune revente ni partage de tes données — il n\'y a rien à vendre, rien ne sort d\'ici.',
           'Aucune publicité.',
+          'Aucun service de notification extérieur : tes rappels d\'échéances sont programmés par ton téléphone lui-même.',
         ].map((t) => (
           <View key={t} style={styles.bulletRow}>
             <Text style={styles.bulletMark}>✓</Text>
@@ -126,6 +197,54 @@ export default function ConfidentialiteScreen() {
       </View>
 
       {/* ── Contrôle ── */}
+      <Text style={styles.sectionTitle}>Changer de téléphone sans rien perdre</Text>
+      <View style={styles.card}>
+        <Text style={styles.plainText}>
+          Tes données n'existent que sur cet appareil. Pour les retrouver ailleurs, crée une sauvegarde et
+          garde-la toi-même — dans un mail à ton adresse, tes notes ou ton cloud. Elle ne passe par aucun
+          serveur, et ta clé API n'y figure jamais.
+        </Text>
+        <TouchableOpacity style={styles.secondaryBtn} onPress={creerSauvegarde} activeOpacity={0.85}
+          accessibilityRole="button" accessibilityLabel="Créer une sauvegarde de mes données">
+          <Text style={styles.secondaryBtnText}>Créer une sauvegarde</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.secondaryBtn} onPress={choisirSauvegarde} activeOpacity={0.85}
+          accessibilityRole="button" accessibilityLabel="Restaurer une sauvegarde">
+          <Text style={styles.secondaryBtnText}>Restaurer une sauvegarde</Text>
+        </TouchableOpacity>
+        {modeCollage && (
+          <View style={{ marginTop: spacing.sm }}>
+            <TextInput
+              style={styles.collage}
+              value={collage}
+              onChangeText={setCollage}
+              placeholder="Colle ici le texte de ta sauvegarde"
+              placeholderTextColor={colors.textMuted}
+              multiline
+              accessibilityLabel="Texte de la sauvegarde"
+            />
+            <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              <TouchableOpacity style={[styles.secondaryBtn, { flex: 1 }]} activeOpacity={0.85}
+                onPress={async () => setCollage(await Clipboard.getStringAsync())}
+                accessibilityRole="button" accessibilityLabel="Coller depuis le presse-papiers">
+                <Text style={styles.secondaryBtnText}>Coller</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.secondaryBtn, { flex: 1 }]} activeOpacity={0.85}
+                onPress={() => confirmerRestauration(collage)}
+                accessibilityRole="button" accessibilityLabel="Restaurer ce texte">
+                <Text style={styles.secondaryBtnText}>Restaurer</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        {messageSauvegarde && (
+          <Text style={[styles.messageSauvegarde, { color: messageSauvegarde.ok ? colors.success : colors.danger }]}
+            accessibilityLiveRegion="polite">
+            {messageSauvegarde.texte}
+          </Text>
+        )}
+      </View>
+
       <Text style={styles.sectionTitle}>Tu gardes le contrôle</Text>
       <View style={styles.card}>
         <Text style={styles.plainText}>
@@ -153,7 +272,7 @@ export default function ConfidentialiteScreen() {
         >
           <Text style={styles.contactLink}>contact@kichtapp.fr</Text>
         </TouchableOpacity>
-        <Text style={styles.updated}>Dernière mise à jour : 25 août 2026</Text>
+        <Text style={styles.updated}>Dernière mise à jour : 17 septembre 2026</Text>
       </View>
 
     </ScrollView>
@@ -161,6 +280,17 @@ export default function ConfidentialiteScreen() {
 }
 
 const styles = StyleSheet.create({
+  secondaryBtn: {
+    marginTop: spacing.sm, backgroundColor: colors.cardLight, borderRadius: radius.md,
+    borderWidth: 1, borderColor: colors.borderLight, paddingVertical: 12, alignItems: 'center',
+  },
+  secondaryBtnText: { color: colors.text, fontWeight: '600', fontSize: 14 },
+  collage: {
+    minHeight: 90, maxHeight: 180, backgroundColor: colors.surface, borderRadius: radius.md,
+    borderWidth: 1, borderColor: colors.border, color: colors.text, padding: 12, fontSize: 12,
+    textAlignVertical: 'top',
+  },
+  messageSauvegarde: { marginTop: spacing.sm, fontSize: 13, lineHeight: 19 },
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.md, paddingBottom: 48 },
 

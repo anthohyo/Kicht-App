@@ -15,6 +15,7 @@
     "src/data/aidesLocales.ts",
     "src/data/agendaDefaults.ts",
     "src/utils/rappels.ts",
-    "src/utils/parrainAI.ts"
+    "src/utils/parrainAI.ts",
+    "src/utils/sauvegarde.ts"
   ]
 }
