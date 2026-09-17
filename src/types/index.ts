@@ -190,6 +190,8 @@ export interface AgendaEvent {
   isPayment?: boolean;      // true = dépense récurrente
   paymentType?: 'prelevement' | 'budget'; // prelevement = date fixe, budget = enveloppe mensuelle
   color?: string;
+  /** URL officielle — obligatoire pour une échéance officielle pré-remplie. */
+  source?: string;
 }
 
 // --- Navigation ---
