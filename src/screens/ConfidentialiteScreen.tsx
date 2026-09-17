@@ -42,8 +42,8 @@ export default function ConfidentialiteScreen() {
 
   const creerSauvegarde = async () => {
     const cles = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(PREFIXE));
-    const valeurs = await AsyncStorage.getMany(cles);
-    const fichier = construireSauvegarde(Object.entries(valeurs), new Date());
+    const paires = await AsyncStorage.multiGet(cles);
+    const fichier = construireSauvegarde(paires, new Date());
     const contenu = JSON.stringify(fichier, null, 2);
     if (Platform.OS === 'web') {
       const url = URL.createObjectURL(new Blob([contenu], { type: 'application/json' }));
@@ -61,8 +61,8 @@ export default function ConfidentialiteScreen() {
 
   const restaurer = async (fichier: FichierSauvegarde) => {
     const actuelles = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(PREFIXE));
-    await AsyncStorage.removeMany(actuelles);
-    await AsyncStorage.setMany(fichier.donnees);
+    await AsyncStorage.multiRemove(actuelles);
+    await AsyncStorage.multiSet(Object.entries(fichier.donnees));
     await resynchroniserRappels();
     navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Main' }] }));
   };
