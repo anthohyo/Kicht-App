@@ -142,7 +142,7 @@ export default function OnboardingScreen({ navigation }: Props) {
 
             <Text style={styles.label}>Et tu es… ?</Text>
             {STATUS_OPTIONS.map((s) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={status === s.value}
                 key={s.value}
                 style={[styles.statusOption, status === s.value && styles.statusActive]}
                 onPress={() => setStatus(s.value)}
@@ -166,7 +166,7 @@ export default function OnboardingScreen({ navigation }: Props) {
             </Text>
 
             {HOUSING_OPTIONS.map((opt) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={housingType === opt.value}
                 key={opt.value}
                 style={[styles.statusOption, housingType === opt.value && styles.statusActive]}
                 onPress={() => setHousingType(opt.value)}
@@ -215,7 +215,7 @@ export default function OnboardingScreen({ navigation }: Props) {
                   { value: 'prive_reconnu' as SchoolType, label: '🏢 Grande école / école privée reconnue', hint: 'Vérifier avec ton école' },
                   { value: 'prive_non_reconnu' as SchoolType, label: '🏫 École privée non conventionnée', hint: 'EFAP, ESG, ISCOM…' },
                 ] as { value: SchoolType; label: string; hint: string }[]).map((opt) => (
-                  <TouchableOpacity
+                  <TouchableOpacity role="radio" aria-checked={schoolType === opt.value}
                     key={opt.value}
                     style={[styles.statusOption, schoolType === opt.value && styles.statusActive]}
                     onPress={() => setSchoolType(opt.value)}
@@ -323,7 +323,7 @@ export default function OnboardingScreen({ navigation }: Props) {
                 hint: 'Impôts, bail, CAF, contrat, fiche de paie…',
               },
             ]).map((opt) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={primaryGoal === opt.value}
                 key={opt.value}
                 style={[styles.statusOption, primaryGoal === opt.value && styles.statusActive]}
                 onPress={() => setPrimaryGoal(opt.value)}
@@ -360,17 +360,17 @@ export default function OnboardingScreen({ navigation }: Props) {
       {/* Navigation */}
       <View style={styles.footer}>
         {step > 0 && (
-          <TouchableOpacity style={styles.backBtn} onPress={() => setStep((s) => s - 1)}>
+          <TouchableOpacity role="button" style={styles.backBtn} onPress={() => setStep((s) => s - 1)}>
             <Text style={styles.backText}>Retour</Text>
           </TouchableOpacity>
         )}
         {/* Passer — uniquement sur l'étape logement/ville et revenus */}
         {step >= 1 && (
-          <TouchableOpacity style={styles.skipBtn} onPress={handleNext}>
+          <TouchableOpacity role="button" style={styles.skipBtn} onPress={handleNext}>
             <Text style={styles.skipText}>Passer</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={[styles.nextBtn, !canNext() && styles.nextBtnDisabled]}
           onPress={handleNext}
           disabled={!canNext()}

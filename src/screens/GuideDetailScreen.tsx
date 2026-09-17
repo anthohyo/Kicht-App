@@ -78,7 +78,7 @@ export default function GuideDetailScreen({ route }: Props) {
             <Text style={styles.doneText}>Bravo, tu as terminé ce guide !</Text>
           </View>
         ) : (
-          <TouchableOpacity style={styles.nextBtn} onPress={handleNext} activeOpacity={0.8}>
+          <TouchableOpacity role="button" style={styles.nextBtn} onPress={handleNext} activeOpacity={0.8}>
             <Text style={styles.nextBtnText}>
               {isLast ? '✅ Terminer' : 'Étape suivante →'}
             </Text>

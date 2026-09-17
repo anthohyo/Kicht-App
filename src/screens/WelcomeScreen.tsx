@@ -82,7 +82,7 @@ export default function WelcomeScreen({ navigation }: Props) {
 
       {/* CTA fixe en bas */}
       <View style={styles.footer}>
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.cta}
           onPress={async () => {
             await AsyncStorage.setItem('@kichtapp_welcomed', '1');
@@ -97,8 +97,8 @@ export default function WelcomeScreen({ navigation }: Props) {
         <TouchableOpacity
           onPress={() => navigation.navigate('Confidentialite')}
           style={styles.restaurerLien}
-          accessibilityRole="link"
-          accessibilityLabel="J'ai déjà une sauvegarde, la restaurer"
+          role="link"
+          aria-label="J'ai déjà une sauvegarde, la restaurer"
         >
           <Text style={styles.restaurerTexte}>J'ai déjà une sauvegarde</Text>
         </TouchableOpacity>

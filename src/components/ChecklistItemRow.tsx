@@ -16,12 +16,12 @@ export default function ChecklistItemRow({ item, onToggle }: Props) {
       activeOpacity={0.7}
       // La coche est purement visuelle : sans ces attributs, un lecteur d'écran
       // annonce le texte de l'étape sans jamais dire si elle est faite ou non.
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: item.checked }}
-      accessibilityLabel={item.label}
+      role="checkbox"
+      aria-checked={item.checked}
+      aria-label={item.label}
       accessibilityHint={item.checked ? 'Appuie pour marquer comme à faire' : 'Appuie pour marquer comme fait'}
     >
-      <View style={[styles.checkbox, item.checked && styles.checked]} importantForAccessibility="no">
+      <View style={[styles.checkbox, item.checked && styles.checked]} aria-hidden>
         {item.checked && <Text style={styles.checkmark}>✓</Text>}
       </View>
       <Text style={[styles.label, item.checked && styles.labelChecked]}>

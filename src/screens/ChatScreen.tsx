@@ -405,7 +405,7 @@ export default function ChatScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           onPress={() => handleNewConversationRef.current()}
           style={{ marginRight: 4 }}
         >
@@ -456,7 +456,7 @@ export default function ChatScreen() {
         </View>
         {/* Bouton d'action — routing vers courrier, guide, ou écran */}
         {item.actionCard && (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             style={styles.actionCardBtn}
             onPress={() => {
               const card = item.actionCard!;
@@ -501,7 +501,7 @@ export default function ChatScreen() {
             {apiErrorType === 'rate_limit' && '⏳ Trop de requêtes — réessaie dans quelques secondes'}
             {(apiErrorType === 'server' || apiErrorType === 'unknown') && '⚠️ Le Parrain est temporairement indisponible — mode hors ligne actif'}
           </Text>
-          <TouchableOpacity onPress={() => setApiErrorType(null)}>
+          <TouchableOpacity role="button" aria-label="Fermer ce message" onPress={() => setApiErrorType(null)}>
             <Text style={styles.apiBannerClose}>✕</Text>
           </TouchableOpacity>
         </View>
@@ -525,7 +525,7 @@ export default function ChatScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {getSuggestedQuestions(profile).map((q, i) => (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             key={i}
             style={styles.quickChip}
             onPress={() => handleSuggestedQuestion(q)}
@@ -545,7 +545,7 @@ export default function ChatScreen() {
 
       {/* Mode urgence */}
       <View style={styles.urgenceBar}>
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.urgenceToggle}
           onPress={() => setShowUrgence(!showUrgence)}
           activeOpacity={0.7}
@@ -556,7 +556,7 @@ export default function ChatScreen() {
         {showUrgence && (
           <View style={styles.urgenceGrid}>
             {URGENCE_SITUATIONS.map((s, i) => (
-              <TouchableOpacity
+              <TouchableOpacity role="button"
                 key={i}
                 style={styles.urgenceBtn}
                 onPress={() => handleUrgence(s)}
@@ -586,9 +586,9 @@ export default function ChatScreen() {
           style={[styles.sendBtn, (!input.trim() || loading) && { opacity: 0.3 }]}
           onPress={handleSend}
           disabled={!input.trim() || loading}
-          accessibilityRole="button"
-          accessibilityLabel="Envoyer ma question"
-          accessibilityState={{ disabled: !input.trim() || loading }}
+          role="button"
+          aria-label="Envoyer ma question"
+          aria-disabled={!input.trim() || loading}
         >
           <Text style={styles.sendText}>↑</Text>
         </TouchableOpacity>

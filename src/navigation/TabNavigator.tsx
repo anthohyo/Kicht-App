@@ -74,8 +74,8 @@ export default function TabNavigator() {
                 // petite pour être atteinte de façon fiable au pouce.
                 style={{ marginRight: 12, padding: 12 }}
                 activeOpacity={0.7}
-                accessibilityRole="button"
-                accessibilityLabel="Mon profil"
+                role="button"
+                aria-label="Mon profil"
               >
                 <Text style={{ fontSize: 20, opacity: 0.7 }}>👤</Text>
               </TouchableOpacity>

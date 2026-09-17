@@ -220,7 +220,7 @@ export default function HomeScreen() {
             </Text>
           )}
 
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             onPress={async () => {
               await AsyncStorage.setItem('@kichtapp_open_budget_form', '1');
               navigation.navigate('Main' as any, { screen: 'Budget' } as any);
@@ -234,7 +234,7 @@ export default function HomeScreen() {
 
         {/* ── Priorité n°1 ── */}
         {priorité && (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             style={styles.priorityCard}
             onPress={priorité.onPress}
             activeOpacity={0.85}
@@ -259,7 +259,7 @@ export default function HomeScreen() {
           if (total === 0 || done === total) return null;
           const pct = Math.round((done / total) * 100);
           return (
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               style={styles.checklistCard}
               onPress={() => navigation.navigate('Checklist')}
               activeOpacity={0.8}
@@ -291,8 +291,8 @@ export default function HomeScreen() {
           style={[styles.parrainCard, { marginBottom: spacing.sm }]}
           onPress={() => navigation.navigate('Agenda')}
           activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Mes échéances et rappels"
+          role="button"
+          aria-label="Mes échéances et rappels"
         >
           <Text style={styles.parrainEmoji}>📅</Text>
           <View style={{ flex: 1 }}>
@@ -305,7 +305,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
 
         {/* ── Le Parrain ── */}
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.parrainCard}
           onPress={() => navigation.navigate('Main' as any, { screen: 'Chat' } as any)}
           activeOpacity={0.8}

@@ -42,7 +42,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
             <Text style={styles.strong}>tes données sont intactes</Text> — rien n'a été perdu.
           </Text>
 
-          <TouchableOpacity style={styles.button} onPress={this.handleReset} activeOpacity={0.85}>
+          <TouchableOpacity role="button" style={styles.button} onPress={this.handleReset} activeOpacity={0.85}>
             <Text style={styles.buttonText}>Réessayer</Text>
           </TouchableOpacity>
 

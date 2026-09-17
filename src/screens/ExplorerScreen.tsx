@@ -88,7 +88,7 @@ export default function ExplorerScreen() {
 
       {/* Objectif si défini */}
       {profile?.savingsGoal && (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.goalCard}
           onPress={() => navigation.navigate('SimulateurEpargne')}
           activeOpacity={0.8}
@@ -106,7 +106,7 @@ export default function ExplorerScreen() {
         <View key={section.title}>
           <Text style={styles.sectionHeader}>{section.title}</Text>
           {section.features.map((f) => (
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               key={f.key}
               style={styles.card}
               onPress={() => navigation.navigate(f.key as any)}

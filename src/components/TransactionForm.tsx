@@ -80,7 +80,7 @@ export default function TransactionForm({ visible, onClose, onAdd }: Props) {
         style={styles.overlay}
       >
         {/* Backdrop */}
-        <Pressable style={styles.backdrop} onPress={handleClose} />
+        <Pressable role="button" aria-label="Fermer sans enregistrer" style={styles.backdrop} onPress={handleClose} />
 
         <View style={styles.sheet}>
           {/* Drag handle */}
@@ -91,7 +91,7 @@ export default function TransactionForm({ visible, onClose, onAdd }: Props) {
           {/* Type toggle */}
           <View style={styles.typeRow}>
             {(['Dépense', 'Revenu'] as TransactionType[]).map((t) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={type === t}
                 key={t}
                 style={[
                   styles.typeButton,
@@ -140,7 +140,7 @@ export default function TransactionForm({ visible, onClose, onAdd }: Props) {
           <Text style={styles.label}>Catégorie</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll}>
             {categories.map((c) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={category === c}
                 key={c}
                 style={[styles.catChip, category === c && styles.catChipActive]}
                 onPress={() => setCategory(c)}
@@ -154,10 +154,10 @@ export default function TransactionForm({ visible, onClose, onAdd }: Props) {
 
           {/* Buttons */}
           <View style={styles.actions}>
-            <TouchableOpacity style={styles.cancelBtn} onPress={handleClose}>
+            <TouchableOpacity role="button" style={styles.cancelBtn} onPress={handleClose}>
               <Text style={styles.cancelText}>Annuler</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               style={[styles.addBtn, !isValid && { opacity: 0.4 }]}
               onPress={handleSubmit}
             >

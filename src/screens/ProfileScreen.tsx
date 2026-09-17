@@ -257,7 +257,7 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Avatar + Name */}
       <View style={styles.avatarSection}>
-        <TouchableOpacity onPress={handleAvatarPress} activeOpacity={0.8} style={styles.avatarWrapper}>
+        <TouchableOpacity role="button" aria-label="Changer ma photo de profil" onPress={handleAvatarPress} activeOpacity={0.8} style={styles.avatarWrapper}>
           <View style={styles.avatar}>
             {profile.photoUri ? (
               <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} />
@@ -275,17 +275,17 @@ export default function ProfileScreen() {
 
       {/* Quick actions */}
       <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('Badges')}>
+        <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('Badges')}>
           <Text style={styles.actionEmoji}>🏆</Text>
           <Text style={styles.actionLabel}>Badges</Text>
           {progress && <Text style={styles.actionValue}>{progress.points} pts</Text>}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('MesDocuments')}>
+        <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('MesDocuments')}>
           <Text style={styles.actionEmoji}>🗂️</Text>
           <Text style={styles.actionLabel}>Mes docs</Text>
           <Text style={styles.actionValue}>N° clés</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('Checklist')}>
+        <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('Checklist')}>
           <Text style={styles.actionEmoji}>✅</Text>
           <Text style={styles.actionLabel}>Mes démarches</Text>
           <Text style={styles.actionValue}>Étape par étape</Text>
@@ -295,7 +295,7 @@ export default function ProfileScreen() {
       {/* Aller plus loin */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Aller plus loin</Text>
-        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Courriers')} activeOpacity={0.7}>
+        <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Courriers')} activeOpacity={0.7}>
           <Text style={styles.goFurtherEmoji}>✉️</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Modèles de courriers</Text>
@@ -304,7 +304,7 @@ export default function ProfileScreen() {
           <Text style={styles.goFurtherChevron}>›</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Guides')} activeOpacity={0.7}>
+        <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Guides')} activeOpacity={0.7}>
           <Text style={styles.goFurtherEmoji}>📖</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Fiches pratiques</Text>
@@ -313,7 +313,7 @@ export default function ProfileScreen() {
           <Text style={styles.goFurtherChevron}>›</Text>
         </TouchableOpacity>
         <View style={styles.separator} />
-        <TouchableOpacity style={styles.goFurtherRow} onPress={() => navigation.navigate('Explorer')} activeOpacity={0.7}>
+        <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Explorer')} activeOpacity={0.7}>
           <Text style={styles.goFurtherEmoji}>🧰</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Tous les outils</Text>
@@ -336,7 +336,7 @@ export default function ProfileScreen() {
         <InfoRow label="📍 Ville" value={profile.ville || 'Non renseignée'} />
 
         {/* Modifier ma ville */}
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.modifyVilleBtn}
           onPress={() => setShowVilleInput(!showVilleInput)}
         >
@@ -363,7 +363,7 @@ export default function ProfileScreen() {
                 <Text style={styles.geoNotFound}>Aucune ville trouvée pour cette recherche</Text>
               )
             )}
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               style={[styles.apiSaveBtn, !detectedGeo && { opacity: 0.5 }]}
               onPress={handleSaveVille}
               disabled={!detectedGeo}
@@ -374,7 +374,7 @@ export default function ProfileScreen() {
         )}
 
         {/* Modifier ma situation */}
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.modifyVilleBtn}
           onPress={() => setShowEditSituation(!showEditSituation)}
         >
@@ -384,7 +384,7 @@ export default function ProfileScreen() {
         {showEditSituation && (
           <View style={styles.editContainer}>
             {STATUS_OPTIONS.map((s) => (
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={editStatus === s.value}
                 key={s.value}
                 style={[styles.statusOption, editStatus === s.value && styles.statusActive]}
                 onPress={() => setEditStatus(s.value)}
@@ -398,7 +398,7 @@ export default function ProfileScreen() {
             {editStatus === 'etudiant' && (
               <View style={styles.schoolTypeContainer}>
                 {SCHOOL_TYPE_OPTIONS.map((opt) => (
-                  <TouchableOpacity
+                  <TouchableOpacity role="radio" aria-checked={editSchoolType === opt.value}
                     key={opt.value}
                     style={[styles.statusOption, editSchoolType === opt.value && styles.statusActive]}
                     onPress={() => setEditSchoolType(opt.value)}
@@ -415,7 +415,7 @@ export default function ProfileScreen() {
             <View style={styles.schoolTypeContainer}>
               <Text style={styles.editFieldLabel}>🏠 Logement</Text>
               {HOUSING_OPTIONS.map((opt) => (
-                <TouchableOpacity
+                <TouchableOpacity role="radio" aria-checked={editHousingType === opt.value}
                   key={opt.value}
                   style={[styles.statusOption, editHousingType === opt.value && styles.statusActive]}
                   onPress={() => setEditHousingType(opt.value)}
@@ -428,7 +428,7 @@ export default function ProfileScreen() {
               ))}
             </View>
 
-            <TouchableOpacity style={styles.apiSaveBtn} onPress={handleSaveSituation}>
+            <TouchableOpacity role="button" style={styles.apiSaveBtn} onPress={handleSaveSituation}>
               <Text style={styles.apiSaveText}>Sauvegarder</Text>
             </TouchableOpacity>
           </View>
@@ -451,7 +451,7 @@ export default function ProfileScreen() {
         <InfoRow label="Reste disponible" value={`${reste} €`} valueColor={reste >= 0 ? colors.success : colors.danger} />
 
         {/* Modifier mes finances */}
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.modifyVilleBtn}
           onPress={() => setShowEditFinances(!showEditFinances)}
         >
@@ -530,7 +530,7 @@ export default function ProfileScreen() {
               keyboardType="numeric"
             />
 
-            <TouchableOpacity style={styles.apiSaveBtn} onPress={handleSaveFinances}>
+            <TouchableOpacity role="button" style={styles.apiSaveBtn} onPress={handleSaveFinances}>
               <Text style={styles.apiSaveText}>Sauvegarder</Text>
             </TouchableOpacity>
           </View>
@@ -542,7 +542,7 @@ export default function ProfileScreen() {
         <Text style={styles.cardTitle}>Réglages</Text>
 
         {/* Claude API Key */}
-        <TouchableOpacity style={styles.settingRow} onPress={() => setShowApiInput(!showApiInput)}>
+        <TouchableOpacity role="button" style={styles.settingRow} onPress={() => setShowApiInput(!showApiInput)}>
           <Text style={styles.settingEmoji}>🤖</Text>
           <View style={styles.settingText}>
             <Text style={styles.settingTitle}>Chat IA (Claude API)</Text>
@@ -569,7 +569,7 @@ export default function ProfileScreen() {
               autoCorrect={false}
               secureTextEntry
             />
-            <TouchableOpacity style={styles.apiSaveBtn} onPress={handleSaveApiKey}>
+            <TouchableOpacity role="button" style={styles.apiSaveBtn} onPress={handleSaveApiKey}>
               <Text style={styles.apiSaveText}>
                 {apiKey.trim() ? 'Sauvegarder' : 'Supprimer la clé'}
               </Text>
@@ -584,8 +584,8 @@ export default function ProfileScreen() {
         style={styles.privacyRow}
         onPress={() => navigation.navigate('Confidentialite')}
         activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel="Confidentialité et gestion de mes données"
+        role="button"
+        aria-label="Confidentialité et gestion de mes données"
       >
         <Text style={styles.privacyEmoji}>🔒</Text>
         <View style={{ flex: 1 }}>
@@ -596,7 +596,7 @@ export default function ProfileScreen() {
       </TouchableOpacity>
 
       {/* Reset */}
-      <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
+      <TouchableOpacity role="button" style={styles.resetBtn} onPress={handleReset}>
         <Text style={styles.resetText}>Recommencer l'onboarding</Text>
       </TouchableOpacity>
     </ScrollView>

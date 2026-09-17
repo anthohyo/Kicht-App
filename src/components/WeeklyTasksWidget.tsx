@@ -150,7 +150,7 @@ export default function WeeklyTasksWidget() {
     <View style={styles.container}>
       <Text style={styles.title}>🗓️ Cette semaine</Text>
       {tasks.map((task) => (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           key={task.id}
           style={[styles.taskRow, task.urgent ? styles.taskRowUrgent : styles.taskRowNormal]}
           onPress={() => {

@@ -102,7 +102,7 @@ export default function CourrierDetailScreen({ route }: Props) {
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.copyBtn} onPress={handleCopy} activeOpacity={0.7}>
+      <TouchableOpacity role="button" style={styles.copyBtn} onPress={handleCopy} activeOpacity={0.7}>
         <Text style={styles.copyText}>
           {copied ? '✅ Copié !' : '📋 Copier le modèle'}
         </Text>

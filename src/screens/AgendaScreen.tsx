@@ -267,9 +267,9 @@ export default function AgendaScreen() {
           <TouchableOpacity
             style={[styles.rappelsBtn, rappels === 'actifs' && styles.rappelsBtnActif]}
             onPress={basculerRappels}
-            accessibilityRole="switch"
-            accessibilityState={{ checked: rappels === 'actifs' }}
-            accessibilityLabel="Rappels des échéances"
+            role="switch"
+            aria-checked={rappels === 'actifs'}
+            aria-label="Rappels des échéances"
           >
             <Text style={styles.rappelsBtnText}>
               {rappels === 'actifs' ? '🔔 Rappels activés — appuie pour désactiver' : '🔔 Me rappeler mes échéances'}
@@ -278,13 +278,13 @@ export default function AgendaScreen() {
         )}
         {/* Tabs */}
         <View style={styles.tabRow}>
-          <TouchableOpacity
+          <TouchableOpacity role="radio" aria-checked={tab === 'upcoming'}
             style={[styles.tab, tab === 'upcoming' && styles.tabActive]}
             onPress={() => setTab('upcoming')}
           >
             <Text style={[styles.tabText, tab === 'upcoming' && styles.tabTextActive]}>À venir</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity role="radio" aria-checked={tab === 'annual'}
             style={[styles.tab, tab === 'annual' && styles.tabActive]}
             onPress={() => setTab('annual')}
           >
@@ -365,7 +365,7 @@ export default function AgendaScreen() {
                             )}
                           </View>
                           {event.isCustom && (
-                            <TouchableOpacity onPress={() => handleDelete(event.id)} style={styles.deleteBtnContainer}>
+                            <TouchableOpacity role="button" aria-label={`Supprimer ${event.title}`} onPress={() => handleDelete(event.id)} style={styles.deleteBtnContainer}>
                               <Text style={styles.deleteBtn}>✕</Text>
                             </TouchableOpacity>
                           )}
@@ -416,7 +416,7 @@ export default function AgendaScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <TouchableOpacity style={styles.fab} onPress={() => setShowAddModal(true)} activeOpacity={0.8}>
+      <TouchableOpacity role="button" aria-label="Ajouter une échéance" style={styles.fab} onPress={() => setShowAddModal(true)} activeOpacity={0.8}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
 
@@ -433,10 +433,11 @@ export default function AgendaScreen() {
             <Text style={styles.fieldLabel}>Emoji</Text>
             <View style={styles.emojiRow}>
               {EMOJI_OPTIONS.map((em) => (
-                <TouchableOpacity
+                <TouchableOpacity role="radio" aria-checked={newEmoji === em}
                   key={em}
                   style={[styles.emojiOption, newEmoji === em && styles.emojiOptionSelected]}
                   onPress={() => setNewEmoji(em)}
+                  aria-label={`Icône ${em}`}
                 >
                   <Text style={styles.emojiOptionText}>{em}</Text>
                 </TouchableOpacity>
@@ -458,7 +459,7 @@ export default function AgendaScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
               <View style={styles.chipsRow}>
                 {CATEGORY_OPTIONS.map((cat) => (
-                  <TouchableOpacity
+                  <TouchableOpacity role="radio" aria-checked={newCategory === cat}
                     key={cat}
                     style={[styles.chip, newCategory === cat && styles.chipActive]}
                     onPress={() => setNewCategory(cat)}
@@ -474,7 +475,7 @@ export default function AgendaScreen() {
             {/* Recurring toggle */}
             <Text style={styles.fieldLabel}>Type</Text>
             <View style={styles.toggleRow}>
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={newIsRecurring}
                 style={[styles.toggleBtn, newIsRecurring && styles.toggleBtnActive]}
                 onPress={() => setNewIsRecurring(true)}
               >
@@ -482,7 +483,7 @@ export default function AgendaScreen() {
                   Récurrent
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity
+              <TouchableOpacity role="radio" aria-checked={!newIsRecurring}
                 style={[styles.toggleBtn, !newIsRecurring && styles.toggleBtnActive]}
                 onPress={() => setNewIsRecurring(false)}
               >
@@ -534,13 +535,13 @@ export default function AgendaScreen() {
 
             {/* Buttons */}
             <View style={styles.modalButtons}>
-              <TouchableOpacity
+              <TouchableOpacity role="button"
                 style={styles.cancelBtn}
                 onPress={() => { resetForm(); setShowAddModal(false); }}
               >
                 <Text style={styles.cancelBtnText}>Annuler</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.addBtn} onPress={handleAdd}>
+              <TouchableOpacity role="button" style={styles.addBtn} onPress={handleAdd}>
                 <Text style={styles.addBtnText}>Ajouter</Text>
               </TouchableOpacity>
             </View>

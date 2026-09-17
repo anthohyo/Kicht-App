@@ -165,7 +165,7 @@ export default function SimulateurEpargneScreen() {
         </View>
         <View style={styles.quickRow}>
           {[50, 100, 200, 500].map((v) => (
-            <TouchableOpacity
+            <TouchableOpacity role="radio" aria-checked={monthly === String(v)}
               key={v}
               style={[styles.quickBtn, monthly === String(v) && styles.quickBtnActive]}
               onPress={() => setMonthly(String(v))}
@@ -189,7 +189,7 @@ export default function SimulateurEpargneScreen() {
         <Text style={styles.fieldLabel}>Pendant combien de temps ?</Text>
         <View style={styles.quickRow}>
           {DURATIONS.map((d) => (
-            <TouchableOpacity
+            <TouchableOpacity role="radio" aria-checked={years === d}
               key={d}
               style={[styles.quickBtn, years === d && styles.quickBtnActive]}
               onPress={() => setYears(d)}
@@ -207,7 +207,7 @@ export default function SimulateurEpargneScreen() {
         <Text style={styles.fieldLabel}>Sur quel support ?</Text>
         <View style={styles.presetRow}>
           {PRESETS.map((p, i) => (
-            <TouchableOpacity
+            <TouchableOpacity role="radio" aria-checked={selectedPreset === i}
               key={i}
               style={[styles.presetBtn, selectedPreset === i && styles.presetBtnActive]}
               onPress={() => handlePreset(i)}
@@ -237,7 +237,7 @@ export default function SimulateurEpargneScreen() {
         <Text style={styles.resultTitle}>Dans {years} ans, tu auras</Text>
         <Text style={styles.resultAmount}>{fmt(Math.round(finalAmount))}</Text>
 
-        <TouchableOpacity onPress={() => setShowInflation(!showInflation)} style={styles.inflationToggle}>
+        <TouchableOpacity role="button" onPress={() => setShowInflation(!showInflation)} style={styles.inflationToggle}>
           <Text style={styles.inflationToggleText}>
             {showInflation ? '📈 Voir en valeur nominale' : '📉 Voir en €uros d\'aujourd\'hui'}
           </Text>
@@ -251,7 +251,7 @@ export default function SimulateurEpargneScreen() {
             </Text>
             <View style={styles.inflationChips}>
               {INFLATION_CHIPS.map((chip) => (
-                <TouchableOpacity
+                <TouchableOpacity role="radio" aria-checked={inflationRate === chip}
                   key={chip}
                   style={[styles.inflationChip, inflationRate === chip && styles.inflationChipActive]}
                   onPress={() => setInflationRate(chip)}

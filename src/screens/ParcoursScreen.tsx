@@ -78,7 +78,7 @@ export default function ParcoursScreen() {
 
         return (
           <View key={parcours.id} style={styles.parcoursContainer}>
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               style={[styles.parcoursCard, isRecommended && styles.parcoursRecommended]}
               onPress={() => setSelectedParcours(isOpen ? null : parcours.id)}
               activeOpacity={0.7}
@@ -117,7 +117,7 @@ export default function ParcoursScreen() {
                   const isDone = done.has(index);
                   return (
                     <View key={index} style={styles.stepRow}>
-                      <TouchableOpacity
+                      <TouchableOpacity role="checkbox" aria-checked={isDone} aria-label={step.title}
                         style={[styles.stepCheckbox, isDone && styles.stepCheckboxDone]}
                         onPress={() => toggleStep(parcours.id, index)}
                       >
@@ -129,7 +129,7 @@ export default function ParcoursScreen() {
                         </Text>
                         <Text style={styles.stepDesc}>{step.description}</Text>
                         {step.action && (
-                          <TouchableOpacity
+                          <TouchableOpacity role="button"
                             style={styles.actionBtn}
                             onPress={() => navigation.navigate(step.action!.screen as any)}
                           >

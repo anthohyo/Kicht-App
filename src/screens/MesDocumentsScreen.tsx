@@ -195,15 +195,15 @@ export default function MesDocumentsScreen() {
         </View>
       ))}
 
-      <TouchableOpacity style={styles.saveBtn} onPress={handleSave} activeOpacity={0.8}>
+      <TouchableOpacity role="button" style={styles.saveBtn} onPress={handleSave} activeOpacity={0.8}>
         <Text style={styles.saveBtnText}>{saved ? '✅ Sauvegardé !' : '💾 Sauvegarder'}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.exportBtn} onPress={handleExport} activeOpacity={0.8}>
+      <TouchableOpacity role="button" style={styles.exportBtn} onPress={handleExport} activeOpacity={0.8}>
         <Text style={styles.exportBtnText}>📤 Exporter mes documents</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.clearBtn} onPress={handleClearAll} activeOpacity={0.8}>
+      <TouchableOpacity role="button" style={styles.clearBtn} onPress={handleClearAll} activeOpacity={0.8}>
         <Text style={styles.clearBtnText}>🔄 Tout effacer</Text>
       </TouchableOpacity>
     </ScrollView>

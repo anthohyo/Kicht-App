@@ -196,14 +196,14 @@ export default function AidesScreen() {
                 </View>
               )}
               <View style={styles.vedetteActions}>
-                <TouchableOpacity
+                <TouchableOpacity role="link"
                   style={styles.ctaPrimary}
                   onPress={() => Linking.openURL(vedette.lien)}
                 >
                   <Text style={styles.ctaPrimaryText}>🔗 {vedette.lienLabel}</Text>
                 </TouchableOpacity>
                 {AIDE_TO_GUIDE[vedette.id] && (
-                  <TouchableOpacity
+                  <TouchableOpacity role="button"
                     style={styles.ctaSecondary}
                     onPress={() => navigation.navigate('GuideDetail', { guideId: AIDE_TO_GUIDE[vedette.id] })}
                   >
@@ -219,9 +219,9 @@ export default function AidesScreen() {
             style={styles.ctaExpand}
             onPress={() => setVedetteExpanded(!vedetteExpanded)}
             activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: vedetteExpanded }}
-            accessibilityLabel={`Voir comment obtenir ${vedette.name}`}
+            role="button"
+            aria-expanded={vedetteExpanded}
+            aria-label={`Voir comment obtenir ${vedette.name}`}
           >
             <Text style={styles.ctaExpandText}>
               {vedetteExpanded ? '▲ Masquer' : 'Voir comment l\'obtenir →'}
@@ -229,7 +229,7 @@ export default function AidesScreen() {
           </TouchableOpacity>
 
           {/* CTA secondaire — déjà obtenue */}
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             style={styles.ctaClaimed}
             onPress={() => handleClaim(vedette.id)}
             activeOpacity={0.7}
@@ -241,7 +241,7 @@ export default function AidesScreen() {
 
       {/* ── CTA chat contextuel ── */}
       {vedette && (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.chatCtaCard}
           onPress={async () => {
             await AsyncStorage.setItem(
@@ -281,7 +281,7 @@ export default function AidesScreen() {
             const badge = getBadge(aide.eligible);
             const isOpen = expandedSecondaryId === aide.id;
             return (
-              <TouchableOpacity
+              <TouchableOpacity role="button"
                 key={aide.id}
                 style={styles.secondaryCard}
                 onPress={() => setExpandedSecondaryId(isOpen ? null : aide.id)}
@@ -311,14 +311,14 @@ export default function AidesScreen() {
                       <Text key={i} style={styles.step}>{i + 1}. {step}</Text>
                     ))}
                     <View style={styles.vedetteActions}>
-                      <TouchableOpacity
+                      <TouchableOpacity role="link"
                         style={styles.ctaPrimary}
                         onPress={() => Linking.openURL(aide.lien)}
                       >
                         <Text style={styles.ctaPrimaryText}>🔗 {aide.lienLabel}</Text>
                       </TouchableOpacity>
                       {AIDE_TO_GUIDE[aide.id] && (
-                        <TouchableOpacity
+                        <TouchableOpacity role="button"
                           style={styles.ctaSecondary}
                           onPress={() => navigation.navigate('GuideDetail', { guideId: AIDE_TO_GUIDE[aide.id] })}
                         >
@@ -336,7 +336,7 @@ export default function AidesScreen() {
 
       {/* ── Tout le reste derrière un toggle ── */}
       {allHiddenCount > 0 && (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={styles.showMoreBtn}
           onPress={() => setShowAllAides(!showAllAides)}
           activeOpacity={0.7}
@@ -356,7 +356,7 @@ export default function AidesScreen() {
             <>
               <Text style={styles.sectionTitle}>📍 Aides dans ta ville</Text>
               {localAides.slice(0, 3).map((aide) => (
-                <TouchableOpacity
+                <TouchableOpacity role="link"
                   key={aide.id}
                   style={styles.secondaryCard}
                   onPress={() => {

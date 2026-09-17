@@ -34,14 +34,14 @@ export default function CourriersScreen() {
       </Text>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
-        <TouchableOpacity
+        <TouchableOpacity role="radio" aria-checked={filter === 'all'}
           style={[styles.chip, filter === 'all' && styles.chipActive]}
           onPress={() => setFilter('all')}
         >
           <Text style={[styles.chipText, filter === 'all' && styles.chipTextActive]}>📄 Tout</Text>
         </TouchableOpacity>
         {(Object.keys(COURRIER_CATEGORIES) as CatKey[]).map((cat) => (
-          <TouchableOpacity
+          <TouchableOpacity role="radio" aria-checked={filter === cat}
             key={cat}
             style={[styles.chip, filter === cat && styles.chipActive]}
             onPress={() => setFilter(cat)}
@@ -55,7 +55,7 @@ export default function CourriersScreen() {
 
       {filtered.map((c) => {
         return (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             key={c.id}
             style={styles.card}
             onPress={() => navigation.navigate('CourrierDetail', { courrierId: c.id })}

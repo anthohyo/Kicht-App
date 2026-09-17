@@ -52,7 +52,7 @@ export default function RootNavigator() {
     // Sur web, le bouton retour natif ne s'affiche pas — on l'ajoute manuellement
     ...(Platform.OS === 'web' && navigation.canGoBack() ? {
       headerLeft: () => (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           onPress={() => navigation.goBack()}
           style={{ paddingRight: 16, paddingVertical: 4, flexDirection: 'row', alignItems: 'center' }}
         >

@@ -76,7 +76,7 @@ export default function BilanMensuelWidget() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.header} onPress={() => setExpanded(!expanded)} activeOpacity={0.7} accessibilityRole="button">
+      <TouchableOpacity style={styles.header} onPress={() => setExpanded(!expanded)} activeOpacity={0.7} role="button">
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>📊 Bilan de {monthName}</Text>
           <Text style={styles.subtitle}>

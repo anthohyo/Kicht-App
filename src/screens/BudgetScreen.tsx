@@ -113,7 +113,7 @@ function ResteAVivre({ transactions, isCurrentMonth }: { transactions: Transacti
         )}
       </View>
       {isRouge && (
-        <TouchableOpacity
+        <TouchableOpacity role="button"
           style={ravStyles.alertRow}
           onPress={async () => {
             const msg = `Mon budget est vraiment serré ce mois-ci. Il me reste ${reste}€ disponible en tout, soit ${parJour}€ par jour sur les ${joursRestants} prochains jours. Qu'est-ce que je peux faire concrètement pour m'en sortir jusqu'à la fin du mois ?`;
@@ -178,7 +178,7 @@ function BudgetAlert({ transactions }: { transactions: Transaction[] }) {
         <View style={{ flex: 1 }}>
           <Text style={alertStyles.icon}>⚠️</Text>
           <Text style={alertStyles.text}>Tu dépenses {pct}% de tes revenus. C'est serré — regarde les abonnements et les sorties.</Text>
-          <TouchableOpacity onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci. Comment je peux réduire mes sorties et mes abonnements concrètement ?`)} style={alertStyles.cta}>
+          <TouchableOpacity role="button" onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci. Comment je peux réduire mes sorties et mes abonnements concrètement ?`)} style={alertStyles.cta}>
             <Text style={alertStyles.ctaText}>💬 Comment réduire mes sorties ? →</Text>
           </TouchableOpacity>
         </View>
@@ -190,7 +190,7 @@ function BudgetAlert({ transactions }: { transactions: Transaction[] }) {
       <View style={{ flex: 1 }}>
         <Text style={alertStyles.icon}>🚨</Text>
         <Text style={alertStyles.text}>Tu dépenses {pct}% de tes revenus ! Essaie de réduire une dépense dès ce mois-ci.</Text>
-        <TouchableOpacity onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci, c'est trop. Qu'est-ce que je peux réduire en priorité pour retrouver de la marge ?`)} style={alertStyles.cta}>
+        <TouchableOpacity role="button" onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci, c'est trop. Qu'est-ce que je peux réduire en priorité pour retrouver de la marge ?`)} style={alertStyles.cta}>
           <Text style={[alertStyles.ctaText, { color: colors.danger }]}>💬 Que réduire en priorité ? →</Text>
         </TouchableOpacity>
       </View>
@@ -217,11 +217,11 @@ function MonthNav({ selectedDate, onChange }: { selectedDate: Date; onChange: (d
 
   return (
     <View style={navStyles.row}>
-      <TouchableOpacity onPress={() => onChange(-1)} style={navStyles.btn} activeOpacity={0.7}>
+      <TouchableOpacity role="button" aria-label="Mois précédent" onPress={() => onChange(-1)} style={navStyles.btn} activeOpacity={0.7}>
         <Text style={navStyles.arrow}>←</Text>
       </TouchableOpacity>
       <Text style={navStyles.label}>{label.charAt(0).toUpperCase() + label.slice(1)}</Text>
-      <TouchableOpacity onPress={() => onChange(1)} style={[navStyles.btn, isCurrentMonth && navStyles.btnDisabled]} disabled={isCurrentMonth} activeOpacity={0.7}>
+      <TouchableOpacity role="button" aria-label="Mois suivant" aria-disabled={isCurrentMonth} onPress={() => onChange(1)} style={[navStyles.btn, isCurrentMonth && navStyles.btnDisabled]} disabled={isCurrentMonth} activeOpacity={0.7}>
         <Text style={[navStyles.arrow, isCurrentMonth && navStyles.arrowDisabled]}>→</Text>
       </TouchableOpacity>
     </View>
@@ -274,7 +274,7 @@ export default function BudgetScreen() {
     navigation.setOptions({
       headerRight: transactions.length > 0
         ? () => (
-            <TouchableOpacity
+            <TouchableOpacity role="button"
               onPress={() => exportCSVRef.current()}
               style={{ marginRight: 4, paddingHorizontal: 8, paddingVertical: 4 }}
             >
@@ -413,7 +413,7 @@ export default function BudgetScreen() {
             const isExpense  = item.type === 'Dépense';
             const isRecurring = item.id.startsWith('seed-') || item.id.startsWith('recurrent-');
             return (
-              <TouchableOpacity
+              <TouchableOpacity role="button"
                 key={item.id}
                 style={[styles.transactionRow, isRecurring && styles.transactionRowSeeded]}
                 onLongPress={() => handleDelete(item.id)}
@@ -436,7 +436,7 @@ export default function BudgetScreen() {
         )}
       </ScrollView>
 
-      <TouchableOpacity style={styles.fab} onPress={() => setShowForm(true)} activeOpacity={0.8}>
+      <TouchableOpacity role="button" aria-label="Ajouter une dépense ou un revenu" style={styles.fab} onPress={() => setShowForm(true)} activeOpacity={0.8}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
 

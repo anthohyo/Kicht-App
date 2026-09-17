@@ -205,11 +205,11 @@ export default function ConfidentialiteScreen() {
           serveur, et ta clé API n'y figure jamais.
         </Text>
         <TouchableOpacity style={styles.secondaryBtn} onPress={creerSauvegarde} activeOpacity={0.85}
-          accessibilityRole="button" accessibilityLabel="Créer une sauvegarde de mes données">
+          role="button" aria-label="Créer une sauvegarde de mes données">
           <Text style={styles.secondaryBtnText}>Créer une sauvegarde</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.secondaryBtn} onPress={choisirSauvegarde} activeOpacity={0.85}
-          accessibilityRole="button" accessibilityLabel="Restaurer une sauvegarde">
+          role="button" aria-label="Restaurer une sauvegarde">
           <Text style={styles.secondaryBtnText}>Restaurer une sauvegarde</Text>
         </TouchableOpacity>
         {modeCollage && (
@@ -221,17 +221,17 @@ export default function ConfidentialiteScreen() {
               placeholder="Colle ici le texte de ta sauvegarde"
               placeholderTextColor={colors.textMuted}
               multiline
-              accessibilityLabel="Texte de la sauvegarde"
+              aria-label="Texte de la sauvegarde"
             />
             <View style={{ flexDirection: 'row', gap: spacing.sm }}>
               <TouchableOpacity style={[styles.secondaryBtn, { flex: 1 }]} activeOpacity={0.85}
                 onPress={async () => setCollage(await Clipboard.getStringAsync())}
-                accessibilityRole="button" accessibilityLabel="Coller depuis le presse-papiers">
+                role="button" aria-label="Coller depuis le presse-papiers">
                 <Text style={styles.secondaryBtnText}>Coller</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.secondaryBtn, { flex: 1 }]} activeOpacity={0.85}
                 onPress={() => confirmerRestauration(collage)}
-                accessibilityRole="button" accessibilityLabel="Restaurer ce texte">
+                role="button" aria-label="Restaurer ce texte">
                 <Text style={styles.secondaryBtnText}>Restaurer</Text>
               </TouchableOpacity>
             </View>
@@ -239,7 +239,7 @@ export default function ConfidentialiteScreen() {
         )}
         {messageSauvegarde && (
           <Text style={[styles.messageSauvegarde, { color: messageSauvegarde.ok ? colors.success : colors.danger }]}
-            accessibilityLiveRegion="polite">
+            aria-live="polite">
             {messageSauvegarde.texte}
           </Text>
         )}
@@ -255,8 +255,8 @@ export default function ConfidentialiteScreen() {
           style={styles.dangerBtn}
           onPress={confirmerEffacement}
           activeOpacity={0.85}
-          accessibilityRole="button"
-          accessibilityLabel="Effacer toutes mes données"
+          role="button"
+          aria-label="Effacer toutes mes données"
         >
           <Text style={styles.dangerBtnText}>Effacer toutes mes données</Text>
         </TouchableOpacity>
@@ -267,8 +267,8 @@ export default function ConfidentialiteScreen() {
         <Text style={styles.contactTitle}>Une question sur tes données ?</Text>
         <TouchableOpacity
           onPress={() => Linking.openURL('mailto:contact@kichtapp.fr?subject=Confidentialit%C3%A9')}
-          accessibilityRole="link"
-          accessibilityLabel="Écrire à contact@kichtapp.fr"
+          role="link"
+          aria-label="Écrire à contact@kichtapp.fr"
         >
           <Text style={styles.contactLink}>contact@kichtapp.fr</Text>
         </TouchableOpacity>

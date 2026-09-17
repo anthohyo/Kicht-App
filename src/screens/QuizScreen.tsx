@@ -85,7 +85,7 @@ export default function QuizScreen() {
         {bestScore !== null && score > (bestScore ?? 0) && (
           <Text style={styles.newRecord}>🎉 Nouveau record !</Text>
         )}
-        <TouchableOpacity style={styles.restartBtn} onPress={handleRestart}>
+        <TouchableOpacity role="button" style={styles.restartBtn} onPress={handleRestart}>
           <Text style={styles.restartText}>Recommencer le quiz</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -122,7 +122,7 @@ export default function QuizScreen() {
         }
 
         return (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             key={i}
             style={[styles.option, { backgroundColor: bg, borderColor: border }]}
             onPress={() => handleSelect(i)}
@@ -144,7 +144,7 @@ export default function QuizScreen() {
       )}
 
       {selectedIndex !== null && (
-        <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
+        <TouchableOpacity role="button" style={styles.nextBtn} onPress={handleNext}>
           <Text style={styles.nextText}>
             {currentIndex + 1 >= quizQuestions.length ? 'Voir le résultat' : 'Question suivante →'}
           </Text>

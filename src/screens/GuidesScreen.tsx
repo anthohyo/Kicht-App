@@ -44,7 +44,7 @@ export default function GuidesScreen() {
           const isActive = filter === cat;
           const label = cat === 'all' ? '📚 Tout' : `${GUIDE_CATEGORIES[cat].emoji} ${GUIDE_CATEGORIES[cat].label}`;
           return (
-            <TouchableOpacity
+            <TouchableOpacity role="radio" aria-checked={isActive}
               key={cat}
               style={[styles.filterChip, isActive && styles.filterChipActive]}
               onPress={() => setFilter(cat)}
@@ -57,7 +57,7 @@ export default function GuidesScreen() {
 
       {filtered.map((guide) => {
         return (
-          <TouchableOpacity
+          <TouchableOpacity role="button"
             key={guide.id}
             style={styles.guideCard}
             onPress={() => navigation.navigate('GuideDetail', { guideId: guide.id })}
