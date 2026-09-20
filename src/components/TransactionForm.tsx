@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   errorText: {
-    color: colors.danger,
+    color: colors.dangerText,
     fontSize: 12,
     marginBottom: spacing.md,
   },

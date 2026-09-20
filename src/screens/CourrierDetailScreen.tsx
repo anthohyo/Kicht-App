@@ -83,7 +83,7 @@ export default function CourrierDetailScreen({ route }: Props) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.emoji}>{courrier.emoji}</Text>
+        <Text style={styles.emoji} aria-hidden>{courrier.emoji}</Text>
         <Text style={styles.title}>{courrier.title}</Text>
         <Text style={styles.desc}>{courrier.description}</Text>
       </View>

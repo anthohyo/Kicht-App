@@ -35,7 +35,7 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.emoji}>🛠️</Text>
+          <Text style={styles.emoji} aria-hidden>🛠️</Text>
           <Text style={styles.title}>Quelque chose s'est mal passé</Text>
           <Text style={styles.body}>
             L'app a rencontré un problème d'affichage. Ce n'est pas de ta faute et{' '}

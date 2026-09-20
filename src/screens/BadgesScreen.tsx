@@ -22,17 +22,17 @@ export default function BadgesScreen() {
       {/* Points & Streak */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
-          <Text style={styles.statEmoji}>⭐</Text>
+          <Text style={styles.statEmoji} aria-hidden>⭐</Text>
           <Text style={styles.statValue}>{progress.points}</Text>
           <Text style={styles.statLabel}>Points</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statEmoji}>🔥</Text>
+          <Text style={styles.statEmoji} aria-hidden>🔥</Text>
           <Text style={styles.statValue}>{progress.streak}</Text>
           <Text style={styles.statLabel}>Jours de suite</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statEmoji}>🏆</Text>
+          <Text style={styles.statEmoji} aria-hidden>🏆</Text>
           <Text style={styles.statValue}>{earned.length}/{allBadges.length}</Text>
           <Text style={styles.statLabel}>Badges</Text>
         </View>
@@ -55,7 +55,7 @@ export default function BadgesScreen() {
           <View style={styles.badgeGrid}>
             {earned.map((badge) => (
               <View key={badge.id} style={styles.badgeCard}>
-                <Text style={styles.badgeEmoji}>{badge.emoji}</Text>
+                <Text style={styles.badgeEmoji} aria-hidden>{badge.emoji}</Text>
                 <Text style={styles.badgeTitle}>{badge.title}</Text>
                 <Text style={styles.badgeDesc}>{badge.description}</Text>
               </View>
@@ -82,7 +82,7 @@ export default function BadgesScreen() {
 function StatRow({ emoji, label, value }: { emoji: string; label: string; value: number | string }) {
   return (
     <View style={styles.statRow}>
-      <Text style={styles.statRowEmoji}>{emoji}</Text>
+      <Text style={styles.statRowEmoji} aria-hidden>{emoji}</Text>
       <Text style={styles.statRowLabel}>{label}</Text>
       <Text style={styles.statRowValue}>{value}</Text>
     </View>

@@ -160,7 +160,7 @@ export default function WeeklyTasksWidget() {
           activeOpacity={task.screen || task.tab ? 0.7 : 1}
           disabled={!task.screen && !task.tab}
         >
-          <Text style={styles.taskEmoji}>{task.emoji}</Text>
+          <Text style={styles.taskEmoji} aria-hidden>{task.emoji}</Text>
           <Text style={styles.taskText}>{task.text}</Text>
           {(task.screen || task.tab) && <Text style={styles.arrow}>›</Text>}
         </TouchableOpacity>

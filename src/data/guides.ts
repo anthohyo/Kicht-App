@@ -270,7 +270,7 @@ export const guides: Guide[] = [
       {
         title: '1. Banque en ligne vs classique',
         content:
-          'Banque en ligne (Boursorama, Fortuneo, Hello Bank) : GRATUIT, bonne appli, pas d\'agence physique. Banque classique (BNP, Crédit Agricole) : payant (2-5 €/mois) mais tu as un conseiller en face. Pour un jeune, la banque en ligne est souvent le meilleur choix.',
+          'Banque en ligne : souvent sans frais de tenue de compte ni frais de carte, tout se fait depuis l\'application, mais il n\'y a pas d\'agence où se présenter. Banque de réseau : généralement 2 à 5 €/mois, avec un conseiller que tu peux rencontrer. Regarde trois lignes avant de choisir : les frais de tenue de compte, le coût de la carte, et les frais en cas de découvert — c\'est là que les écarts se creusent. Toutes les banques françaises sont couvertes par la même garantie des dépôts (100 000 € par déposant).',
       },
       {
         title: '2. Ce qu\'il te faut pour ouvrir un compte',
@@ -290,7 +290,7 @@ export const guides: Guide[] = [
       {
         title: '💡 Conseil',
         content:
-          'Tu peux avoir plusieurs comptes. Beaucoup de gens utilisent un compte principal (salaire, loyer) + un compte secondaire en néobanque (Revolut, N26) pour les dépenses courantes et les voyages.',
+          'Tu peux avoir plusieurs comptes sans problème : un compte principal pour ce qui est fixe (salaire, loyer, prélèvements) et un second, souvent dans une néobanque, pour les dépenses courantes et les voyages. Ça évite de piocher sans s\'en rendre compte dans l\'argent du loyer. Vérifie juste que le second est bien agréé en France ou dans l\'Union européenne.',
       },
     ],
   },

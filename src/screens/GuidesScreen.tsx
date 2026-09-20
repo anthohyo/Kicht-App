@@ -63,7 +63,7 @@ export default function GuidesScreen() {
             onPress={() => navigation.navigate('GuideDetail', { guideId: guide.id })}
             activeOpacity={0.7}
           >
-            <Text style={styles.guideEmoji}>{guide.emoji}</Text>
+            <Text style={styles.guideEmoji} aria-hidden>{guide.emoji}</Text>
             <View style={styles.guideText}>
               <View style={styles.titleRow}>
                 <Text style={styles.guideTitle}>{guide.title}</Text>

@@ -166,7 +166,7 @@ export default function MesDocumentsScreen() {
       </Text>
 
       <View style={styles.warningCard}>
-        <Text style={styles.warningIcon}>🔒</Text>
+        <Text style={styles.warningIcon} aria-hidden>🔒</Text>
         <Text style={styles.warningText}>
           Ne stocke pas tes mots de passe ici. Ces infos restent sur ton appareil et ne sont jamais envoyées en ligne.
         </Text>
@@ -262,5 +262,5 @@ const styles = StyleSheet.create({
     alignItems: 'center', marginBottom: spacing.sm,
     borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)',
   },
-  clearBtnText: { color: colors.danger, fontWeight: '600', fontSize: 15 },
+  clearBtnText: { color: colors.dangerText, fontWeight: '600', fontSize: 15 },
 });

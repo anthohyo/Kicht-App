@@ -1,0 +1,19 @@
+{
+  "name": "KichtApp — tes aides et tes démarches",
+  "short_name": "KichtApp",
+  "description": "APL, bourse, transport, budget, papiers : les aides auxquelles tu as droit et les démarches à faire quand tu pars vivre seul. Gratuit, sans compte.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0A0F",
+  "theme_color": "#0A0A0F",
+  "categories": ["education", "finance", "lifestyle"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

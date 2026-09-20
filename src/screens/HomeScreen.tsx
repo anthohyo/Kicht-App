@@ -195,7 +195,7 @@ export default function HomeScreen() {
           )}
 
           {isDépassé && (
-            <Text style={[styles.resteSubline, { color: colors.danger }]}>
+            <Text style={[styles.resteSubline, { color: colors.dangerText }]}>
               Tu es dans le rouge — il faut agir maintenant
             </Text>
           )}
@@ -240,7 +240,7 @@ export default function HomeScreen() {
             activeOpacity={0.85}
           >
             <View style={styles.priorityTop}>
-              <Text style={styles.priorityEmoji}>{priorité.emoji}</Text>
+              <Text style={styles.priorityEmoji} aria-hidden>{priorité.emoji}</Text>
               <Text style={styles.priorityLabel}>PRIORITÉ N°1</Text>
             </View>
             <Text style={styles.priorityTitle}>{priorité.title}</Text>
@@ -294,7 +294,7 @@ export default function HomeScreen() {
           role="button"
           aria-label="Mes échéances et rappels"
         >
-          <Text style={styles.parrainEmoji}>📅</Text>
+          <Text style={styles.parrainEmoji} aria-hidden>📅</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.parrainTitle}>Mes échéances</Text>
             <Text style={styles.parrainSub}>
@@ -310,7 +310,7 @@ export default function HomeScreen() {
           onPress={() => navigation.navigate('Main' as any, { screen: 'Chat' } as any)}
           activeOpacity={0.8}
         >
-          <Text style={styles.parrainEmoji}>🤝</Text>
+          <Text style={styles.parrainEmoji} aria-hidden>🤝</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.parrainTitle}>Besoin d'aide ?</Text>
             <Text style={styles.parrainSub}>

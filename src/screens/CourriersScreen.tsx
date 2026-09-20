@@ -61,7 +61,7 @@ export default function CourriersScreen() {
             onPress={() => navigation.navigate('CourrierDetail', { courrierId: c.id })}
             activeOpacity={0.7}
           >
-            <Text style={styles.cardEmoji}>{c.emoji}</Text>
+            <Text style={styles.cardEmoji} aria-hidden>{c.emoji}</Text>
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>{c.title}</Text>
               <Text style={styles.cardDesc}>{c.description}</Text>

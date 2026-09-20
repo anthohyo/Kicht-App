@@ -11,6 +11,7 @@ import { loadProfile } from '../utils/storage';
 import { colors, radius, spacing } from '../theme';
 import { construireSauvegarde, lireSauvegarde, nomFichier, PREFIXE, FichierSauvegarde } from '../utils/sauvegarde';
 import { resynchroniserRappels } from '../utils/notifications';
+import { CONTACT_EMAIL, EDITEUR, DERNIERE_MAJ_LEGAL, mailto } from '../legal';
 
 /**
  * Écran de confidentialité.
@@ -128,7 +129,7 @@ export default function ConfidentialiteScreen() {
 
       {/* ── La promesse, en premier ── */}
       <View style={styles.hero}>
-        <Text style={styles.heroEmoji}>🔒</Text>
+        <Text style={styles.heroEmoji} aria-hidden>🔒</Text>
         <Text style={styles.heroTitle}>Tes données ne quittent pas ton appareil</Text>
         <Text style={styles.heroBody}>
           KichtApp n'a pas de serveur. Tout ce que tu saisis — ton salaire, ton loyer, ta situation —
@@ -141,7 +142,7 @@ export default function ConfidentialiteScreen() {
       <View style={styles.card}>
         {DONNEES_STOCKEES.map((d, i) => (
           <View key={d.titre} style={[styles.row, i > 0 && styles.rowBordered]}>
-            <Text style={styles.rowEmoji}>{d.emoji}</Text>
+            <Text style={styles.rowEmoji} aria-hidden>{d.emoji}</Text>
             <View style={styles.rowText}>
               <Text style={styles.rowTitle}>{d.titre}</Text>
               <Text style={styles.rowDetail}>{d.detail}</Text>
@@ -177,7 +178,11 @@ export default function ConfidentialiteScreen() {
           {'\n\n'}
           Si tu ajoutes ta propre clé API dans les réglages, alors — et seulement alors — tes questions
           et ton profil (situation, revenus, logement) sont envoyés à Anthropic pour générer la réponse.
-          Cela relève de leurs conditions d'utilisation, pas des nôtres.
+          Tu utilises ton propre compte : c'est leur politique de confidentialité qui s'applique à ces
+          échanges, et leurs serveurs se trouvent hors de l'Union européenne (États-Unis).
+          {'\n\n'}
+          Ta clé est enregistrée sur cet appareil comme le reste, en clair. Évite de la coller sur un
+          téléphone ou un ordinateur partagé, et supprime-la depuis ton profil quand tu ne t'en sers plus.
         </Text>
         <Text style={styles.warnStatus}>
           {profile?.claudeApiKey
@@ -262,17 +267,73 @@ export default function ConfidentialiteScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* ── Cookies : la question revient tout le temps, autant y répondre ici ── */}
+      <Text style={styles.sectionTitle}>Et les cookies ?</Text>
+      <View style={styles.card}>
+        <Text style={styles.plainText}>
+          KichtApp ne dépose aucun cookie. Sur la version web, tes réponses sont rangées dans le
+          stockage local de ton navigateur : ça ressemble à un cookie, sauf que rien n'est envoyé
+          à un serveur — c'est le même téléphone qui écrit et qui relit.
+          {'\n\n'}
+          Ce stockage sert uniquement à faire fonctionner ce que tu as demandé : retrouver ton profil,
+          ton budget et tes démarches quand tu reviens. La réglementation dispense ce type de stockage
+          strictement nécessaire de bandeau de consentement — c'est pour ça que tu n'en vois pas.
+          Aucun traceur publicitaire, aucune mesure d'audience, aucun partage avec un tiers.
+        </Text>
+      </View>
+
+      {/* ── Droits RGPD : ici ils s'exercent tout seuls, autant le dire clairement ── */}
+      <Text style={styles.sectionTitle}>Tes droits</Text>
+      <View style={styles.card}>
+        <Text style={styles.plainText}>
+          Le RGPD te donne un droit d'accès, de rectification, d'effacement et de portabilité sur tes
+          données. Comme elles ne sortent pas de ton appareil, tu les exerces toi-même, tout de suite,
+          sans avoir à écrire à qui que ce soit :
+        </Text>
+        {[
+          'Accès et rectification : tout est affiché et modifiable dans ton profil.',
+          'Portabilité : « Créer une sauvegarde » t\'en donne une copie dans un fichier lisible.',
+          'Effacement : « Effacer toutes mes données » supprime tout, immédiatement.',
+        ].map((t) => (
+          <View key={t} style={styles.bulletRow}>
+            <Text style={styles.bulletMark} aria-hidden>✓</Text>
+            <Text style={styles.bulletText}>{t}</Text>
+          </View>
+        ))}
+        <Text style={[styles.plainText, { marginTop: 12 }]}>
+          {EDITEUR}, qui édite l'app, n'a accès à aucune de tes données : il ne peut ni les lire, ni les
+          corriger, ni les supprimer à ta place. Elles sont conservées tant que tu les gardes, et
+          disparaissent quand tu les effaces ou quand tu désinstalles l'app.
+          {'\n\n'}
+          Si tu estimes que tes droits ne sont pas respectés, tu peux saisir la CNIL.
+        </Text>
+        <TouchableOpacity
+          onPress={() => Linking.openURL('https://www.cnil.fr/fr/plaintes')}
+          role="link"
+          aria-label="Ouvrir le site de la CNIL pour déposer une plainte"
+        >
+          <Text style={styles.lienExterne}>cnil.fr</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* ── Contact ── */}
       <View style={styles.contactBox}>
         <Text style={styles.contactTitle}>Une question sur tes données ?</Text>
         <TouchableOpacity
-          onPress={() => Linking.openURL('mailto:contact@kichtapp.fr?subject=Confidentialit%C3%A9')}
+          onPress={() => Linking.openURL(mailto('Confidentialité'))}
           role="link"
-          aria-label="Écrire à contact@kichtapp.fr"
+          aria-label={`Écrire à ${CONTACT_EMAIL}`}
         >
-          <Text style={styles.contactLink}>contact@kichtapp.fr</Text>
+          <Text style={styles.contactLink}>{CONTACT_EMAIL}</Text>
         </TouchableOpacity>
-        <Text style={styles.updated}>Dernière mise à jour : 17 septembre 2026</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('MentionsLegales')}
+          role="link"
+          aria-label="Ouvrir les mentions légales et les conditions d'utilisation"
+        >
+          <Text style={styles.lienLegal}>Mentions légales et conditions d'utilisation</Text>
+        </TouchableOpacity>
+        <Text style={styles.updated}>Dernière mise à jour : {DERNIERE_MAJ_LEGAL}</Text>
       </View>
 
     </ScrollView>
@@ -345,10 +406,12 @@ const styles = StyleSheet.create({
     borderRadius: radius.md, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.4)',
     paddingVertical: 13, alignItems: 'center',
   },
-  dangerBtnText: { color: colors.danger, fontWeight: '700', fontSize: 14 },
+  dangerBtnText: { color: colors.dangerText, fontWeight: '700', fontSize: 14 },
 
   contactBox: { alignItems: 'center', paddingTop: spacing.sm },
   contactTitle: { fontSize: 14, color: colors.textSecondary, marginBottom: 6 },
   contactLink: { fontSize: 15, color: colors.primaryLight, fontWeight: '600' },
+  lienLegal: { fontSize: 13, color: colors.textSecondary, marginTop: spacing.md, textDecorationLine: 'underline' },
+  lienExterne: { fontSize: 14, color: colors.primaryLight, fontWeight: '600', marginTop: 6 },
   updated: { fontSize: 12, color: colors.textMuted, marginTop: spacing.md },
 });

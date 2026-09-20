@@ -74,7 +74,7 @@ export default function QuizScreen() {
 
     return (
       <ScrollView contentContainerStyle={styles.resultContainer}>
-        <Text style={styles.resultEmoji}>{emoji}</Text>
+        <Text style={styles.resultEmoji} aria-hidden>{emoji}</Text>
         <Text style={styles.resultScore}>
           {score} / {quizQuestions.length}
         </Text>

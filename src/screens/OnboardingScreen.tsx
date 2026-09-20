@@ -41,6 +41,11 @@ export default function OnboardingScreen({ navigation }: Props) {
 
   // Étape 0 — identité + statut
   const [firstName, setFirstName] = useState('');
+  // L'âge conditionne six aides (CEJ 16-25, Mobili-Jeune < 30, Visale < 31,
+  // transports < 26…). Tant qu'il n'était pas demandé, tout le monde était
+  // réputé avoir 20 ans : un jeune de 28 ans se voyait proposer des aides
+  // auxquelles il n'a pas droit.
+  const [age, setAge] = useState('');
   const [status, setStatus] = useState<UserStatus>('etudiant');
 
   // Étape 1 — logement + loyer + école + ville
@@ -67,8 +72,7 @@ export default function OnboardingScreen({ navigation }: Props) {
   const handleFinish = async () => {
     const profile: UserProfile = {
       firstName: firstName.trim(),
-      age: 20, // valeur par défaut — peut être mis à jour dans le profil
-      gender: 'autre',
+      age: parseInt(age, 10),
       status,
       monthlySalary: parseFloat(salary) || 0,
       expenses: {
@@ -109,8 +113,13 @@ export default function OnboardingScreen({ navigation }: Props) {
     });
   };
 
+  const ageValide = () => {
+    const n = parseInt(age, 10);
+    return Number.isFinite(n) && n >= 14 && n <= 99;
+  };
+
   const canNext = () => {
-    if (step === 0) return firstName.trim().length > 0;
+    if (step === 0) return firstName.trim().length > 0 && ageValide();
     return true;
   };
 
@@ -126,10 +135,11 @@ export default function OnboardingScreen({ navigation }: Props) {
       case 0:
         return (
           <View style={styles.stepContent}>
-            <Text style={styles.emoji}>👋</Text>
+            <Text style={styles.emoji} aria-hidden>👋</Text>
             <Text style={styles.stepTitle}>Comment tu t'appelles ?</Text>
             <Text style={styles.stepDesc}>
-              Pour personnaliser ton expérience — promis, c'est la seule info obligatoire.
+              Ton prénom et ton âge, c'est tout ce qu'on demande. L'âge sert à savoir quelles
+              aides te concernent : beaucoup s'arrêtent à 25, 26 ou 30 ans.
             </Text>
             <TextInput
               style={styles.input}
@@ -138,7 +148,23 @@ export default function OnboardingScreen({ navigation }: Props) {
               value={firstName}
               onChangeText={setFirstName}
               autoFocus
+              aria-label="Ton prénom"
             />
+            <TextInput
+              style={styles.input}
+              placeholder="Ton âge"
+              placeholderTextColor={colors.textMuted}
+              value={age}
+              onChangeText={(t) => setAge(t.replace(/[^0-9]/g, '').slice(0, 2))}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              aria-label="Ton âge en années"
+            />
+            {age.length > 0 && !ageValide() && (
+              <Text style={styles.ageErreur} aria-live="polite">
+                Indique un âge entre 14 et 99 ans.
+              </Text>
+            )}
 
             <Text style={styles.label}>Et tu es… ?</Text>
             {STATUS_OPTIONS.map((s) => (
@@ -159,7 +185,7 @@ export default function OnboardingScreen({ navigation }: Props) {
       case 1:
         return (
           <View style={styles.stepContent}>
-            <Text style={styles.emoji}>🏠</Text>
+            <Text style={styles.emoji} aria-hidden>🏠</Text>
             <Text style={styles.stepTitle}>Ta situation logement</Text>
             <Text style={styles.stepDesc}>
               Ça nous permet de calculer tes droits à l'APL et aux aides logement.
@@ -261,7 +287,7 @@ export default function OnboardingScreen({ navigation }: Props) {
       case 2:
         return (
           <View style={styles.stepContent}>
-            <Text style={styles.emoji}>💰</Text>
+            <Text style={styles.emoji} aria-hidden>💰</Text>
             <Text style={styles.stepTitle}>
               {firstName ? `${firstName}, combien tu gagnes ?` : 'Tes revenus'}
             </Text>
@@ -301,7 +327,7 @@ export default function OnboardingScreen({ navigation }: Props) {
       case 3:
         return (
           <View style={styles.stepContent}>
-            <Text style={styles.emoji}>🎯</Text>
+            <Text style={styles.emoji} aria-hidden>🎯</Text>
             <Text style={styles.stepTitle}>Qu'est-ce qui t'aiderait le plus maintenant ?</Text>
             <Text style={styles.stepDesc}>
               On personnalise ton accueil selon ta priorité.
@@ -435,6 +461,12 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: 22,
     marginBottom: spacing.lg,
+  },
+  ageErreur: {
+    fontSize: 13,
+    color: colors.dangerText,
+    marginTop: -spacing.sm,
+    marginBottom: spacing.sm,
   },
   label: {
     fontSize: 13,

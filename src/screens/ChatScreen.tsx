@@ -562,7 +562,7 @@ export default function ChatScreen() {
                 onPress={() => handleUrgence(s)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.urgenceEmoji}>{s.emoji}</Text>
+                <Text style={styles.urgenceEmoji} aria-hidden>{s.emoji}</Text>
                 <Text style={styles.urgenceBtnText}>{s.label}</Text>
               </TouchableOpacity>
             ))}
@@ -676,8 +676,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingVertical: 8, paddingHorizontal: spacing.md, gap: 6,
   },
-  urgenceToggleText: { fontSize: 13, fontWeight: '600', color: colors.danger },
-  urgenceChevron: { fontSize: 10, color: colors.danger },
+  urgenceToggleText: { fontSize: 13, fontWeight: '600', color: colors.dangerText },
+  urgenceChevron: { fontSize: 10, color: colors.dangerText },
   urgenceGrid: { paddingHorizontal: spacing.sm, paddingBottom: spacing.sm, gap: 6 },
   urgenceBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 8,

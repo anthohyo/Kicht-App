@@ -49,7 +49,7 @@ export default function BadgeToast() {
   return (
     <Animated.View style={[styles.toast, { transform: [{ translateY }], opacity }]}>
       <View style={styles.iconWrap}>
-        <Text style={styles.emoji}>{badge.emoji}</Text>
+        <Text style={styles.emoji} aria-hidden>{badge.emoji}</Text>
       </View>
       <View style={styles.textWrap}>
         <Text style={styles.label}>Badge débloqué !</Text>

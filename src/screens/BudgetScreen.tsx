@@ -144,8 +144,8 @@ const ravStyles = StyleSheet.create({
   statLabel: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
   divider: { width: 1, height: 40, backgroundColor: colors.border, marginHorizontal: 8 },
   alertRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: spacing.sm, backgroundColor: 'rgba(239,68,68,0.08)', borderRadius: radius.md, padding: 8, borderWidth: 1, borderColor: 'rgba(239,68,68,0.2)' },
-  alertText: { fontSize: 13, color: colors.danger, fontWeight: '600' },
-  alertArrow: { fontSize: 14, color: colors.danger, fontWeight: 'bold' },
+  alertText: { fontSize: 13, color: colors.dangerText, fontWeight: '600' },
+  alertArrow: { fontSize: 14, color: colors.dangerText, fontWeight: 'bold' },
   tipOrange: { fontSize: 12, color: colors.warning, marginTop: spacing.sm, textAlign: 'center' },
 });
 
@@ -167,7 +167,7 @@ function BudgetAlert({ transactions }: { transactions: Transaction[] }) {
   if (ratio < 0.7) {
     return (
       <View style={[alertStyles.box, alertStyles.green]}>
-        <Text style={alertStyles.icon}>✅</Text>
+        <Text style={alertStyles.icon} aria-hidden>✅</Text>
         <Text style={alertStyles.text}>Tu dépenses {pct}% de tes revenus. Bonne gestion — pense à faire fructifier le reste !</Text>
       </View>
     );
@@ -176,7 +176,7 @@ function BudgetAlert({ transactions }: { transactions: Transaction[] }) {
     return (
       <View style={[alertStyles.box, alertStyles.yellow]}>
         <View style={{ flex: 1 }}>
-          <Text style={alertStyles.icon}>⚠️</Text>
+          <Text style={alertStyles.icon} aria-hidden>⚠️</Text>
           <Text style={alertStyles.text}>Tu dépenses {pct}% de tes revenus. C'est serré — regarde les abonnements et les sorties.</Text>
           <TouchableOpacity role="button" onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci. Comment je peux réduire mes sorties et mes abonnements concrètement ?`)} style={alertStyles.cta}>
             <Text style={alertStyles.ctaText}>💬 Comment réduire mes sorties ? →</Text>
@@ -188,10 +188,10 @@ function BudgetAlert({ transactions }: { transactions: Transaction[] }) {
   return (
     <View style={[alertStyles.box, alertStyles.red]}>
       <View style={{ flex: 1 }}>
-        <Text style={alertStyles.icon}>🚨</Text>
+        <Text style={alertStyles.icon} aria-hidden>🚨</Text>
         <Text style={alertStyles.text}>Tu dépenses {pct}% de tes revenus ! Essaie de réduire une dépense dès ce mois-ci.</Text>
         <TouchableOpacity role="button" onPress={() => askParrain(`Je dépense ${pct}% de mes revenus ce mois-ci, c'est trop. Qu'est-ce que je peux réduire en priorité pour retrouver de la marge ?`)} style={alertStyles.cta}>
-          <Text style={[alertStyles.ctaText, { color: colors.danger }]}>💬 Que réduire en priorité ? →</Text>
+          <Text style={[alertStyles.ctaText, { color: colors.dangerText }]}>💬 Que réduire en priorité ? →</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -403,7 +403,7 @@ export default function BudgetScreen() {
 
         {filteredTransactions.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyEmoji}>📝</Text>
+            <Text style={styles.emptyEmoji} aria-hidden>📝</Text>
             <Text style={styles.emptyText}>
               Aucune transaction ce mois-ci.{'\n'}Appuie sur + pour en ajouter une.
             </Text>

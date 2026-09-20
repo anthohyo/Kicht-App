@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const { simulerAides, DERNIERE_MAJ_BAREMES } = require('../.test-build/src/data/aidesData.js');
 const { getAidesLocales, AIDES_LOCALES } = require('../.test-build/src/data/aidesLocales.js');
 
-const base = { gender: 'autre', onboardingComplete: true, primaryGoal: 'aides', claimedAids: [] };
+const base = { age: 20, onboardingComplete: true, primaryGoal: 'aides', claimedAids: [] };
 const depenses = (loyer = 0, autres = {}) => ({
   loyer, abonnements: 0, electricite: 0, courses: 0, transport: 0, sorties: 0, ...autres,
 });

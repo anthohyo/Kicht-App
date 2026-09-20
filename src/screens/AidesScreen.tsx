@@ -157,7 +157,7 @@ export default function AidesScreen() {
         <View style={styles.vedetteCard}>
           {/* Header de la carte */}
           <View style={styles.vedetteTop}>
-            <Text style={styles.vedetteEmoji}>{vedette.emoji}</Text>
+            <Text style={styles.vedetteEmoji} aria-hidden>{vedette.emoji}</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.vedetteName}>{vedette.name}</Text>
               <View style={styles.vedetteBadgeRow}>
@@ -288,7 +288,7 @@ export default function AidesScreen() {
                 activeOpacity={0.8}
               >
                 <View style={styles.secondaryTop}>
-                  <Text style={styles.secondaryEmoji}>{aide.emoji}</Text>
+                  <Text style={styles.secondaryEmoji} aria-hidden>{aide.emoji}</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.secondaryName}>{aide.name}</Text>
                     {!isOpen && aide.montantEstime && (
@@ -366,7 +366,7 @@ export default function AidesScreen() {
                   activeOpacity={0.8}
                 >
                   <View style={styles.secondaryTop}>
-                    <Text style={styles.secondaryEmoji}>{aide.emoji}</Text>
+                    <Text style={styles.secondaryEmoji} aria-hidden>{aide.emoji}</Text>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.secondaryName}>{aide.nom}</Text>
                       <Text style={styles.secondaryMontantLine}>{aide.montant}</Text>
@@ -392,7 +392,7 @@ export default function AidesScreen() {
               {nonEligible.map((aide) => (
                 <View key={aide.id} style={[styles.secondaryCard, { opacity: 0.5 }]}>
                   <View style={styles.secondaryTop}>
-                    <Text style={styles.secondaryEmoji}>{aide.emoji}</Text>
+                    <Text style={styles.secondaryEmoji} aria-hidden>{aide.emoji}</Text>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.secondaryName}>{aide.name}</Text>
                       <Text style={styles.secondaryDesc} numberOfLines={1}>{aide.description}</Text>

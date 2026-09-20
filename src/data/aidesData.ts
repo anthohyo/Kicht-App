@@ -724,6 +724,7 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         ]
       : [
           'Tarif jeune ou étudiant selon le réseau de ta ville',
+          'La plupart des tarifs jeunes s\'arrêtent à 25 ou 26 ans : vérifie la limite d\'âge de ton réseau',
           'Certains réseaux appliquent le quotient familial : l\'écart peut être important',
           'Quelques métropoles sont gratuites pour leurs habitants',
         ],

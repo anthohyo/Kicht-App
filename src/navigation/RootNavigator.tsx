@@ -11,6 +11,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import TabNavigator from './TabNavigator';
 import ProfileScreen from '../screens/ProfileScreen';
 import ConfidentialiteScreen from '../screens/ConfidentialiteScreen';
+import MentionsLegalesScreen from '../screens/MentionsLegalesScreen';
 import ExplorerScreen from '../screens/ExplorerScreen';
 import QuizScreen from '../screens/QuizScreen';
 import ChecklistScreen from '../screens/ChecklistScreen';
@@ -83,6 +84,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Agenda" component={AgendaScreen} options={{ title: 'Mon agenda' }} />
         <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Mon profil' }} />
         <Stack.Screen name="Confidentialite" component={ConfidentialiteScreen} options={{ title: 'Confidentialité' }} />
+        <Stack.Screen name="MentionsLegales" component={MentionsLegalesScreen} options={{ title: 'Mentions légales et conditions' }} />
         <Stack.Screen name="Explorer" component={ExplorerScreen} options={{ title: 'Explorer' }} />
       </Stack.Navigator>
       <BadgeToast />

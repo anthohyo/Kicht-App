@@ -93,7 +93,7 @@ export default function ExplorerScreen() {
           onPress={() => navigation.navigate('SimulateurEpargne')}
           activeOpacity={0.8}
         >
-          <Text style={styles.goalEmoji}>{profile.savingsGoal.emoji}</Text>
+          <Text style={styles.goalEmoji} aria-hidden>{profile.savingsGoal.emoji}</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.goalTitle}>{profile.savingsGoal.label}</Text>
             <Text style={styles.goalSub}>Objectif : {profile.savingsGoal.amount} € — voir la simulation →</Text>
@@ -113,7 +113,7 @@ export default function ExplorerScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.iconBubble}>
-                <Text style={styles.iconText}>{f.emoji}</Text>
+                <Text style={styles.iconText} aria-hidden>{f.emoji}</Text>
               </View>
               <View style={styles.textContainer}>
                 <View style={styles.titleRow}>

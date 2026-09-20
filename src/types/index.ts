@@ -23,7 +23,6 @@ export type PrimaryGoal = 'aides' | 'budget' | 'admin';
 export interface UserProfile {
   firstName: string;
   age: number;
-  gender: 'homme' | 'femme' | 'autre';
   status: UserStatus;
   /** Type d'établissement — uniquement pour les étudiants, détermine l'éligibilité CROUS */
   schoolType?: SchoolType;
@@ -214,6 +213,7 @@ export type RootStackParamList = {
   Agenda: undefined;
   Profile: undefined;
   Confidentialite: undefined;
+  MentionsLegales: undefined;
   Explorer: undefined;
 };
 

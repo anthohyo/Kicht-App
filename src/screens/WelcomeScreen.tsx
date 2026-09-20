@@ -56,7 +56,7 @@ export default function WelcomeScreen({ navigation }: Props) {
             key={f.title}
             style={[styles.featureCard, { backgroundColor: f.color, borderColor: f.border }]}
           >
-            <Text style={styles.featureEmoji}>{f.emoji}</Text>
+            <Text style={styles.featureEmoji} aria-hidden>{f.emoji}</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.featureTitle}>{f.title}</Text>
               <Text style={styles.featureDesc}>{f.desc}</Text>
@@ -64,18 +64,21 @@ export default function WelcomeScreen({ navigation }: Props) {
           </View>
         ))}
 
-        {/* Témoignage */}
+        {/* Le chiffre qui justifie l'app.
+            Ici se trouvait un témoignage inventé (« Inès, 22 ans ») : un avis
+            fabriqué présenté comme réel est interdit, et celui-ci citait en plus
+            l'aide au permis, supprimée en février 2026. Tant qu'aucun utilisateur
+            réel n'a donné son accord pour être cité, on s'en tient à un fait sourcé. */}
         <View style={styles.proofCard}>
-          <Text style={styles.proofQuote}>❝</Text>
+          <Text style={styles.proofChiffre}>1 foyer sur 3</Text>
           <Text style={styles.proofText}>
-            J'ai découvert que j'avais droit à 158€ d'APL et à l'aide au permis. Je ne savais pas du tout que ça existait.
+            qui a droit au RSA ne le demande pas. Le premier motif n'est pas l'orgueil :
+            c'est qu'on ne sait pas qu'on y a droit. C'est exactement ce que cette app
+            cherche à réparer.
           </Text>
-          <View style={styles.proofAuthorRow}>
-            <View style={styles.proofAvatar}>
-              <Text>👩</Text>
-            </View>
-            <Text style={styles.proofAuthor}>Inès, 22 ans — alternante à Marseille</Text>
-          </View>
+          <Text style={styles.proofAuthor}>
+            Source : DREES, « Non-recours au RSA », fin 2021 (33 à 37 % des foyers éligibles)
+          </Text>
         </View>
 
       </ScrollView>
@@ -164,33 +167,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  proofQuote: {
-    fontSize: 28,
+  proofChiffre: {
+    fontSize: 24,
+    fontWeight: '800',
     color: colors.primaryLight,
-    lineHeight: 32,
+    lineHeight: 30,
     marginBottom: 4,
   },
   proofText: {
     fontSize: 15,
     color: colors.text,
-    fontStyle: 'italic',
     lineHeight: 22,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
-  proofAuthorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  proofAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  proofAuthor: { fontSize: 13, color: colors.textMuted, fontWeight: '600' },
+  proofAuthor: { fontSize: 12, color: colors.textMuted, lineHeight: 17 },
 
   // Footer CTA
   footer: {

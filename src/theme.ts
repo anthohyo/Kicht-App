@@ -29,6 +29,11 @@ export const colors = {
   success: '#10B981',
   successBg: 'rgba(16, 185, 129, 0.12)',
   danger: '#EF4444',
+  // `danger` sur son propre fond teinté ne donne que 4.33 : sous le seuil, et c'est
+  // précisément la couleur des boutons « Effacer toutes mes données ». Pour du TEXTE
+  // rouge, utiliser `dangerText` (5.9 sur ce même fond) ; `danger` reste pour les
+  // bordures, les fonds et les icônes, où le seuil ne s'applique pas.
+  dangerText: '#F87171',
   dangerBg: 'rgba(239, 68, 68, 0.12)',
   warning: '#F59E0B',
 

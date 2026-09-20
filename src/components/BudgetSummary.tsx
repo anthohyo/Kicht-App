@@ -36,7 +36,7 @@ export default function BudgetSummary({ transactions, selectedDate }: Props) {
         </View>
         <View style={styles.box}>
           <Text style={styles.label}>Dépenses</Text>
-          <Text style={[styles.amount, { color: colors.danger }]}>
+          <Text style={[styles.amount, { color: colors.dangerText }]}>
             -{depenses.toFixed(0)} €
           </Text>
         </View>

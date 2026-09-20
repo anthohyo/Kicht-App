@@ -11,6 +11,8 @@ const lire = (f) => fs.readFileSync(path.join(racine, f), 'utf8');
 const fichiers = (dossier) =>
   fs.readdirSync(path.join(racine, dossier)).filter((f) => f.endsWith('.tsx')).map((f) => `${dossier}/${f}`);
 
+const sansCommentaires = (code) => code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
 function cibles(code) {
   const out = new Set();
   for (const re of [
@@ -121,4 +123,62 @@ test('chaque élément tactile est annoncé aux lecteurs d\'écran', () => {
   // n'atteignent jamais un lecteur d'écran dans la version en ligne.
   const anciennesProps = sources.filter((f) => /accessibility(State|Role|Label)=/.test(lire(f)));
   assert.deepEqual(anciennesProps, [], `anciennes props d'accessibilité : ${anciennesProps.join(', ')}`);
+});
+
+// L'âge conditionne six aides (CEJ 16-25, Visale < 31, Mobili-Jeune < 30…).
+// Il a longtemps été écrit en dur à 20 ans sans jamais être demandé : un jeune
+// de 28 ans se voyait proposer des aides réservées aux moins de 25.
+test('l\'âge du profil vient d\'une saisie, jamais d\'une valeur par défaut', () => {
+  const onboarding = lire('src/screens/OnboardingScreen.tsx');
+  assert.doesNotMatch(onboarding, /age:\s*\d+/, 'âge écrit en dur dans l\'onboarding');
+  assert.match(onboarding, /age:\s*parseInt\(age/, 'l\'âge saisi n\'est pas enregistré');
+  assert.match(onboarding, /placeholder="Ton âge"/, 'aucun champ ne demande l\'âge');
+  // Et il doit rester corrigeable ensuite.
+  assert.match(lire('src/screens/ProfileScreen.tsx'), /editAge/, 'âge non modifiable dans le profil');
+});
+
+// Une page légale dont l'adresse de contact ne reçoit rien n'est pas une page
+// légale : le domaine kichtapp.fr n'a jamais été enregistré (AFNIC : NOT FOUND).
+test('aucune adresse de contact morte n\'est publiée', () => {
+  for (const f of [...fichiers('src/screens'), 'src/legal.ts']) {
+    const mortes = sansCommentaires(lire(f)).match(/[\w.]+@kichtapp\.fr/g) || [];
+    assert.equal(mortes.length, 0, `${f} publie ${mortes[0]}, qui n'existe pas`);
+  }
+});
+
+// Un avis fabriqué présenté comme réel est une pratique commerciale trompeuse.
+// L'écran d'accueil en a porté un (« Inès, 22 ans — alternante à Marseille »),
+// qui citait en prime l'aide au permis, supprimée en février 2026.
+test('l\'accueil ne met en avant aucun témoignage inventé', () => {
+  const accueil = lire('src/screens/WelcomeScreen.tsx');
+  const guillemets = /❝|«\s*J'ai (découvert|trouvé|économisé)/;
+  assert.doesNotMatch(accueil, guillemets, 'témoignage en style direct sur l\'écran d\'accueil');
+  // Le chiffre qui le remplace doit porter sa source.
+  assert.match(accueil, /Source\s*:/, 'le chiffre affiché n\'est pas sourcé');
+});
+
+// Les taux réglementés vieillissent vite : le Livret A est passé de 3 % à 1,7 %
+// en trois révisions. Un taux sans date devient faux sans que personne ne le voie.
+test('aucune fiche n\'annonce le Livret A à un taux périmé', () => {
+  for (const f of ['src/data/guides.ts', 'src/data/premiumGuides.ts']) {
+    const code = sansCommentaires(lire(f));
+    for (const m of code.matchAll(/Livret A[^.!\n]{0,120}?(\d+(?:[,.]\d+)?)\s*%/g)) {
+      assert.equal(m[1].replace('.', ','), '1,7', `${f} annonce le Livret A à ${m[1]} %`);
+    }
+  }
+});
+
+// Recommander des courtiers ou des assureurs nommés relève du conseil en
+// investissement, réglementé par l'AMF — et laisse croire à un partenariat.
+test('aucune fiche ne recommande un courtier ou un produit commercial nommé', () => {
+  const enseignes = /Boursorama|BoursoBank|Fortuneo|Bourse Direct|Hello Bank|Linxea|Yomoni|Trade Republic|Revolut|\bN26\b|BNP|Crédit Agricole|Société Générale/i;
+  for (const f of ['src/data/guides.ts', 'src/data/premiumGuides.ts']) {
+    // Les lignes « Fondation … » sont écartées : une fondation d'entreprise qui
+    // distribue des bourses est une piste de financement, pas un produit à souscrire.
+    const code = sansCommentaires(lire(f))
+      .split('\n')
+      .filter((l) => !/Fondation/.test(l))
+      .join('\n');
+    assert.doesNotMatch(code, enseignes, `${f} cite une enseigne financière`);
+  }
 });

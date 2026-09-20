@@ -115,7 +115,7 @@ export default function SimulateurEpargneScreen() {
       {goal && goal.amount > 0 && (
         <View style={styles.goalCard}>
           <View style={styles.goalHeader}>
-            <Text style={styles.goalEmoji}>{goal.emoji}</Text>
+            <Text style={styles.goalEmoji} aria-hidden>{goal.emoji}</Text>
             <View style={{ flex: 1 }}>
               <Text style={styles.goalTitle}>{goal.label}</Text>
               <Text style={styles.goalTarget}>Objectif : {fmt(goal.amount)}</Text>
@@ -212,7 +212,7 @@ export default function SimulateurEpargneScreen() {
               style={[styles.presetBtn, selectedPreset === i && styles.presetBtnActive]}
               onPress={() => handlePreset(i)}
             >
-              <Text style={styles.presetEmoji}>{p.emoji}</Text>
+              <Text style={styles.presetEmoji} aria-hidden>{p.emoji}</Text>
               <Text style={[styles.presetLabel, selectedPreset === i && styles.presetLabelActive]}>{p.label}</Text>
               <Text style={[styles.presetRate,  selectedPreset === i && styles.presetRateActive]}>{p.rate} %/an</Text>
             </TouchableOpacity>

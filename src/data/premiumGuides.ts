@@ -1,6 +1,23 @@
 import { Guide } from '../types';
 
-// Guides premium — contenu avancé pour les abonnés
+/**
+ * Fiches avancées (épargne, impôts, investissement).
+ *
+ * Règles de rédaction, à respecter à chaque modification :
+ *
+ * 1. Aucun nom de courtier, de banque ou de produit commercial. Citer des
+ *    enseignes revient à recommander des produits financiers, ce qui relève du
+ *    conseil en investissement, réglementé par l'AMF — et fait planer un doute
+ *    sur un éventuel partenariat.
+ * 2. Tout taux porte sa date. Le Livret A est passé de 3 % à 1,7 % en trois
+ *    révisions : un taux non daté devient faux en quelques mois.
+ * 3. Une projection de rendement est présentée comme un exemple de calcul,
+ *    jamais comme un résultat attendu.
+ *
+ * Taux réglementés au 20/09/2026 — Livret A et LDDS 1,7 %, LEP 2,5 % depuis le
+ * 1er août 2026 (communiqué du ministère de l'Économie, presse.economie.gouv.fr).
+ * Le champ `premium` est un reliquat : tout est gratuit (voir utils/premium.ts).
+ */
 export const premiumGuides: Guide[] = [
   {
     id: 'investir-debutant',
@@ -18,17 +35,17 @@ export const premiumGuides: Guide[] = [
       {
         title: '2. Comprends les supports d\'investissement',
         content:
-          'Livret A / LDDS : épargne sans risque, ~3%/an. PEA (Plan d\'Épargne en Actions) : pour investir en bourse avec un avantage fiscal après 5 ans. Assurance-vie : enveloppe polyvalente, fiscalité avantageuse après 8 ans. Compte-titres : pour investir librement, mais pas d\'avantage fiscal.',
+          'Livret A et LDDS : épargne sans risque, disponible à tout moment, 1,7 %/an depuis le 1er août 2026 (taux fixé par l\'État, révisé deux fois par an). LEP : 2,5 %/an, réservé aux revenus modestes — ta banque vérifie ton revenu fiscal de référence. PEA (Plan d\'Épargne en Actions) : pour investir en bourse avec un avantage fiscal après 5 ans. Assurance-vie : enveloppe polyvalente, fiscalité avantageuse après 8 ans. Compte-titres : pour investir librement, mais pas d\'avantage fiscal.',
       },
       {
         title: '3. Les ETF, le meilleur choix pour débuter',
         content:
-          'Un ETF (ou tracker) est un fonds qui réplique un indice boursier (ex: le CAC 40 ou le MSCI World). Avantages : très diversifié, frais très faibles (~0,2%/an), pas besoin de choisir des actions individuelles. L\'ETF MSCI World suit 1 600 entreprises dans 23 pays — c\'est le choix n°1 des débutants.',
+          'Un ETF (ou tracker) est un fonds qui réplique un indice boursier (ex: le CAC 40 ou le MSCI World). Son intérêt : il répartit ton argent sur des centaines d\'entreprises d\'un coup, et ses frais annuels sont bien plus bas que ceux d\'un fonds géré à la main. Attention quand même : un ETF actions peut perdre 30 à 40 % lors d\'une crise. Diversifié ne veut pas dire sans risque.',
       },
       {
         title: '4. Ouvre un PEA',
         content:
-          'Le PEA est le meilleur outil pour un jeune investisseur français. Après 5 ans, les gains sont exonérés d\'impôt sur le revenu (tu ne paies que 17,2% de prélèvements sociaux au lieu de 30%). Ouvre-le chez un courtier en ligne (Boursorama, Fortuneo, Bourse Direct) pour avoir des frais réduits.',
+          'Après 5 ans, les gains d\'un PEA sont exonérés d\'impôt sur le revenu : tu ne paies que 17,2 % de prélèvements sociaux, au lieu de 30 % sur un compte-titres. Il se souscrit dans une banque ou chez un courtier en ligne ; compare les frais de courtage et les frais de garde avant de choisir, ce sont eux qui font la différence sur la durée.',
       },
       {
         title: '5. Investis régulièrement (DCA)',
@@ -38,12 +55,17 @@ export const premiumGuides: Guide[] = [
       {
         title: '6. Les erreurs à éviter',
         content:
-          '• Ne pas investir de l\'argent dont tu as besoin à court terme\n• Ne pas essayer de "timer" le marché (personne n\'y arrive)\n• Ne pas vendre en panique quand ça baisse\n• Ne pas mettre tous ses œufs dans le même panier\n• Se méfier des "gourous" qui promettent des rendements miracles\n• Les cryptos ne sont PAS un investissement, c\'est de la spéculation',
+          '• Ne pas investir de l\'argent dont tu as besoin à court terme\n• Ne pas essayer de "timer" le marché (personne n\'y arrive)\n• Ne pas vendre en panique quand ça baisse\n• Ne pas mettre tous ses œufs dans le même panier\n• Se méfier des "gourous" qui promettent des rendements miracles : sur les réseaux, un rendement garanti est le signal d\'une arnaque\n• Les cryptomonnaies sont extrêmement volatiles et ne sont garanties par personne : n\'y mets jamais un argent dont tu as besoin',
+      },
+      {
+        title: '⚠️ Ce que cette fiche n\'est pas',
+        content:
+          'Ce qui est écrit ici explique des règles générales : ce n\'est pas un conseil en investissement personnalisé, et personne à KichtApp ne connaît ta situation complète. Aucun produit, aucune banque et aucun courtier n\'est recommandé, et l\'app ne touche rien de personne. Avant d\'engager de l\'argent, renseigne-toi auprès d\'un professionnel, et rappelle-toi la règle de base : si tu ne comprends pas où va ton argent, n\'y va pas.',
       },
       {
         title: '💡 Le pouvoir du temps',
         content:
-          'Si tu investis 100 €/mois à partir de 20 ans avec un rendement moyen de 7%/an, à 60 ans tu auras ~264 000 € (dont 216 000 € de gains !). Si tu commences à 30 ans avec le même montant, tu n\'auras que ~122 000 €. La différence ? 10 ans de temps en plus. Commencer tôt, c\'est ton plus gros avantage.',
+          'Un exemple de calcul, pas une promesse : 100 €/mois placés de 20 à 60 ans donneraient environ 264 000 € si le rendement moyen était de 7 %/an ; en commençant à 30 ans, environ 122 000 €. Ce qui change tout, c\'est le temps, pas le montant. Mais personne ne peut garantir un rendement : les marchés montent et descendent, et le passé ne préjuge pas de l\'avenir. Prends ce chiffre comme une illustration de l\'effet du temps, pas comme un objectif.',
       },
     ],
   },
@@ -78,7 +100,7 @@ export const premiumGuides: Guide[] = [
       {
         title: '5. L\'investissement locatif (pour plus tard)',
         content:
-          'Le dispositif Pinel (fin 2024) et le Denormandie permettent de réduire ses impôts en investissant dans l\'immobilier locatif. C\'est pour plus tard, mais c\'est bon à savoir : investir dans un logement à louer peut réduire tes impôts de 12 à 21% du prix d\'achat.',
+          'Certains dispositifs permettent de réduire ses impôts en investissant dans l\'immobilier locatif — le Pinel, le plus connu, s\'est arrêté fin 2024 et n\'est plus souscrivable ; le Denormandie, lui, existe toujours pour la rénovation dans certaines villes. C\'est un sujet pour bien plus tard : ces montages supposent un apport, un crédit et des revenus imposables que tu n\'as pas encore. À connaître, pas à faire maintenant.',
       },
       {
         title: '💡 Le conseil du Parrain',
@@ -108,12 +130,12 @@ export const premiumGuides: Guide[] = [
       {
         title: '3. Le Livret A — ton bouclier',
         content:
-          'Objectif : y mettre 2-3 mois de dépenses (~2 000-5 000 €). Taux : 3% (2025). Plafond : 22 950 €. C\'est ton argent de sécurité, à ne toucher qu\'en cas d\'urgence. Une fois ce matelas constitué, l\'excédent va sur des supports plus rentables.',
+          'Objectif : y mettre 2-3 mois de dépenses (~2 000-5 000 €). Taux : 1,7 % depuis le 1er août 2026. Plafond : 22 950 €. C\'est ton argent de sécurité, à ne toucher qu\'en cas d\'urgence. Si tes revenus sont modestes, regarde aussi le LEP (2,5 %, sous condition de revenu fiscal de référence) : mieux rémunéré, même sécurité.',
       },
       {
         title: '4. L\'assurance-vie — ta boîte à outils',
         content:
-          'Ouvre une assurance-vie en ligne (Linxea, Boursorama Vie, Yomoni). Les frais sont beaucoup plus bas qu\'en banque classique. Tu peux y mettre du fonds euros (sûr, ~2-3%) et des unités de compte (ETF, plus risqué mais plus rentable). Fiscalité avantageuse après 8 ans.',
+          'Une assurance-vie en ligne a généralement des frais bien plus bas qu\'un contrat souscrit au guichet : regarde les frais sur versement (idéalement 0 %) et les frais de gestion annuels. Tu peux y mettre du fonds euros (capital garanti, rendement modeste) et des unités de compte (plus risqué, capital non garanti). Fiscalité avantageuse après 8 ans.',
       },
       {
         title: '5. Automatise tout',

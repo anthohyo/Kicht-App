@@ -98,7 +98,7 @@ export default function BilanMensuelWidget() {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Text style={[styles.statVal, { color: colors.danger }]}>-{totalDepenses}€</Text>
+              <Text style={[styles.statVal, { color: colors.dangerText }]}>-{totalDepenses}€</Text>
               <Text style={styles.statLbl}>Dépenses</Text>
             </View>
             <View style={styles.statDivider} />

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+
+    <!--
+      Ce fichier remplace le gabarit HTML par défaut d'Expo, qui déclarait lang="en"
+      sur une application entièrement en français : les lecteurs d'écran prononçaient
+      le texte avec la phonétique anglaise. Tout ce qui est écrit ici doit rester vrai
+      (gratuité, absence de compte, données locales) — c'est la première chose que
+      Google et les réseaux sociaux affichent.
+    -->
+
+    <title>KichtApp — tes aides et tes démarches quand tu pars vivre seul</title>
+    <meta
+      name="description"
+      content="APL, bourse, transport, budget, papiers : KichtApp réunit au même endroit les aides auxquelles tu as droit et les démarches à faire quand tu quittes le domicile familial. Gratuit, sans compte, tes données restent sur ton téléphone."
+    />
+    <meta name="theme-color" content="#0A0A0F" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://kichtappv2.netlify.app/" />
+
+    <!-- Partage sur Instagram, WhatsApp, Snapchat, Discord : sans ces balises, le lien s'affiche nu. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KichtApp" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="KichtApp — tes aides et tes démarches quand tu pars vivre seul" />
+    <meta
+      property="og:description"
+      content="Toutes les aides auxquelles tu as droit et les démarches à faire, réunies au même endroit. Gratuit, sans compte."
+    />
+    <meta property="og:url" content="https://kichtappv2.netlify.app/" />
+    <meta property="og:image" content="https://kichtappv2.netlify.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="KichtApp — aides et démarches pour les jeunes" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KichtApp — tes aides et tes démarches quand tu pars vivre seul" />
+    <meta
+      name="twitter:description"
+      content="Toutes les aides auxquelles tu as droit et les démarches à faire, réunies au même endroit. Gratuit, sans compte."
+    />
+    <meta name="twitter:image" content="https://kichtappv2.netlify.app/og-image.png" />
+
+    <!-- Installation sur l'écran d'accueil, sans passer par un store. -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="KichtApp" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <style id="expo-reset">
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        overflow: hidden;
+        background-color: #0a0a0f;
+      }
+      #root {
+        display: flex;
+        height: 100%;
+        flex: 1;
+      }
+      /* Le fond sombre couvre aussi les encoches et la barre d'adresse iOS. */
+      @supports (padding: env(safe-area-inset-top)) {
+        body {
+          background-color: #0a0a0f;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript>
+      KichtApp a besoin de JavaScript pour fonctionner. Active-le dans les réglages de ton navigateur,
+      puis recharge la page.
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>

@@ -400,7 +400,7 @@ export default function AgendaScreen() {
                     const d = new Date(event.isoDate! + 'T00:00:00');
                     return (
                       <View key={event.id} style={styles.annualItem}>
-                        <Text style={styles.annualEmoji}>{event.emoji}</Text>
+                        <Text style={styles.annualEmoji} aria-hidden>{event.emoji}</Text>
                         <Text style={styles.annualTitle}>{event.title}</Text>
                         <Text style={styles.annualDate}>
                           {d.getDate()} {MONTHS_SHORT[d.getMonth()]}.
@@ -439,7 +439,7 @@ export default function AgendaScreen() {
                   onPress={() => setNewEmoji(em)}
                   aria-label={`Icône ${em}`}
                 >
-                  <Text style={styles.emojiOptionText}>{em}</Text>
+                  <Text style={styles.emojiOptionText} aria-hidden>{em}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   dateGroupTotal: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.danger,
+    color: colors.dangerText,
   },
 
   eventCard: {
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
   eventAmount: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.danger,
+    color: colors.dangerText,
     marginTop: 2,
   },
   eventAmountBudget: {

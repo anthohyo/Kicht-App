@@ -37,7 +37,7 @@ export default function GuideDetailScreen({ route }: Props) {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.emoji}>{guide.emoji}</Text>
+        <Text style={styles.emoji} aria-hidden>{guide.emoji}</Text>
         <Text style={styles.title}>{guide.title}</Text>
         <Text style={styles.summary}>{guide.summary}</Text>
       </View>
@@ -74,7 +74,7 @@ export default function GuideDetailScreen({ route }: Props) {
 
         {finished ? (
           <View style={styles.doneCard}>
-            <Text style={styles.doneEmoji}>🎉</Text>
+            <Text style={styles.doneEmoji} aria-hidden>🎉</Text>
             <Text style={styles.doneText}>Bravo, tu as terminé ce guide !</Text>
           </View>
         ) : (

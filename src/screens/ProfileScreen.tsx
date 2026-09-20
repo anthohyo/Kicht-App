@@ -30,12 +30,6 @@ const HOUSING_TYPE_LABELS: Record<HousingType, string> = {
   foyer: '🏢 Foyer / hébergement social',
 };
 
-const GENDER_LABELS: Record<string, string> = {
-  homme: 'Homme',
-  femme: 'Femme',
-  autre: 'Autre',
-};
-
 const STATUS_OPTIONS: { value: UserStatus; label: string }[] = [
   { value: 'etudiant', label: '🎓 Étudiant·e' },
   { value: 'apprenti', label: '🔧 Alternant·e / Apprenti·e' },
@@ -79,6 +73,7 @@ export default function ProfileScreen() {
 
   // Edit situation states
   const [showEditSituation, setShowEditSituation] = useState(false);
+  const [editAge, setEditAge] = useState('');
   const [editStatus, setEditStatus] = useState<UserStatus>('etudiant');
   const [editSchoolType, setEditSchoolType] = useState<SchoolType>('public');
   const [editHousingType, setEditHousingType] = useState<HousingType>('seul');
@@ -110,6 +105,7 @@ export default function ProfileScreen() {
   // Sync edit states when profile changes
   useEffect(() => {
     if (profile) {
+      setEditAge(String(profile.age ?? ''));
       setEditStatus(profile.status);
       setEditSchoolType(profile.schoolType ?? 'public');
       setEditHousingType(profile.housingType ?? 'seul');
@@ -175,6 +171,10 @@ export default function ProfileScreen() {
     if (profile) {
       const updated: UserProfile = {
         ...profile,
+        age: (() => {
+          const n = parseInt(editAge, 10);
+          return Number.isFinite(n) && n >= 14 && n <= 99 ? n : profile.age;
+        })(),
         status: editStatus,
         schoolType: editStatus === 'etudiant' ? editSchoolType : undefined,
         housingType: editHousingType,
@@ -260,13 +260,13 @@ export default function ProfileScreen() {
         <TouchableOpacity role="button" aria-label="Changer ma photo de profil" onPress={handleAvatarPress} activeOpacity={0.8} style={styles.avatarWrapper}>
           <View style={styles.avatar}>
             {profile.photoUri ? (
-              <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} />
+              <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} alt="Ta photo de profil" />
             ) : (
               <Text style={styles.avatarText}>{profile.firstName.charAt(0).toUpperCase()}</Text>
             )}
           </View>
           <View style={styles.avatarOverlay}>
-            <Text style={styles.avatarOverlayIcon}>📷</Text>
+            <Text style={styles.avatarOverlayIcon} aria-hidden>📷</Text>
           </View>
         </TouchableOpacity>
         <Text style={styles.name}>{profile.firstName}</Text>
@@ -276,17 +276,17 @@ export default function ProfileScreen() {
       {/* Quick actions */}
       <View style={styles.quickActions}>
         <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('Badges')}>
-          <Text style={styles.actionEmoji}>🏆</Text>
+          <Text style={styles.actionEmoji} aria-hidden>🏆</Text>
           <Text style={styles.actionLabel}>Badges</Text>
           {progress && <Text style={styles.actionValue}>{progress.points} pts</Text>}
         </TouchableOpacity>
         <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('MesDocuments')}>
-          <Text style={styles.actionEmoji}>🗂️</Text>
+          <Text style={styles.actionEmoji} aria-hidden>🗂️</Text>
           <Text style={styles.actionLabel}>Mes docs</Text>
           <Text style={styles.actionValue}>N° clés</Text>
         </TouchableOpacity>
         <TouchableOpacity role="button" style={styles.actionBtn} onPress={() => navigation.navigate('Checklist')}>
-          <Text style={styles.actionEmoji}>✅</Text>
+          <Text style={styles.actionEmoji} aria-hidden>✅</Text>
           <Text style={styles.actionLabel}>Mes démarches</Text>
           <Text style={styles.actionValue}>Étape par étape</Text>
         </TouchableOpacity>
@@ -296,7 +296,7 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Aller plus loin</Text>
         <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Courriers')} activeOpacity={0.7}>
-          <Text style={styles.goFurtherEmoji}>✉️</Text>
+          <Text style={styles.goFurtherEmoji} aria-hidden>✉️</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Modèles de courriers</Text>
             <Text style={styles.goFurtherValue}>Prêts à envoyer</Text>
@@ -305,7 +305,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <View style={styles.separator} />
         <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Guides')} activeOpacity={0.7}>
-          <Text style={styles.goFurtherEmoji}>📖</Text>
+          <Text style={styles.goFurtherEmoji} aria-hidden>📖</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Fiches pratiques</Text>
             <Text style={styles.goFurtherValue}>Tout expliqué simplement</Text>
@@ -314,7 +314,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
         <View style={styles.separator} />
         <TouchableOpacity role="button" style={styles.goFurtherRow} onPress={() => navigation.navigate('Explorer')} activeOpacity={0.7}>
-          <Text style={styles.goFurtherEmoji}>🧰</Text>
+          <Text style={styles.goFurtherEmoji} aria-hidden>🧰</Text>
           <View style={styles.goFurtherText}>
             <Text style={styles.goFurtherLabel}>Tous les outils</Text>
             <Text style={styles.goFurtherValue}>Parcours, agenda, quiz, simulateur d'épargne</Text>
@@ -327,7 +327,6 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Informations</Text>
         <InfoRow label="Âge" value={`${profile.age} ans`} />
-        <InfoRow label="Genre" value={GENDER_LABELS[profile.gender]} />
         <InfoRow label="Situation" value={STATUS_LABELS[profile.status]} />
         <InfoRow label="Logement" value={profile.housingType ? HOUSING_TYPE_LABELS[profile.housingType] : 'Non renseigné'} />
         {profile.status === 'etudiant' && (
@@ -383,6 +382,19 @@ export default function ProfileScreen() {
 
         {showEditSituation && (
           <View style={styles.editContainer}>
+            {/* L'âge fait basculer l'éligibilité de plusieurs aides : il doit rester corrigeable. */}
+            <Text style={styles.editFieldLabel}>Ton âge</Text>
+            <TextInput
+              style={styles.apiInput}
+              placeholder="Ton âge"
+              placeholderTextColor={colors.textMuted}
+              value={editAge}
+              onChangeText={(t) => setEditAge(t.replace(/[^0-9]/g, '').slice(0, 2))}
+              keyboardType="number-pad"
+              inputMode="numeric"
+              aria-label="Ton âge en années"
+            />
+            <Text style={styles.editFieldLabel}>Ta situation</Text>
             {STATUS_OPTIONS.map((s) => (
               <TouchableOpacity role="radio" aria-checked={editStatus === s.value}
                 key={s.value}
@@ -543,7 +555,7 @@ export default function ProfileScreen() {
 
         {/* Claude API Key */}
         <TouchableOpacity role="button" style={styles.settingRow} onPress={() => setShowApiInput(!showApiInput)}>
-          <Text style={styles.settingEmoji}>🤖</Text>
+          <Text style={styles.settingEmoji} aria-hidden>🤖</Text>
           <View style={styles.settingText}>
             <Text style={styles.settingTitle}>Chat IA (Claude API)</Text>
             <Text style={styles.settingDesc}>
@@ -587,11 +599,23 @@ export default function ProfileScreen() {
         role="button"
         aria-label="Confidentialité et gestion de mes données"
       >
-        <Text style={styles.privacyEmoji}>🔒</Text>
+        <Text style={styles.privacyEmoji} aria-hidden>🔒</Text>
         <View style={{ flex: 1 }}>
           <Text style={styles.privacyTitle}>Confidentialité</Text>
           <Text style={styles.privacyDesc}>Tes données restent sur ton appareil</Text>
         </View>
+        <Text style={styles.chevron}>›</Text>
+      </TouchableOpacity>
+
+      {/* Mentions légales : obligatoires (LCEN), et exigées par les stores. */}
+      <TouchableOpacity
+        style={styles.legalRow}
+        onPress={() => navigation.navigate('MentionsLegales')}
+        activeOpacity={0.7}
+        role="button"
+        aria-label="Mentions légales et conditions d'utilisation"
+      >
+        <Text style={styles.legalText}>Mentions légales et conditions d'utilisation</Text>
         <Text style={styles.chevron}>›</Text>
       </TouchableOpacity>
 
@@ -622,6 +646,14 @@ const styles = StyleSheet.create({
   privacyEmoji: { fontSize: 20 },
   privacyTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
   privacyDesc: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
+  legalRow: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 14, paddingHorizontal: spacing.md,
+    marginTop: spacing.sm,
+    backgroundColor: colors.card, borderRadius: radius.lg,
+    borderWidth: 1, borderColor: colors.border,
+  },
+  legalText: { flex: 1, fontSize: 14, color: colors.textSecondary },
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.md, paddingBottom: 40 },
   emptyText: { color: colors.textMuted, fontSize: 15 },
@@ -689,7 +721,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16, borderRadius: radius.md, backgroundColor: colors.dangerBg,
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', marginTop: spacing.sm,
   },
-  resetText: { color: colors.danger, fontWeight: '600', fontSize: 15 },
+  resetText: { color: colors.dangerText, fontWeight: '600', fontSize: 15 },
   modifyVilleBtn: {
     marginTop: spacing.sm,
     paddingVertical: 8,

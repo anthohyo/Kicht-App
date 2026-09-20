@@ -84,7 +84,7 @@ export default function ParcoursScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.parcoursHeader}>
-                <Text style={styles.parcoursEmoji}>{parcours.emoji}</Text>
+                <Text style={styles.parcoursEmoji} aria-hidden>{parcours.emoji}</Text>
                 <View style={styles.parcoursHeaderText}>
                   <View style={styles.titleRow}>
                     <Text style={styles.parcoursTitle}>{parcours.title}</Text>
