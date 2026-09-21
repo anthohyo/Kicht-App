@@ -3,13 +3,18 @@
     "name": "KichtApp",
     "slug": "kichtapp",
     "version": "1.0.0",
+    "description": "Les aides et les démarches pour quitter le domicile familial, réunies au même endroit : APL, bourses, garantie Visale, budget, checklists et modèles de courriers. Gratuit, sans compte, sans pub, tes données restent sur ton téléphone.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "primaryColor": "#7C3AED",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.kichtapp.app",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

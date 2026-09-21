@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!--
+      Mentions légales obligatoires en France dès qu'un service est mis à disposition
+      du public en ligne (LCEN art. 6 III). Elles vivaient jusqu'ici derrière un écran
+      de l'application monopage, donc sans adresse à donner à qui les demande.
+
+      Comme la page de confidentialité : aucun script, aucune police distante, aucun
+      appel réseau. Le texte reprend mot pour mot src/screens/MentionsLegalesScreen.tsx,
+      et tests/legal.test.js échoue si les deux divergent.
+    -->
+
+    <title>Mentions légales et conditions d’utilisation — KichtApp</title>
+    <meta
+      name="description"
+      content="Qui édite KichtApp, qui l'héberge, et à quoi sert l'app : un outil d'information gratuit, indépendant de la CAF et du CROUS, dont les montants affichés sont des estimations et non des décisions."
+    />
+    <meta name="theme-color" content="#0A0A0F" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://kichtappv2.netlify.app/mentions-legales.html" />
+
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #0a0a0f;
+        /* Contrastes mesurés sur la carte #14141F, le fond le plus clair de la page :
+           F1F1F6 = 16.2, 9CA3AF = 7.2, 868D99 = 5.5, A78BFA = 6.7. Seuil AA : 4.5. */
+        color: #f1f1f6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-text-size-adjust: 100%;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 20px 16px 56px;
+      }
+      a {
+        color: #a78bfa;
+      }
+      .retour {
+        display: inline-block;
+        margin-bottom: 24px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .retour:hover,
+      .retour:focus {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 26px;
+        line-height: 1.25;
+        font-weight: 800;
+        margin: 0 0 20px;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: 700;
+        color: #868d99;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        margin: 24px 0 8px;
+      }
+      h3 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 6px;
+      }
+      p {
+        margin: 0 0 12px;
+        color: #9ca3af;
+        font-size: 15px;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+      .carte {
+        background: #14141f;
+        border: 1px solid #2a2a40;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      dl {
+        margin: 0;
+      }
+      dl > div {
+        padding: 9px 0;
+      }
+      dl > div + div {
+        border-top: 1px solid #2a2a40;
+      }
+      dt {
+        font-size: 13px;
+        color: #868d99;
+        margin-bottom: 3px;
+      }
+      dd {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .encart {
+        background: rgba(124, 58, 237, 0.1);
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .bouton {
+        display: block;
+        margin-top: 16px;
+        background: #7c3aed;
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 13px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .bouton:hover,
+      .bouton:focus {
+        background: #5b21b6;
+      }
+      .lien-interne {
+        display: block;
+        background: #14141f;
+        border: 1px solid #2a2a40;
+        border-radius: 16px;
+        padding: 16px;
+        color: #f1f1f6;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+      }
+      .lien-interne:hover,
+      .lien-interne:focus {
+        border-color: #3a3a55;
+      }
+      .maj {
+        color: #868d99;
+        font-size: 13px;
+        text-align: center;
+        margin-top: 24px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <a class="retour" href="/">&lsaquo; Retour à KichtApp</a>
+
+      <h1>Mentions légales et conditions d’utilisation</h1>
+
+      <h2>Qui édite KichtApp</h2>
+      <div class="carte">
+        <dl>
+          <div>
+            <dt>Éditeur</dt>
+            <dd>Anthony Bayard</dd>
+          </div>
+          <div>
+            <dt>Directeur de la publication</dt>
+            <dd>Anthony Bayard</dd>
+          </div>
+          <div>
+            <dt>Statut</dt>
+            <dd>Particulier — service gratuit et non commercial</dd>
+          </div>
+          <div>
+            <dt>Contact</dt>
+            <dd>
+              <a href="mailto:anthony.bayard69@gmail.com?subject=KichtApp%20%E2%80%94%20Question"
+                >anthony.bayard69@gmail.com</a
+              >
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <h2>Hébergeur</h2>
+      <div class="carte">
+        <p>
+          Netlify, Inc.<br />
+          101 2nd Street, San Francisco, CA 94105-2239, États-Unis<br />
+          <a href="https://www.netlify.com" rel="noopener noreferrer">netlify.com</a>
+        </p>
+      </div>
+
+      <h2>Ce que KichtApp est</h2>
+      <div class="carte">
+        <p>
+          Un outil d’information et d’estimation, gratuit, qui réunit au même endroit les aides
+          auxquelles tu peux avoir droit et les démarches à faire quand tu quittes le domicile familial.
+        </p>
+        <p>
+          KichtApp est indépendante. Elle n’est affiliée à aucune administration : ni la CAF, ni le CROUS,
+          ni Action Logement, ni une mairie, ni une région. Les noms cités le sont à titre d’information,
+          et appartiennent à leurs propriétaires.
+        </p>
+      </div>
+
+      <h2>Ce qu’elle n’est pas</h2>
+      <div class="carte">
+        <p>
+          Les montants affichés sont des estimations, calculées à partir des barèmes publics à la date
+          indiquée sur chaque aide. Seul l’organisme concerné décide de ce que tu touches vraiment : une
+          estimation ne vaut ni décision, ni promesse, ni droit acquis.
+        </p>
+        <p>
+          KichtApp ne remplace ni un conseiller CAF, ni une assistante sociale, ni un avocat, ni un
+          conseiller en investissement. Les fiches expliquent des règles générales ; elles ne tiennent
+          pas compte de toute ta situation.
+        </p>
+        <p>
+          Avant toute démarche qui t’engage, vérifie auprès de l’organisme. L’éditeur ne peut pas être
+          tenu responsable d’une décision prise sur la seule base d’une estimation affichée ici.
+        </p>
+      </div>
+
+      <h2>C’est gratuit, et ça le reste</h2>
+      <div class="carte">
+        <p>
+          Tout le contenu est accessible à tout le monde : aucun abonnement, aucune option payante,
+          aucun achat intégré, aucune publicité, aucune revente de données.
+        </p>
+        <p>
+          Comme rien n’est vendu, il n’y a ni facture, ni paiement, ni remboursement possible — la
+          question ne se pose pas. Si un financement devient nécessaire un jour, il viendra
+          d’institutions (CROUS, missions locales, mutuelles), pas de toi, et cette page le dira avant
+          tout changement.
+        </p>
+      </div>
+
+      <h2>Fiabilité des informations</h2>
+      <div class="carte">
+        <p>
+          Chaque aide locale affichée porte sa source officielle et la date à laquelle elle a été
+          vérifiée. Une aide dont le montant n’a pas pu être vérifié n’est pas affichée du tout, plutôt
+          que de l’être avec un chiffre incertain.
+        </p>
+        <p>
+          Les barèmes changent souvent, parfois en cours d’année. Si tu vois une information fausse ou
+          périmée, signale-la : c’est corrigé et la date de vérification est mise à jour.
+        </p>
+      </div>
+
+      <h2>Utilisation</h2>
+      <div class="carte">
+        <p>Tu peux utiliser KichtApp librement, pour toi, autant que tu veux, sans créer de compte.</p>
+        <p>
+          Ne sont pas autorisés : détourner le service de son usage, tenter d’en perturber le
+          fonctionnement, ou réutiliser commercialement les fiches et contenus sans accord de l’éditeur.
+          Les données publiques citées restent soumises à leurs propres licences de réutilisation.
+        </p>
+        <p>
+          L’app s’adresse à des jeunes à partir de 16 ans. Elle ne collecte aucune donnée personnelle,
+          donc aucun consentement parental n’est requis ; en dessous de cet âge, parles-en quand même à
+          un adulte autour de toi.
+        </p>
+      </div>
+
+      <h2>Liens vers des sites extérieurs</h2>
+      <div class="carte">
+        <p>
+          L’app renvoie vers des sites publics (caf.fr, ameli.fr, impots.gouv.fr, visale.fr,
+          messervices.etudiant.gouv.fr et d’autres). Une fois là-bas, tu quittes KichtApp : leur contenu
+          et leurs règles ne dépendent pas de nous.
+        </p>
+      </div>
+
+      <h2>Disponibilité</h2>
+      <div class="carte">
+        <p>
+          Le service est fourni tel quel, sans garantie de disponibilité permanente. Il peut être
+          interrompu, modifié ou arrêté. Tes données étant stockées sur ton appareil, elles ne
+          disparaissent pas si le site est indisponible — et tu peux en faire une sauvegarde à tout
+          moment depuis la page Confidentialité.
+        </p>
+      </div>
+
+      <h2>Droit applicable</h2>
+      <div class="carte">
+        <p>
+          Ces conditions sont soumises au droit français. En cas de difficulté, écris d’abord à
+          l’éditeur : c’est plus rapide que n’importe quelle procédure. À défaut d’accord, les tribunaux
+          français sont compétents.
+        </p>
+      </div>
+
+      <div class="encart">
+        <h3>Une information te semble fausse ?</h3>
+        <p>
+          C’est le meilleur service que tu puisses rendre aux autres jeunes qui utilisent l’app.
+          Dis-nous quelle aide et quel montant : c’est vérifié à la source et corrigé.
+        </p>
+        <a
+          class="bouton"
+          href="mailto:anthony.bayard69@gmail.com?subject=KichtApp%20%E2%80%94%20Signaler%20une%20information%20erron%C3%A9e"
+          >Signaler une erreur</a
+        >
+      </div>
+
+      <a class="lien-interne" href="/confidentialite.html" rel="privacy-policy"
+        >Politique de confidentialité et tes données &rsaquo;</a
+      >
+
+      <p class="maj">Dernière mise à jour : 20 septembre 2026</p>
+    </main>
+  </body>
+</html>

@@ -76,9 +76,21 @@
   </head>
 
   <body>
+    <!--
+      Les deux pages légales sont liées ici plutôt que dans le corps de la page :
+      #root occupe toute la hauteur et body est en overflow:hidden, donc un lien
+      ajouté après lui serait hors écran et inatteignable. Dans <noscript>, il ne
+      s'affiche que là où l'app ne peut pas tourner, et reste présent dans le HTML
+      brut pour les robots qui n'exécutent pas JavaScript. La découverte par les
+      moteurs passe surtout par sitemap.xml.
+    -->
     <noscript>
       KichtApp a besoin de JavaScript pour fonctionner. Active-le dans les réglages de ton navigateur,
       puis recharge la page.
+      <p>
+        <a href="/confidentialite.html" rel="privacy-policy">Politique de confidentialité</a> —
+        <a href="/mentions-legales.html" rel="terms-of-service">Mentions légales</a>
+      </p>
     </noscript>
     <div id="root"></div>
   </body>

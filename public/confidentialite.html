@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!--
+      Page autonome, et c'est le but : App Store Connect exige une URL de politique
+      de confidentialité qui s'ouvre seule, sans JavaScript et sans navigation dans
+      l'app (App Store Review Guidelines 5.1.1(i)). Un écran interne d'une application
+      monopage ne répond pas à cette exigence, faute d'adresse propre.
+
+      Aucun script, aucune police distante, aucune image : cette page ne peut donc
+      déposer ni cookie ni traceur. Ce serait contradictoire de promettre l'absence
+      de traceurs sur une page qui en chargerait.
+
+      Le texte reprend mot pour mot src/screens/ConfidentialiteScreen.tsx. Si l'un
+      diverge de l'autre, tests/legal.test.js échoue.
+    -->
+
+    <title>Politique de confidentialité — KichtApp</title>
+    <meta
+      name="description"
+      content="KichtApp n'a pas de serveur : ton profil, ton budget et tes démarches restent sur ton appareil. Aucun compte, aucun traceur, aucune publicité. Ce que l'app enregistre, et comment tout effacer."
+    />
+    <meta name="theme-color" content="#0A0A0F" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://kichtappv2.netlify.app/confidentialite.html" />
+
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #0a0a0f;
+        /* Contrastes mesurés sur la carte #14141F, le fond le plus clair de la page :
+           F1F1F6 = 16.2, 9CA3AF = 7.2, 868D99 = 5.5, A78BFA = 6.7. Seuil AA : 4.5. */
+        color: #f1f1f6;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-text-size-adjust: 100%;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 20px 16px 56px;
+      }
+      a {
+        color: #a78bfa;
+      }
+      .retour {
+        display: inline-block;
+        margin-bottom: 24px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .retour:hover,
+      .retour:focus {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 26px;
+        line-height: 1.25;
+        font-weight: 800;
+        margin: 0 0 10px;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: 700;
+        color: #868d99;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        margin: 24px 0 8px;
+      }
+      h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin: 0 0 8px;
+      }
+      p {
+        margin: 0 0 12px;
+        color: #9ca3af;
+        font-size: 15px;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+      .hero {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+      .carte {
+        background: #14141f;
+        border: 1px solid #2a2a40;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 24px;
+      }
+      .carte--alerte {
+        border-color: rgba(245, 158, 11, 0.35);
+      }
+      .carte--alerte h3 {
+        color: #f59e0b;
+      }
+      dl {
+        margin: 0;
+      }
+      dl > div {
+        padding: 10px 0;
+      }
+      dl > div + div {
+        border-top: 1px solid #2a2a40;
+      }
+      dt {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      dd {
+        margin: 0;
+        color: #9ca3af;
+        font-size: 14px;
+      }
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      li {
+        display: flex;
+        gap: 10px;
+        padding: 7px 0;
+        color: #9ca3af;
+        font-size: 15px;
+      }
+      li::before {
+        content: "✓";
+        color: #10b981;
+        font-weight: 800;
+        flex: none;
+      }
+      .etat {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #2a2a40;
+        color: #f1f1f6;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .pied {
+        text-align: center;
+        padding-top: 8px;
+      }
+      .pied p {
+        margin-bottom: 6px;
+      }
+      .maj {
+        color: #868d99;
+        font-size: 13px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main>
+      <a class="retour" href="/">&lsaquo; Retour à KichtApp</a>
+
+      <h1>Tes données ne quittent pas ton appareil</h1>
+      <div class="hero">
+        <p>
+          KichtApp n’a pas de serveur. Tout ce que tu saisis — ton salaire, ton loyer, ta situation —
+          reste enregistré sur ce téléphone. Nous n’y avons pas accès, et personne d’autre non plus.
+        </p>
+      </div>
+
+      <h2>Ce qui est enregistré ici</h2>
+      <div class="carte">
+        <dl>
+          <div>
+            <dt>Ton profil</dt>
+            <dd>Prénom, âge, situation, ville, logement, revenus et dépenses.</dd>
+          </div>
+          <div>
+            <dt>Ton budget</dt>
+            <dd>Les revenus et dépenses que tu saisis, mois par mois.</dd>
+          </div>
+          <div>
+            <dt>Tes démarches</dt>
+            <dd>Les étapes que tu coches et ta progression.</dd>
+          </div>
+          <div>
+            <dt>Tes conversations</dt>
+            <dd>L’historique de ce que tu as demandé au Parrain.</dd>
+          </div>
+          <div>
+            <dt>Ton agenda</dt>
+            <dd>Les échéances et rappels que tu ajoutes.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <h2>Ce que l’app ne fait pas</h2>
+      <div class="carte">
+        <ul>
+          <li>Aucun compte, aucune inscription, aucune adresse e-mail demandée.</li>
+          <li>Aucun traceur, aucune statistique d’usage, aucun cookie publicitaire.</li>
+          <li>Aucune revente ni partage de tes données — il n’y a rien à vendre, rien ne sort d’ici.</li>
+          <li>Aucune publicité.</li>
+          <li>
+            Aucun service de notification extérieur : tes rappels d’échéances sont programmés par ton
+            téléphone lui-même.
+          </li>
+        </ul>
+      </div>
+
+      <h2>La seule exception</h2>
+      <div class="carte carte--alerte">
+        <h3>Si tu actives le Parrain IA</h3>
+        <p>
+          Par défaut, Le Parrain répond hors ligne : ses réponses sont écrites à l’avance dans l’app,
+          rien n’est envoyé nulle part.
+        </p>
+        <p>
+          Si tu ajoutes ta propre clé API dans les réglages, alors — et seulement alors — tes questions
+          et ton profil (situation, revenus, logement) sont envoyés à Anthropic pour générer la réponse.
+          Tu utilises ton propre compte : c’est leur politique de confidentialité qui s’applique à ces
+          échanges, et leurs serveurs se trouvent hors de l’Union européenne (États-Unis).
+        </p>
+        <p>
+          Ta clé est enregistrée sur cet appareil comme le reste, en clair. Évite de la coller sur un
+          téléphone ou un ordinateur partagé, et supprime-la depuis ton profil quand tu ne t’en sers plus.
+        </p>
+        <p class="etat">
+          Tant que tu n’as pas collé ta clé, c’est désactivé : aucune donnée n’est envoyée. L’app
+          t’indique l’état exact sur ton appareil, page Confidentialité.
+        </p>
+      </div>
+
+      <h2>Liens vers les sites officiels</h2>
+      <div class="carte">
+        <p>
+          L’app te renvoie vers caf.fr, ameli.fr, impots.gouv.fr, visale.fr et d’autres sites publics.
+          Une fois là-bas, tu quittes KichtApp : ce sont leurs propres règles de confidentialité qui
+          s’appliquent. Nous ne leur transmettons rien à ton sujet.
+        </p>
+      </div>
+
+      <h2>Changer de téléphone sans rien perdre</h2>
+      <div class="carte">
+        <p>
+          Tes données n’existent que sur ton appareil. Pour les retrouver ailleurs, crée une sauvegarde et
+          garde-la toi-même — dans un mail à ton adresse, tes notes ou ton cloud. Elle ne passe par aucun
+          serveur, et ta clé API n’y figure jamais.
+        </p>
+        <p>
+          Les boutons « Créer une sauvegarde » et « Restaurer une sauvegarde » sont dans l’app, page
+          Confidentialité.
+        </p>
+      </div>
+
+      <h2>Tu gardes le contrôle</h2>
+      <div class="carte">
+        <p>
+          Tu peux effacer l’intégralité de tes données à tout moment, sans demander l’autorisation à
+          personne. La suppression est immédiate et définitive — il n’existe aucune copie ailleurs.
+        </p>
+        <p>
+          Le bouton « Effacer toutes mes données » est dans l’app, page Confidentialité. Désinstaller
+          l’app efface tout aussi sûrement.
+        </p>
+      </div>
+
+      <h2>Et les cookies ?</h2>
+      <div class="carte">
+        <p>
+          KichtApp ne dépose aucun cookie. Sur la version web, tes réponses sont rangées dans le
+          stockage local de ton navigateur : ça ressemble à un cookie, sauf que rien n’est envoyé
+          à un serveur — c’est le même téléphone qui écrit et qui relit.
+        </p>
+        <p>
+          Ce stockage sert uniquement à faire fonctionner ce que tu as demandé : retrouver ton profil,
+          ton budget et tes démarches quand tu reviens. La réglementation dispense ce type de stockage
+          strictement nécessaire de bandeau de consentement — c’est pour ça que tu n’en vois pas.
+          Aucun traceur publicitaire, aucune mesure d’audience, aucun partage avec un tiers.
+        </p>
+      </div>
+
+      <h2>Tes droits</h2>
+      <div class="carte">
+        <p>
+          Le RGPD te donne un droit d’accès, de rectification, d’effacement et de portabilité sur tes
+          données. Comme elles ne sortent pas de ton appareil, tu les exerces toi-même, tout de suite,
+          sans avoir à écrire à qui que ce soit :
+        </p>
+        <ul>
+          <li>Accès et rectification : tout est affiché et modifiable dans ton profil.</li>
+          <li>Portabilité : « Créer une sauvegarde » t’en donne une copie dans un fichier lisible.</li>
+          <li>Effacement : « Effacer toutes mes données » supprime tout, immédiatement.</li>
+        </ul>
+        <p style="margin-top: 12px">
+          Anthony Bayard, qui édite l’app, n’a accès à aucune de tes données : il ne peut ni les lire, ni les
+          corriger, ni les supprimer à ta place. Elles sont conservées tant que tu les gardes, et
+          disparaissent quand tu les effaces ou quand tu désinstalles l’app.
+        </p>
+        <p>
+          Si tu estimes que tes droits ne sont pas respectés, tu peux saisir la CNIL :
+          <a href="https://www.cnil.fr/fr/plaintes" rel="noopener noreferrer">cnil.fr</a>
+        </p>
+      </div>
+
+      <div class="pied">
+        <p>Une question sur tes données ?</p>
+        <p>
+          <a href="mailto:anthony.bayard69@gmail.com?subject=KichtApp%20%E2%80%94%20Confidentialit%C3%A9"
+            >anthony.bayard69@gmail.com</a
+          >
+        </p>
+        <p>
+          <a href="/mentions-legales.html" rel="terms-of-service"
+            >Mentions légales et conditions d’utilisation</a
+          >
+        </p>
+        <p class="maj">Dernière mise à jour : 20 septembre 2026</p>
+      </div>
+    </main>
+  </body>
+</html>

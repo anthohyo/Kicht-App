@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Rappelées explicitement : ces deux pages doivent rester accessibles sans
+# JavaScript et sans blocage, c'est l'URL de politique de confidentialité
+# donnée à App Store Connect qui en dépend.
+Allow: /confidentialite.html
+Allow: /mentions-legales.html
+
 Sitemap: https://kichtappv2.netlify.app/sitemap.xml
