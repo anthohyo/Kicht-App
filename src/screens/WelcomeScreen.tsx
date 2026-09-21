@@ -65,19 +65,20 @@ export default function WelcomeScreen({ navigation }: Props) {
         ))}
 
         {/* Le chiffre qui justifie l'app.
-            Ici se trouvait un témoignage inventé (« Inès, 22 ans ») : un avis
-            fabriqué présenté comme réel est interdit, et celui-ci citait en plus
-            l'aide au permis, supprimée en février 2026. Tant qu'aucun utilisateur
-            réel n'a donné son accord pour être cité, on s'en tient à un fait sourcé. */}
+            Deux versions ont déjà été écartées ici : un témoignage inventé
+            (« Inès, 22 ans »), interdit parce que fabriqué, puis le non-recours au
+            RSA — exact, mais hors sujet pour le public visé, puisqu'un étudiant de
+            18 ans n'y a pas droit avant 25 ans. Le motif du non-recours, lui, vaut
+            pour l'APL et les bourses comme pour le reste. */}
         <View style={styles.proofCard}>
-          <Text style={styles.proofChiffre}>1 foyer sur 3</Text>
+          <Text style={styles.proofChiffre}>4 personnes sur 10</Text>
           <Text style={styles.proofText}>
-            qui a droit au RSA ne le demande pas. Le premier motif n'est pas l'orgueil :
-            c'est qu'on ne sait pas qu'on y a droit. C'est exactement ce que cette app
-            cherche à réparer.
+            qui ne demandent pas une aide ne le font pas par fierté ni par flemme :
+            elles ignorent simplement qu'elle existe. C'est exactement ce que cette
+            app répare — elle te dit ce qui te concerne, toi.
           </Text>
           <Text style={styles.proofAuthor}>
-            Source : DREES, « Non-recours au RSA », fin 2021 (33 à 37 % des foyers éligibles)
+            Source : DREES, baromètre d'opinion 2021 — Études et Résultats n° 1263, avril 2023
           </Text>
         </View>
 
