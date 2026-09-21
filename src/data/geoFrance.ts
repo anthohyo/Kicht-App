@@ -237,6 +237,13 @@ export interface Commune {
   ville: string;
   departement: string;
   region: string;
+  /**
+   * Code de l'intercommunalité, renseigné uniquement pour les métropoles dont
+   * l'app suit une aide. C'est le bon territoire pour un réseau de transport :
+   * l'abonnement TCL vaut dans toute la Métropole de Lyon — Villeurbanne,
+   * Vénissieux, Bron — mais pas à Villefranche-sur-Saône, pourtant dans le 69.
+   */
+  epci?: string;
   /** Nombre de communes françaises portant le même nom, celle-ci comprise. */
   homonymes?: number;
 }
@@ -246,17 +253,19 @@ export interface Commune {
  * parcourir 35 000 communes au démarrage retarderait le premier écran pour
  * un utilisateur qui ne saisira peut-être jamais sa ville.
  */
-let parNom: Map<string, { nom: string; dept: string; pop: number }[]> | null = null;
-let parCodePostal: Map<string, { nom: string; dept: string; pop: number }> | null = null;
+interface Entree { nom: string; dept: string; pop: number; epci: string }
+
+let parNom: Map<string, Entree[]> | null = null;
+let parCodePostal: Map<string, Entree> | null = null;
 
 function construireIndex(): void {
   if (parNom) return;
   parNom = new Map();
   parCodePostal = new Map();
   for (const ligne of COMMUNES_BRUT.split('~')) {
-    const [nom, cp, dept, pop] = ligne.split('|');
+    const [nom, cp, dept, pop, epci] = ligne.split('|');
     if (!nom || !dept) continue;
-    const entree = { nom, dept, pop: parseInt(pop, 10) || 0 };
+    const entree: Entree = { nom, dept, pop: parseInt(pop, 10) || 0, epci: epci || '' };
     const cle = normalize(nom);
     const liste = parNom.get(cle);
     if (liste) liste.push(entree);
@@ -268,10 +277,26 @@ function construireIndex(): void {
   }
 }
 
-function versCommune(e: { nom: string; dept: string }, homonymes: number): Commune | null {
+function versCommune(e: Entree, homonymes: number): Commune | null {
   const region = REGION_PAR_DEPARTEMENT[e.dept];
   if (!region) return null;
-  return { ville: e.nom, departement: e.dept, region, homonymes };
+  return { ville: e.nom, departement: e.dept, region, homonymes, epci: e.epci || undefined };
+}
+
+/**
+ * Intercommunalité d'une commune déjà enregistrée dans un profil.
+ *
+ * Passe par le nom et le département plutôt que par un champ stocké : les
+ * profils créés avant l'ajout des intercommunalités continuent ainsi de
+ * bénéficier du bon périmètre, sans migration ni nouvelle question.
+ */
+export function epciDe(ville?: string, departement?: string): string | undefined {
+  if (!ville || !departement) return undefined;
+  construireIndex();
+  const candidats = parNom!.get(normalize(ville));
+  if (!candidats) return undefined;
+  const exact = candidats.find((c) => c.dept === departement);
+  return exact && exact.epci ? exact.epci : undefined;
 }
 
 /**
@@ -291,17 +316,20 @@ export function detectGeo(input: string): Commune | null {
 
   // 1. Table curatée d'abord : elle porte les arrondissements de Paris, Lyon et
   // Marseille, et garantit l'orthographe attendue par les aides locales.
+  const depuisTableCuratee = (entry: GeoEntry): Commune => ({
+    ville: entry.ville,
+    departement: entry.departement,
+    region: entry.region,
+    epci: epciDe(entry.ville, entry.departement),
+  });
+
   if (/^\d{5}$/.test(normalized)) {
     for (const entry of GEO_FRANCE) {
-      if (entry.codePostal.includes(normalized)) {
-        return { ville: entry.ville, departement: entry.departement, region: entry.region };
-      }
+      if (entry.codePostal.includes(normalized)) return depuisTableCuratee(entry);
     }
   } else {
     for (const entry of GEO_FRANCE) {
-      if (normalize(entry.ville) === normalized) {
-        return { ville: entry.ville, departement: entry.departement, region: entry.region };
-      }
+      if (normalize(entry.ville) === normalized) return depuisTableCuratee(entry);
     }
   }
 
@@ -324,7 +352,7 @@ export function detectGeo(input: string): Commune | null {
 
   if (normalized.length < 3) return null;
 
-  let meilleur: { nom: string; dept: string; pop: number } | null = null;
+  let meilleur: Entree | null = null;
   for (const liste of parNom!.values()) {
     for (const e of liste) {
       if (!normalize(e.nom).startsWith(normalized)) continue;

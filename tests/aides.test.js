@@ -152,3 +152,55 @@ test('un étudiant francilien hors Paris voit le Pass Navigo', () => {
   assert.ok(!ids.includes('faj-paris'), 'le FAJ de Paris ne doit pas apparaître dans le 94');
   assert.ok(!ids.includes('aide-urgence-crous-paris'), 'le CROUS de Paris ne couvre pas le Val-de-Marne');
 });
+
+// Les réseaux de transport suivent le ressort d'une métropole, pas un département.
+// Rattachés au département, ils s'affichaient à Villefranche-sur-Saône ou à
+// Dunkerque, que ces réseaux ne desservent pas — et l'app envoyait des jeunes
+// demander un abonnement qui n'existe pas chez eux.
+const transportDe = (saisie) => {
+  const g = detectGeo(saisie);
+  if (!g) return null;
+  return getAidesLocales(g.ville, g.departement, g.region, 'etudiant')
+    .filter((a) => a.epcis && a.epcis.length)
+    .map((a) => a.id);
+};
+
+test('une aide de métropole couvre toutes ses communes', () => {
+  assert.deepEqual(transportDe('Villeurbanne'), ['tcl-tarif-reduit']);
+  assert.deepEqual(transportDe('Vénissieux'), ['tcl-tarif-reduit']);
+  assert.deepEqual(transportDe('Saint-Herblain'), ['naolib-jeune']);
+  assert.deepEqual(transportDe('Roubaix'), ['carte-avantage-mel']);
+});
+
+test('une aide de métropole ne déborde pas sur le reste du département', () => {
+  // Contrôle par identifiant, et non sur les seules aides intercommunales :
+  // sinon un retour à une portée départementale passerait inaperçu ici.
+  const idsDe = (saisie) => {
+    const g = detectGeo(saisie);
+    return g ? getAidesLocales(g.ville, g.departement, g.region, 'etudiant').map((a) => a.id) : [];
+  };
+  // Même département que Lyon, mais hors Métropole de Lyon : pas de réseau TCL.
+  assert.ok(!idsDe('Villefranche-sur-Saône').includes('tcl-tarif-reduit'));
+  // Nord, mais réseau DK'Bus et non ilévia.
+  assert.ok(!idsDe('Dunkerque').includes('carte-avantage-mel'));
+  // Loire-Atlantique, hors Nantes Métropole.
+  assert.ok(!idsDe('Ancenis-Saint-Géréon').includes('naolib-jeune'));
+  // Hérault, hors Montpellier Méditerranée Métropole.
+  assert.ok(!idsDe('Béziers').includes('tam-etudiant'));
+});
+
+test('chaque aide intercommunale cible une intercommunalité réellement connue', () => {
+  const connues = new Set();
+  for (const ligne of require('../.test-build/src/data/communes.js').COMMUNES_BRUT.split('~')) {
+    const epci = ligne.split('|')[4];
+    if (epci) connues.add(epci);
+  }
+  for (const aide of AIDES_LOCALES.filter((a) => a.epcis && a.epcis.length)) {
+    for (const code of aide.epcis) {
+      assert.ok(connues.has(code), `${aide.id} vise l'intercommunalité ${code}, absente des communes`);
+    }
+    // Sinon le filtre par intercommunalité serait court-circuité par le département.
+    assert.ok(!aide.departements, `${aide.id} garde une portée départementale qui annule son périmètre`);
+    assert.ok(!aide.villes, `${aide.id} garde une portée communale qui annule son périmètre`);
+  }
+});

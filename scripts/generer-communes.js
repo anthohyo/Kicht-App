@@ -15,6 +15,29 @@ const path = require('path');
 
 const API = 'https://geo.api.gouv.fr';
 
+/**
+ * Intercommunalités dont on a besoin pour rattacher une aide à son vrai
+ * territoire. Un abonnement de transport n'est ni communal ni départemental :
+ * il couvre le ressort de la métropole. Rattaché au département, l'abonnement
+ * TCL s'affichait jusqu'à Villefranche-sur-Saône, que le réseau ne dessert pas.
+ *
+ * Seules ces intercommunalités sont écrites dans le fichier généré : stocker le
+ * code EPCI des 34 964 communes ajouterait 350 Ko pour une information dont
+ * l'app ne se sert pas.
+ */
+const EPCI_UTILES = new Set([
+  '244400404', // Nantes Métropole — réseau Naolib
+  '243300316', // Bordeaux Métropole — réseau TBM
+  '200046977', // Métropole de Lyon — réseau TCL
+  '243100518', // Toulouse Métropole — réseau Tisséo
+  '243400017', // Montpellier Méditerranée Métropole — réseau TaM
+  '200093201', // Métropole Européenne de Lille — réseau ilévia
+  '246700488', // Eurométropole de Strasbourg — réseau CTS
+  // Aix-Marseille-Provence est volontairement absente : la métropole compte
+  // plusieurs réseaux (RTM à Marseille, Aix en Bus à Aix), donc l'abonnement
+  // RTM ne s'applique pas à ses 92 communes.
+]);
+
 async function json(url) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`${url} → HTTP ${r.status}`);
@@ -23,7 +46,7 @@ async function json(url) {
 
 (async () => {
   const [communes, regions] = await Promise.all([
-    json(`${API}/communes?fields=nom,codesPostaux,codeDepartement,codeRegion,population&format=json`),
+    json(`${API}/communes?fields=nom,codesPostaux,codeDepartement,codeRegion,population,codeEpci&format=json`),
     json(`${API}/regions`),
   ]);
 
@@ -40,14 +63,19 @@ async function json(url) {
   // une douzaine de communes. À défaut de demander, on retient la plus peuplée,
   // et l'app affiche le département pour que l'utilisateur puisse corriger.
   const table = retenues
-    .map((c) => `${c.nom}|${c.codesPostaux[0]}|${c.codeDepartement}|${c.population || 0}`)
+    .map((c) => {
+      const epci = EPCI_UTILES.has(c.codeEpci) ? c.codeEpci : '';
+      return `${c.nom}|${c.codesPostaux[0]}|${c.codeDepartement}|${c.population || 0}|${epci}`;
+    })
     .join('~');
+  const couvertes = retenues.filter((c) => EPCI_UTILES.has(c.codeEpci)).length;
+  console.log(`${couvertes} communes rattachées à une intercommunalité suivie`);
 
   const sortie = `// Fichier généré par scripts/generer-communes.js — NE PAS ÉDITER À LA MAIN.
 // Source : API Découpage administratif, geo.api.gouv.fr (données INSEE).
 // ${retenues.length} communes · ${Object.keys(regionParDept).length} départements · généré le ${process.argv[2] || 'date non fournie'}
 //
-// Format compact « nom|code postal|département|population », séparé par ~ : un tableau
+// Format compact « nom|code postal|département|population|intercommunalité », séparé par ~ : un tableau
 // d'objets pèserait trois fois plus lourd dans le bundle pour la même information.
 
 export const COMMUNES_BRUT = ${JSON.stringify(table)};

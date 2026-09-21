@@ -1,3 +1,4 @@
+import { epciDe } from './geoFrance';
 export interface AideLocale {
   id: string;
   nom: string;
@@ -25,6 +26,13 @@ export interface AideLocale {
    */
   aVerifier?: boolean;
   villes?: string[];
+  /**
+   * Codes des intercommunalités concernées. À utiliser pour tout ce qui suit le
+   * ressort d'une métropole — au premier chef les réseaux de transport. Une
+   * aide portant ce champ n'est proposée QUE dans ces intercommunalités : c'est
+   * plus juste qu'un département, qui débordait largement le réseau réel.
+   */
+  epcis?: string[];
   departements?: string[];
   regions?: string[];
   statuts?: string[];
@@ -40,8 +48,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'Réseau tram, bus et navibus de Nantes Métropole pour les moins de 26 ans. La formule illimitée est un abonnement sur 12 mois à 255 € — environ 21 € par mois, contre 40 € au mois par mois. Et regarde absolument la tarification solidaire, calculée sur ton quotient familial : GRATUIT sous 350 €, 25,50 € de 351 à 500 €, 127,50 € de 501 à 600 €. Beaucoup de jeunes paient plein tarif sans l\'avoir demandée.',
     demarche: 'naolib.fr',
     eligibilite: 'eligible',
-    villes: ['nantes'],
-    departements: ['44'],
+    // Le réseau dessert Nantes Métropole, pas le département entier.
+    epcis: ['244400404'],
     regions: ['Pays de la Loire'],
     source: 'https://data.nantesmetropole.fr/explore/dataset/244400404_transports-en-commun-naolib-tarifs-01072026/',
     verifieLe: '2026-09-17',
@@ -86,8 +94,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'Bordeaux Métropole propose un Pass Jeune à tarif réduit de 11 à 27 ans, en formule mensuelle ou annuelle, sur le tram, le bus et le Bato. C\'est l\'âge qui compte, pas le statut étudiant. Le prix a évolué au 1er juillet et nous n\'avons pas pu le confirmer sur une source officielle : vérifie-le sur la boutique TBM avant de souscrire.',
     demarche: 'infotbm.com',
     eligibilite: 'eligible',
-    villes: ['bordeaux'],
-    departements: ['33'],
+    // Le réseau dessert Bordeaux Métropole, pas le département entier.
+    epcis: ['243300316'],
     regions: ['Nouvelle-Aquitaine'],
     source: 'https://www.infotbm.com/fr/media/pass-jeune-11-27ans',
     verifieLe: '2026-09-17',
@@ -222,8 +230,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'À Lyon, le tarif réduit dépend de ton âge, pas de ton statut : de 18 à 25 ans, l\'abonnement est à 26 €/mois pour les zones 1 et 2, 35 € toutes zones. En formule 12 mois payée d\'un coup, c\'est 260 € (zones 1-2), soit environ 21,70 € par mois. Tu peux aussi payer par prélèvement mensuel sans engagement, avec 2 mois offerts chaque année. Étudiant de 26 ou 27 ans : une offre dédiée existe.',
     demarche: 'tcl.fr',
     eligibilite: 'peut-etre',
-    villes: ['lyon'],
-    departements: ['69'],
+    // Le réseau dessert Métropole de Lyon, pas le département entier.
+    epcis: ['200046977'],
     regions: ['Auvergne-Rhône-Alpes'],
     source: 'https://www.tcl.fr/titres-et-tarifs/tous-les-titres-et-abonnements',
     verifieLe: '2026-09-17',
@@ -362,8 +370,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'Sur le réseau Tisséo, un étudiant de 20 à 25 ans paie 16 € les 31 jours ou 169,60 € à l\'année, au lieu de 59 € et 625,40 € au plein tarif. Boursier de 11 à 25 ans : 12,80 € les 31 jours. Jusqu\'à 19 ans, le tarif jeune est le même que le tarif étudiant. Et si tu as entre 20 et 25 ans sans être étudiant, l\'abonnement annuel reste réduit, à 198,20 €.',
     demarche: 'tisseo.fr',
     eligibilite: 'eligible',
-    villes: ['toulouse'],
-    departements: ['31'],
+    // Le réseau dessert Toulouse Métropole, pas le département entier.
+    epcis: ['243100518'],
     regions: ['Occitanie'],
     source: 'https://eboutique.tisseo.fr/fr/produits/annuel-niveau-3-etudiants-20-25ans',
     verifieLe: '2026-09-17',
@@ -420,8 +428,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'Le réseau TaM (tram + bus) est entièrement gratuit pour tous les habitants des 31 communes de Montpellier Méditerranée Métropole, depuis décembre 2023. Il te faut juste demander le Pass gratuité nominatif : pièce d\'identité, photo et justificatif de domicile à ton nom, via l\'appli M\'Ticket, la boutique TaM ou un Espace Mobilité. À renouveler chaque année. Si tu n\'habites pas la métropole, il existe des abonnements réduits pour les moins de 26 ans.',
     demarche: 'montpellier-mobilite.fr',
     eligibilite: 'eligible',
-    villes: ['montpellier'],
-    departements: ['34'],
+    // Le réseau dessert Montpellier Méditerranée Métropole, pas le département entier.
+    epcis: ['243400017'],
     regions: ['Occitanie'],
     source: 'https://montpellier-mobilite.fr/tarifs-de-transport',
     verifieLe: '2026-08-25',
@@ -450,8 +458,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'À Lille, l\'abonnement des 4-25 ans dépend de ton quotient familial CAF. Au tarif standard : 33,40 € au mois, ou 28,65 €/mois en formule 10 mois ou annuelle. Avec un QF sous 810 €, les tarifs sociaux descendent à 14,32 €/mois (QF de 608 à 810 €), 8,54 € (457 à 607 €) et 3,60 € (jusqu\'à 456 €) en formule annuelle. L\'écart atteint environ 300 € sur l\'année pour le même service — fais calculer ton quotient avant de souscrire. Les abonnements à l\'année incluent V\'lille gratuitement.',
     demarche: 'ilevia.fr',
     eligibilite: 'eligible',
-    villes: ['lille'],
-    departements: ['59'],
+    // Le réseau dessert Métropole Européenne de Lille, pas le département entier.
+    epcis: ['200093201'],
     regions: ['Hauts-de-France'],
     source: 'https://www.ilevia.fr/cms/institutionnel/les-offres-4-25-ans',
     verifieLe: '2026-09-17',
@@ -577,8 +585,8 @@ export const AIDES_LOCALES: AideLocale[] = [
     description: 'À Strasbourg, le tarif dépend de ton âge, pas de ton statut : de 18 à 25 ans, l\'abonnement est à 28 €/mois ou 280 €/an, contre 56 € à partir de 26 ans. Surtout, la tarification solidaire de l\'Eurométropole le fait tomber à 13,60 €/mois pour un boursier échelon 1-2, 7,30 € échelon 3-4 et 3,40 € échelon 5-7 — même chose selon ton quotient familial CAF s\'il est sous 795 €. Elle ne s\'applique pas d\'office : il faut la demander. En stage ou en alternance, ton employeur prend en charge au moins la moitié.',
     demarche: 'cts-strasbourg.fr',
     eligibilite: 'eligible',
-    villes: ['strasbourg'],
-    departements: ['67'],
+    // Le réseau dessert Eurométropole de Strasbourg, pas le département entier.
+    epcis: ['246700488'],
     regions: ['Grand Est'],
     source: 'https://www.cts-strasbourg.eu/en/buy/our-tickets/regular-tickets/reduced-fare-subscription/',
     verifieLe: '2026-09-17',
@@ -627,6 +635,7 @@ export function getAidesLocales(
   if (!ville && !departement && !region) return [];
 
   const villeLower = ville?.toLowerCase();
+  const epci = epciDe(ville, departement);
 
   const result: AideLocale[] = [];
   const seen = new Set<string>();
@@ -643,6 +652,17 @@ export function getAidesLocales(
 
     const hasVilleScope = !!aide.villes?.length;
     const hasDeptScope = !!aide.departements?.length;
+    const hasEpciScope = !!aide.epcis?.length;
+
+    // Une aide de métropole ne déborde jamais sur le reste du département :
+    // son périmètre est exactement la liste d'intercommunalités déclarée.
+    if (hasEpciScope) {
+      if (epci && aide.epcis!.includes(epci) && !seen.has(aide.id)) {
+        seen.add(aide.id);
+        result.push(aide);
+      }
+      continue;
+    }
 
     const matchesVille = villeLower && hasVilleScope && aide.villes!.includes(villeLower);
     const matchesDept = departement && hasDeptScope && aide.departements!.includes(departement);
