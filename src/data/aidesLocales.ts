@@ -136,8 +136,10 @@ export const AIDES_LOCALES: AideLocale[] = [
     eligibilite: 'eligible',
     source: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-imagine-r-etudiant',
     verifieLe: '2026-08-25',
-    villes: ['paris'],
-    departements: ['75'],
+    // Portée RÉGIONALE et non parisienne : le forfait couvre toutes les zones
+    // d'Île-de-France. Restreint à Paris, il disparaissait pour un étudiant de
+    // Gentilly, de Montreuil ou de Cergy — soit la grande majorité des 12 millions
+    // de Franciliens, qui y ont pourtant droit.
     regions: ['Île-de-France'],
     statuts: ['etudiant'],
   },

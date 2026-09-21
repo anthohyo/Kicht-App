@@ -101,3 +101,54 @@ test('le remboursement transport par l\'employeur n\'est promis qu\'à qui a un 
   const transport = simulerAides(malik).find((a) => a.id === 'transport');
   assert.doesNotMatch(transport.name, /employeur/);
 });
+
+// Une base de 41 grandes villes laissait invisible toute personne habitant
+// ailleurs : à Gentilly (20 000 habitants, collée à Paris), l'app répondait
+// « Aucune ville trouvée » et n'affichait plus aucune aide locale, alors que
+// le Val-de-Marne et l'Île-de-France en proposent.
+const { detectGeo } = require('../.test-build/src/data/geoFrance.js');
+
+test('une commune quelconque est résolue avec son vrai département', () => {
+  const gentilly = detectGeo('Gentilly');
+  assert.deepEqual(
+    { ville: gentilly.ville, departement: gentilly.departement, region: gentilly.region },
+    { ville: 'Gentilly', departement: '94', region: 'Île-de-France' }
+  );
+  // Surtout pas de rattachement automatique à la grande ville voisine : Gentilly
+  // n'est pas dans le 75, et les aides propres à la Ville de Paris n'y ouvrent pas droit.
+  assert.notEqual(gentilly.departement, '75');
+  assert.equal(detectGeo('94250').ville, 'Gentilly');
+  assert.equal(detectGeo('Le Kremlin-Bicêtre').departement, '94');
+  assert.equal(detectGeo('Villeurbanne').departement, '69');
+});
+
+test('les arrondissements et les grandes villes restent correctement détectés', () => {
+  assert.equal(detectGeo('75014').ville, 'Paris');
+  assert.equal(detectGeo('Paris').departement, '75');
+  assert.equal(detectGeo('69003').ville, 'Lyon');
+  assert.equal(detectGeo('Marseille').region, 'Provence-Alpes-Côte d\'Azur');
+});
+
+test('une saisie qui ne désigne aucune commune ne renvoie pas une ville au hasard', () => {
+  assert.equal(detectGeo('xyzabc'), null);
+  assert.equal(detectGeo('12345'), null);
+  assert.equal(detectGeo(''), null);
+});
+
+test('les communes homonymes sont signalées plutôt que tranchées en silence', () => {
+  const sainteMarie = detectGeo('Sainte-Marie');
+  assert.ok(sainteMarie.homonymes > 1, 'Sainte-Marie devrait être signalée comme ambiguë');
+  assert.equal(detectGeo('Gentilly').homonymes, 1);
+});
+
+// Le forfait Imagine R couvre toute l'Île-de-France : restreint à Paris, il
+// disparaissait pour un étudiant de Gentilly, qui y a pourtant droit.
+test('un étudiant francilien hors Paris voit le Pass Navigo', () => {
+  const geo = detectGeo('Gentilly');
+  const aides = getAidesLocales(geo.ville, geo.departement, geo.region, 'etudiant');
+  const ids = aides.map((a) => a.id);
+  assert.ok(ids.includes('navigo-imagine-r'), `Pass Navigo absent pour Gentilly (aides : ${ids.join(', ') || 'aucune'})`);
+  // …mais pas les aides réservées aux Parisiens.
+  assert.ok(!ids.includes('faj-paris'), 'le FAJ de Paris ne doit pas apparaître dans le 94');
+  assert.ok(!ids.includes('aide-urgence-crous-paris'), 'le CROUS de Paris ne couvre pas le Val-de-Marne');
+});

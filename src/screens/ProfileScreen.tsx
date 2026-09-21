@@ -9,7 +9,7 @@ import { loadProfile, saveProfile, loadProgress, loadTransactions, saveTransacti
 import { createMonthlyTransactions, monthKey } from './BudgetScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors, radius, spacing } from '../theme';
-import { detectGeo } from '../data/geoFrance';
+import { detectGeo, Commune } from '../data/geoFrance';
 
 const STATUS_LABELS: Record<string, string> = {
   etudiant: '🎓 Étudiant·e',
@@ -69,7 +69,7 @@ export default function ProfileScreen() {
   const [apiKey, setApiKey] = useState('');
   const [showVilleInput, setShowVilleInput] = useState(false);
   const [villeInput, setVilleInput] = useState('');
-  const [detectedGeo, setDetectedGeo] = useState<{ ville: string; departement: string; region: string } | null>(null);
+  const [detectedGeo, setDetectedGeo] = useState<Commune | null>(null);
 
   // Edit situation states
   const [showEditSituation, setShowEditSituation] = useState(false);
@@ -354,9 +354,17 @@ export default function ProfileScreen() {
               autoCorrect={false}
             />
             {detectedGeo ? (
-              <Text style={styles.geoDetected}>
-                {'✅ ' + detectedGeo.ville + ' · ' + detectedGeo.departement + ' · ' + detectedGeo.region}
-              </Text>
+              <>
+                <Text style={styles.geoDetected}>
+                  {'✅ ' + detectedGeo.ville + ' · ' + detectedGeo.departement + ' · ' + detectedGeo.region}
+                </Text>
+                {(detectedGeo.homonymes ?? 1) > 1 && (
+                  <Text style={styles.geoAmbigu}>
+                    {detectedGeo.homonymes} communes portent ce nom. Si ce n'est pas la tienne,
+                    tape plutôt ton code postal.
+                  </Text>
+                )}
+              </>
             ) : (
               villeInput.length >= 3 && (
                 <Text style={styles.geoNotFound}>Aucune ville trouvée pour cette recherche</Text>
@@ -735,6 +743,7 @@ const styles = StyleSheet.create({
   modifyVilleText: { color: colors.primaryLight, fontWeight: '600', fontSize: 13 },
   villeInputContainer: { paddingTop: spacing.sm },
   geoDetected: { marginTop: spacing.sm, fontSize: 13, color: '#22c55e', fontWeight: '500' },
+  geoAmbigu: { marginTop: 4, fontSize: 12, color: colors.warning, lineHeight: 17 },
   geoNotFound: { marginTop: spacing.sm, fontSize: 12, color: colors.textMuted },
   editContainer: { paddingTop: spacing.sm },
   statusOption: {

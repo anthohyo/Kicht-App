@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, UserProfile, UserStatus, SchoolType, HousingType, PrimaryGoal } from '../types';
 import { saveProfile } from '../utils/storage';
 import { colors, radius, spacing } from '../theme';
-import { detectGeo } from '../data/geoFrance';
+import { detectGeo, Commune } from '../data/geoFrance';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
 
@@ -53,7 +53,7 @@ export default function OnboardingScreen({ navigation }: Props) {
   const [loyer, setLoyer] = useState('');
   const [schoolType, setSchoolType] = useState<SchoolType>('public');
   const [villeInput, setVilleInput] = useState('');
-  const [detectedGeo, setDetectedGeo] = useState<{ ville: string; departement: string; region: string } | null>(null);
+  const [detectedGeo, setDetectedGeo] = useState<Commune | null>(null);
 
   // Étape 2 — revenus
   const [salary, setSalary] = useState('');
@@ -271,9 +271,20 @@ export default function OnboardingScreen({ navigation }: Props) {
                 onChangeText={handleVilleChange}
               />
               {detectedGeo ? (
-                <Text style={styles.geoDetected}>
-                  {'✅ ' + detectedGeo.ville + ' · ' + detectedGeo.departement + ' · ' + detectedGeo.region}
-                </Text>
+                <>
+                  <Text style={styles.geoDetected}>
+                    {'✅ ' + detectedGeo.ville + ' · ' + detectedGeo.departement + ' · ' + detectedGeo.region}
+                  </Text>
+                  {/* Neuf communes s'appellent Sainte-Marie : sans cet avertissement,
+                      on attribuerait silencieusement le mauvais département, donc les
+                      mauvaises aides. */}
+                  {(detectedGeo.homonymes ?? 1) > 1 && (
+                    <Text style={styles.geoAmbigu}>
+                      {detectedGeo.homonymes} communes portent ce nom. Si ce n'est pas la tienne,
+                      tape plutôt ton code postal.
+                    </Text>
+                  )}
+                </>
               ) : (
                 villeInput.length >= 3 && (
                   <Text style={styles.geoNotFound}>Aucune ville trouvée — pas de souci, tu pourras la renseigner plus tard</Text>
@@ -495,6 +506,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#22c55e',
     fontWeight: '500',
+  },
+  geoAmbigu: {
+    fontSize: 12,
+    color: colors.warning,
+    marginTop: 4,
+    lineHeight: 17,
   },
   geoNotFound: {
     marginTop: spacing.sm,

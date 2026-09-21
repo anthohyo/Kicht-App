@@ -1,3 +1,5 @@
+import { COMMUNES_BRUT, REGION_PAR_DEPARTEMENT } from './communes';
+
 export interface GeoEntry {
   ville: string;
   codePostal: string[];
@@ -223,43 +225,111 @@ function removeAccents(str: string): string {
 }
 
 function normalize(str: string): string {
-  return removeAccents(str.trim().toLowerCase());
+  // Les tirets et apostrophes sautent aussi : personne ne tape « L'Haÿ-les-Roses »
+  // exactement comme l'INSEE l'écrit.
+  return removeAccents(str.trim().toLowerCase())
+    .replace(/[-'\u2019.]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-export function detectGeo(input: string): { ville: string; departement: string; region: string } | null {
+export interface Commune {
+  ville: string;
+  departement: string;
+  region: string;
+  /** Nombre de communes françaises portant le même nom, celle-ci comprise. */
+  homonymes?: number;
+}
+
+/**
+ * Index construit à la première recherche, pas au chargement de l'app :
+ * parcourir 35 000 communes au démarrage retarderait le premier écran pour
+ * un utilisateur qui ne saisira peut-être jamais sa ville.
+ */
+let parNom: Map<string, { nom: string; dept: string; pop: number }[]> | null = null;
+let parCodePostal: Map<string, { nom: string; dept: string; pop: number }> | null = null;
+
+function construireIndex(): void {
+  if (parNom) return;
+  parNom = new Map();
+  parCodePostal = new Map();
+  for (const ligne of COMMUNES_BRUT.split('~')) {
+    const [nom, cp, dept, pop] = ligne.split('|');
+    if (!nom || !dept) continue;
+    const entree = { nom, dept, pop: parseInt(pop, 10) || 0 };
+    const cle = normalize(nom);
+    const liste = parNom.get(cle);
+    if (liste) liste.push(entree);
+    else parNom.set(cle, [entree]);
+    // Un code postal couvre parfois plusieurs communes : la plus peuplée gagne,
+    // c'est celle que l'utilisateur a le plus de chances de désigner.
+    const dejaLa = parCodePostal.get(cp);
+    if (!dejaLa || entree.pop > dejaLa.pop) parCodePostal.set(cp, entree);
+  }
+}
+
+function versCommune(e: { nom: string; dept: string }, homonymes: number): Commune | null {
+  const region = REGION_PAR_DEPARTEMENT[e.dept];
+  if (!region) return null;
+  return { ville: e.nom, departement: e.dept, region, homonymes };
+}
+
+/**
+ * Résout une saisie libre (nom de commune ou code postal) en commune, département
+ * et région.
+ *
+ * L'app ne connaissait que 41 grandes villes : un jeune de Gentilly, commune de
+ * 20 000 habitants collée à Paris, tombait sur « Aucune ville trouvée » et perdait
+ * du même coup les aides du Val-de-Marne ET celles de toute l'Île-de-France,
+ * auxquelles il a pourtant droit. Rattacher automatiquement une petite commune à
+ * la grande ville voisine aurait été pire : Gentilly n'est pas dans le 75, et les
+ * aides propres à la Ville de Paris ne s'y appliquent pas.
+ */
+export function detectGeo(input: string): Commune | null {
   const normalized = normalize(input);
   if (!normalized) return null;
 
-  // Try exact postal code match (5 digits)
+  // 1. Table curatée d'abord : elle porte les arrondissements de Paris, Lyon et
+  // Marseille, et garantit l'orthographe attendue par les aides locales.
   if (/^\d{5}$/.test(normalized)) {
     for (const entry of GEO_FRANCE) {
       if (entry.codePostal.includes(normalized)) {
         return { ville: entry.ville, departement: entry.departement, region: entry.region };
       }
     }
-    // Also try 2-digit department prefix for partial matches
-    const dept = normalized.slice(0, 2);
+  } else {
     for (const entry of GEO_FRANCE) {
-      if (entry.departement === dept) {
+      if (normalize(entry.ville) === normalized) {
         return { ville: entry.ville, departement: entry.departement, region: entry.region };
       }
     }
-    return null;
   }
 
-  // Try by city name — startsWith first
-  for (const entry of GEO_FRANCE) {
-    if (normalize(entry.ville).startsWith(normalized)) {
-      return { ville: entry.ville, departement: entry.departement, region: entry.region };
+  construireIndex();
+
+  // 2. Code postal exact.
+  if (/^\d{5}$/.test(normalized)) {
+    const e = parCodePostal!.get(normalized);
+    return e ? versCommune(e, 1) : null;
+  }
+
+  // 3. Nom exact, puis début de nom. On ne descend PAS jusqu'à « contient » :
+  // taper « ville » renverrait Villeurbanne, ce qui fausserait tout sans que
+  // l'utilisateur comprenne pourquoi.
+  const exact = parNom!.get(normalized);
+  if (exact) {
+    const trie = [...exact].sort((a, b) => b.pop - a.pop);
+    return versCommune(trie[0], trie.length);
+  }
+
+  if (normalized.length < 3) return null;
+
+  let meilleur: { nom: string; dept: string; pop: number } | null = null;
+  for (const liste of parNom!.values()) {
+    for (const e of liste) {
+      if (!normalize(e.nom).startsWith(normalized)) continue;
+      if (!meilleur || e.pop > meilleur.pop) meilleur = e;
     }
   }
-
-  // Then includes
-  for (const entry of GEO_FRANCE) {
-    if (normalize(entry.ville).includes(normalized)) {
-      return { ville: entry.ville, departement: entry.departement, region: entry.region };
-    }
-  }
-
-  return null;
+  return meilleur ? versCommune(meilleur, 1) : null;
 }
