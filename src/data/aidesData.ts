@@ -328,7 +328,19 @@ export function simulerAides(profile: UserProfile): AideResult[] {
       'Si éligible, fais ta demande en ligne',
       'Déclare tes revenus chaque trimestre',
     ];
-    const CONDITIONS_PRIME = [
+    /**
+ * Chiffre de non-recours, affiché UNIQUEMENT quand la personne peut prétendre à
+ * l'aide. Sur une aide hors de portée, un tel chiffre ne motive personne : il
+ * décrit l'argent que quelqu'un d'autre laisse sur la table.
+ * Source : DREES, Études et Résultats n° 1379, 8 juillet 2026 — « Non-recours à
+ * la prime d'activité : la moitié des foyers éligibles ne la perçoivent pas fin
+ * 2021 » (3,4 millions de foyers sur 6,6 millions éligibles, soit 48 à 52 %).
+ */
+const NON_RECOURS_PRIME =
+  ' La moitié des foyers qui y ont droit ne la demandent pas (DREES, juillet 2026) : ' +
+  'quelques minutes de simulation peuvent valoir plusieurs centaines d\'euros sur l\'année.';
+
+const CONDITIONS_PRIME = [
       'Avoir plus de 18 ans',
       'Exercer une activité professionnelle (salarié, apprenti, auto-entrepreneur)',
       'Revenus nets < ~1 800 €/mois (personne seule)',
@@ -372,7 +384,8 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         montantMensuelMin: montant > 0 ? montant : undefined,
         montantMensuelMax: montant > 0 ? montant : undefined,
         description: inRange
-          ? 'Si tes revenus viennent d\'un job étudiant (pas de la bourse CROUS), tu pourrais y avoir droit. La bourse seule ne donne pas accès à cette aide.'
+          ? 'Si tes revenus viennent d\'un job étudiant (pas de la bourse CROUS), tu pourrais y avoir droit. La bourse seule ne donne pas accès à cette aide.' +
+            NON_RECOURS_PRIME
           : 'Accessible uniquement si tu as un job étudiant rapportant plus de 1 144 €/mois. La bourse CROUS ne compte pas comme revenu d\'activité.',
         conditions: [...CONDITIONS_PRIME, 'Pour les étudiants : revenu issu d\'un emploi (> 1 144 €/mois), pas de la bourse'],
         commentFaire: COMMENT_FAIRE_PRIME,
@@ -396,7 +409,8 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         montantEstime: montant > 0 ? `~${montant} €/mois` : undefined,
         montantMensuelMin: montant > 0 ? montant : undefined,
         montantMensuelMax: montant > 0 ? montant : undefined,
-        description: 'Complément de revenus pour les travailleurs à revenus modestes. Versée par la CAF tous les mois.',
+        description: 'Complément de revenus pour les travailleurs à revenus modestes. Versée par la CAF tous les mois.' +
+          (eligible ? NON_RECOURS_PRIME : ''),
         conditions: CONDITIONS_PRIME,
         commentFaire: COMMENT_FAIRE_PRIME,
         lien: LIEN_PRIME,

@@ -204,3 +204,23 @@ test('chaque aide intercommunale cible une intercommunalité réellement connue'
     assert.ok(!aide.villes, `${aide.id} garde une portée communale qui annule son périmètre`);
   }
 });
+
+// Un chiffre de non-recours ne motive que celui qui peut demander l'aide.
+// Affiché sur une aide hors de portée, il décrit l'argent que quelqu'un d'autre
+// laisse sur la table — c'est le défaut qu'avait l'écran d'accueil avec le RSA.
+test('le chiffre de non-recours n\'apparaît que si la prime d\'activité est atteignable', () => {
+  const prime = (profil) => simulerAides(profil).find((a) => a.id === 'prime-activite');
+  const chiffre = (a) => a.description.includes('La moitié des foyers');
+
+  const etudiantAvecJob = prime({ ...base, status: 'etudiant', schoolType: 'public', monthlySalary: 1300, expenses: depenses(520), housingType: 'seul' });
+  assert.equal(etudiantAvecJob.eligible, 'peut-etre');
+  assert.ok(chiffre(etudiantAvecJob));
+
+  const etudiantSansJob = prime({ ...base, status: 'etudiant', schoolType: 'public', monthlySalary: 400, expenses: depenses(520), housingType: 'seul' });
+  assert.equal(etudiantSansJob.eligible, 'non');
+  assert.ok(!chiffre(etudiantSansJob), 'chiffre affiché sur une aide inaccessible');
+
+  const apprenti = prime({ ...base, status: 'apprenti', monthlySalary: 1300, expenses: depenses(520), housingType: 'seul' });
+  assert.equal(apprenti.eligible, 'oui');
+  assert.ok(chiffre(apprenti));
+});
