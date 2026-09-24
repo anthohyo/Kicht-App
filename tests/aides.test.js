@@ -224,3 +224,54 @@ test('le chiffre de non-recours n\'apparaît que si la prime d\'activité est at
   assert.equal(apprenti.eligible, 'oui');
   assert.ok(chiffre(apprenti));
 });
+
+// Beaucoup de jeunes dorment dans une commune et étudient dans une autre.
+// Les deux lieux ouvrent des droits, mais PAS les mêmes : le réseau de
+// transport et le CROUS suivent les études, le FAJ et les aides municipales
+// restent attachés au domicile.
+const { getAidesDomicileEtEtudes } = require('../.test-build/src/data/aidesLocales.js');
+const lieu = (nom) => {
+  const g = detectGeo(nom);
+  return { ville: g.ville, departement: g.departement, region: g.region };
+};
+
+test('le lieu d\'études apporte le CROUS et les transports', () => {
+  const aides = getAidesDomicileEtEtudes(lieu('Gentilly'), lieu('Paris'), 'etudiant');
+  const parOrigine = (o) => aides.filter((a) => a.origine === o).map((a) => a.id);
+  assert.ok(parOrigine('etudes').includes('resto-u-paris'));
+  assert.ok(parOrigine('etudes').includes('aide-urgence-crous-paris'));
+  // Un étudiant de Villefranche qui étudie à Lyon emprunte bien le réseau TCL.
+  const lyon = getAidesDomicileEtEtudes(lieu('Villefranche-sur-Saône'), lieu('Lyon'), 'etudiant');
+  assert.ok(lyon.some((a) => a.id === 'tcl-tarif-reduit' && a.origine === 'etudes'));
+});
+
+test('le lieu d\'études n\'apporte PAS les aides liées au domicile', () => {
+  const aides = getAidesDomicileEtEtudes(lieu('Gentilly'), lieu('Paris'), 'etudiant');
+  const ids = aides.map((a) => a.id);
+  // Le FAJ est départemental : un Gentilléen relève du Val-de-Marne, pas de Paris.
+  assert.ok(!ids.includes('faj-paris'), 'le FAJ de Paris ne suit pas le lieu d\'études');
+  // Et le FAJ du domicile reste, lui, accessible.
+  const lyon = getAidesDomicileEtEtudes(lieu('Villefranche-sur-Saône'), lieu('Lyon'), 'etudiant');
+  assert.ok(lyon.some((a) => a.id === 'faj-rhone' && a.origine === 'domicile'));
+});
+
+test('sans ville d\'études, rien ne change', () => {
+  const avec = getAidesDomicileEtEtudes(lieu('Paris'), null, 'etudiant').map((a) => a.id).sort();
+  const sans = getAidesLocales('Paris', '75', 'Île-de-France', 'etudiant').map((a) => a.id).sort();
+  assert.deepEqual(avec, sans);
+  // Une ville d'études identique au domicile ne duplique rien.
+  const identique = getAidesDomicileEtEtudes(lieu('Paris'), lieu('Paris'), 'etudiant').map((a) => a.id).sort();
+  assert.deepEqual(identique, sans);
+});
+
+test('seules les aides réellement liées aux études portent le marqueur', () => {
+  for (const aide of AIDES_LOCALES.filter((a) => a.suitLesEtudes)) {
+    const estTransport = !!(aide.epcis || /navigo|tcl|naolib|tbm|tisseo|tam|mel|cts|rtm/.test(aide.id));
+    const estCrous = /crous|resto-u|epicerie/.test(aide.id);
+    assert.ok(estTransport || estCrous, `${aide.id} suit les études sans être ni transport ni CROUS`);
+  }
+  // Un FAJ ne doit jamais suivre les études : il est départemental.
+  for (const aide of AIDES_LOCALES.filter((a) => a.id.startsWith('faj-'))) {
+    assert.ok(!aide.suitLesEtudes, `${aide.id} est départemental, il suit le domicile`);
+  }
+});

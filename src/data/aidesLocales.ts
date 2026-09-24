@@ -33,6 +33,18 @@ export interface AideLocale {
    * plus juste qu'un département, qui débordait largement le réseau réel.
    */
   epcis?: string[];
+  /**
+   * L'aide suit le lieu d'ÉTUDES autant que le domicile. Réservé à ce qui est
+   * réellement attaché à l'endroit où l'on étudie : le réseau de transport
+   * qu'on emprunte pour s'y rendre, le CROUS dont dépend l'établissement, ses
+   * restaurants et ses épiceries solidaires.
+   *
+   * Tout le reste — FAJ départemental, aides municipales, dispositifs
+   * régionaux — reste attaché au domicile. Un étudiant qui dort à Gentilly et
+   * étudie à Paris relève du FAJ du Val-de-Marne, pas de celui de Paris : le
+   * lui proposer l'enverrait faire la queue au mauvais guichet.
+   */
+  suitLesEtudes?: boolean;
   departements?: string[];
   regions?: string[];
   statuts?: string[];
@@ -42,6 +54,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   // --- Pays de la Loire / Nantes ---
   {
     id: 'naolib-jeune',
+    suitLesEtudes: true,
     nom: 'Abonnement Naolib moins de 26 ans',
     emoji: '🚊',
     montant: '255 €/an, gratuit selon ton quotient familial',
@@ -88,6 +101,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   // --- Nouvelle-Aquitaine / Bordeaux ---
   {
     id: 'tbm-pass-jeune',
+    suitLesEtudes: true,
     nom: 'Pass Jeune TBM 11-27 ans',
     emoji: '🚊',
     montant: 'Tarif réduit — prix sur la boutique TBM',
@@ -119,6 +133,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   // --- Provence-Alpes-Côte d'Azur / Marseille ---
   {
     id: 'rtm-pass-etudiant',
+    suitLesEtudes: true,
     nom: 'Pass Annuel Étudiant RTM',
     emoji: '🚋',
     montant: '220 €/an',
@@ -136,6 +151,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   // --- Île-de-France / Paris ---
   {
     id: 'navigo-imagine-r',
+    suitLesEtudes: true,
     nom: 'Pass Navigo Imagine R',
     emoji: '🚇',
     montant: '401,30 €/an (au lieu de 1 090 €)',
@@ -153,6 +169,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'aide-urgence-crous-paris',
+    suitLesEtudes: true,
     nom: 'Aide d\'urgence CROUS Paris',
     emoji: '🆘',
     montant: 'de 1 454 € à 6 335 €/an',
@@ -168,6 +185,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'resto-u-paris',
+    suitLesEtudes: true,
     nom: 'Resto U Paris',
     emoji: '🍽️',
     montant: '1 € le repas',
@@ -224,6 +242,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'tcl-tarif-reduit',
+    suitLesEtudes: true,
     nom: 'Abonnement TCL 18-25 ans',
     emoji: '🚌',
     montant: '26 €/mois (zones 1-2), ou 260 €/an',
@@ -280,6 +299,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'epicerie-crous-marseille',
+    suitLesEtudes: true,
     nom: 'Épicerie solidaire étudiante',
     emoji: '🛒',
     montant: 'Produits à 10-20 % du prix normal',
@@ -364,6 +384,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'tisseo-etudiant',
+    suitLesEtudes: true,
     nom: 'Abonnement Tisséo jeunes',
     emoji: '🚌',
     montant: '16 €/mois, ou 169,60 €/an étudiant',
@@ -407,6 +428,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'epicerie-crous-montpellier',
+    suitLesEtudes: true,
     nom: 'Épicerie solidaire étudiante',
     emoji: '🛒',
     montant: 'Produits à 10-20 % du prix normal',
@@ -422,6 +444,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'tam-etudiant',
+    suitLesEtudes: true,
     nom: 'Transports TaM — gratuits',
     emoji: '🚊',
     montant: 'Gratuit si tu habites la métropole',
@@ -452,6 +475,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'carte-avantage-mel',
+    suitLesEtudes: true,
     nom: 'Abonnement ilévia 4-25 ans',
     emoji: '🚇',
     montant: 'de 3,60 € à 33,40 €/mois selon ton quotient familial',
@@ -579,6 +603,7 @@ export const AIDES_LOCALES: AideLocale[] = [
   },
   {
     id: 'cts-etudiant',
+    suitLesEtudes: true,
     nom: 'Abonnement CTS 18-25 ans',
     emoji: '🚌',
     montant: '28 €/mois, dès 3,40 € selon ta situation',
@@ -624,6 +649,36 @@ export function getTotalPotentiel(aides: AideLocale[]): number {
   return aides
     .filter((a) => a.eligibilite !== 'non-eligible')
     .reduce((sum, a) => sum + extractMaxAmount(a.montant), 0);
+}
+
+/**
+ * Aides du domicile ET du lieu d'études, sans doublon.
+ *
+ * Les deux comptent, et pas pour les mêmes raisons : le département du domicile
+ * ouvre le FAJ, tandis que le réseau de transport et le CROUS suivent le lieu
+ * d'études. `origine` indique d'où vient chaque aide, pour que l'écran puisse
+ * le dire plutôt que de mélanger les deux en silence.
+ */
+export function getAidesDomicileEtEtudes(
+  domicile: { ville?: string; departement?: string; region?: string },
+  etudes: { ville?: string; departement?: string; region?: string } | null,
+  statut?: string,
+): (AideLocale & { origine: 'domicile' | 'etudes' })[] {
+  const resultat: (AideLocale & { origine: 'domicile' | 'etudes' })[] = [];
+  const vues = new Set<string>();
+
+  for (const aide of getAidesLocales(domicile.ville, domicile.departement, domicile.region, statut)) {
+    vues.add(aide.id);
+    resultat.push({ ...aide, origine: 'domicile' });
+  }
+  if (etudes && (etudes.ville !== domicile.ville || etudes.departement !== domicile.departement)) {
+    for (const aide of getAidesLocales(etudes.ville, etudes.departement, etudes.region, statut)) {
+      if (vues.has(aide.id) || !aide.suitLesEtudes) continue;
+      vues.add(aide.id);
+      resultat.push({ ...aide, origine: 'etudes' });
+    }
+  }
+  return resultat;
 }
 
 export function getAidesLocales(

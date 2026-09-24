@@ -46,6 +46,16 @@ export interface UserProfile {
   ville?: string;
   departement?: string;
   region?: string;
+  /**
+   * Commune d'études ou de travail, quand elle diffère du domicile. Aucun
+   * découpage administratif ne permet de la deviner : quelqu'un qui dort à
+   * Gentilly et étudie à Paris dépend du CROUS de Paris et mange dans ses
+   * restaurants universitaires, alors que ses aides départementales restent
+   * celles du Val-de-Marne. La seule façon de le savoir est de le demander.
+   */
+  villeEtudes?: string;
+  departementEtudes?: string;
+  regionEtudes?: string;
   /** Intention principale — personnalise la home et l'onglet d'atterrissage */
   primaryGoal?: PrimaryGoal;
   /** Aides déjà obtenues — ne remontent plus comme vedette */

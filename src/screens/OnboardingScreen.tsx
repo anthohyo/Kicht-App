@@ -54,6 +54,13 @@ export default function OnboardingScreen({ navigation }: Props) {
   const [schoolType, setSchoolType] = useState<SchoolType>('public');
   const [villeInput, setVilleInput] = useState('');
   const [detectedGeo, setDetectedGeo] = useState<Commune | null>(null);
+  // Beaucoup de jeunes dorment dans une commune et étudient dans une autre.
+  // Le découpage administratif ne permet pas de le deviner : on le demande,
+  // plutôt que de rattacher d'office à la grande ville voisine — ce qui
+  // attribuerait des aides municipales auxquelles ils n'ont pas droit.
+  const [etudieAilleurs, setEtudieAilleurs] = useState(false);
+  const [villeEtudesInput, setVilleEtudesInput] = useState('');
+  const [geoEtudes, setGeoEtudes] = useState<Commune | null>(null);
 
   // Étape 2 — revenus
   const [salary, setSalary] = useState('');
@@ -91,6 +98,11 @@ export default function OnboardingScreen({ navigation }: Props) {
         ville: detectedGeo.ville,
         departement: detectedGeo.departement,
         region: detectedGeo.region,
+      } : {}),
+      ...(etudieAilleurs && geoEtudes ? {
+        villeEtudes: geoEtudes.ville,
+        departementEtudes: geoEtudes.departement,
+        regionEtudes: geoEtudes.region,
       } : {}),
     };
     await saveProfile(profile);
@@ -290,6 +302,45 @@ export default function OnboardingScreen({ navigation }: Props) {
                   <Text style={styles.geoNotFound}>Aucune ville trouvée — pas de souci, tu pourras la renseigner plus tard</Text>
                 )
               )}
+
+              <TouchableOpacity
+                style={styles.caseAcocher}
+                onPress={() => setEtudieAilleurs(!etudieAilleurs)}
+                activeOpacity={0.7}
+                role="checkbox"
+                aria-checked={etudieAilleurs}
+                aria-label="J'étudie ou je travaille dans une autre ville"
+              >
+                <View style={[styles.caseCarre, etudieAilleurs && styles.caseCochee]}>
+                  {etudieAilleurs && <Text style={styles.caseMarque} aria-hidden>✓</Text>}
+                </View>
+                <Text style={styles.caseTexte}>J'étudie ou je travaille dans une autre ville</Text>
+              </TouchableOpacity>
+
+              {etudieAilleurs && (
+                <View style={{ marginTop: spacing.sm }}>
+                  <Text style={{ fontSize: 12, color: colors.textMuted, marginBottom: 8 }}>
+                    Le réseau de transport et le CROUS dépendent de là où tu étudies, pas de là où tu dors.
+                  </Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Ville de tes études ou de ton travail"
+                    placeholderTextColor={colors.textMuted}
+                    value={villeEtudesInput}
+                    onChangeText={(v) => { setVilleEtudesInput(v); setGeoEtudes(detectGeo(v)); }}
+                    aria-label="Ville de tes études ou de ton travail"
+                  />
+                  {geoEtudes ? (
+                    <Text style={styles.geoDetected}>
+                      {'✅ ' + geoEtudes.ville + ' · ' + geoEtudes.departement + ' · ' + geoEtudes.region}
+                    </Text>
+                  ) : (
+                    villeEtudesInput.length >= 3 && (
+                      <Text style={styles.geoNotFound}>Aucune ville trouvée</Text>
+                    )
+                  )}
+                </View>
+              )}
             </View>
           </View>
         );
@@ -473,6 +524,18 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: spacing.lg,
   },
+  caseAcocher: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    marginTop: spacing.md, paddingVertical: 8,
+  },
+  caseCarre: {
+    width: 20, height: 20, borderRadius: radius.sm,
+    borderWidth: 2, borderColor: colors.borderLight,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  caseCochee: { backgroundColor: colors.primary, borderColor: colors.primary },
+  caseMarque: { color: colors.white, fontSize: 12, fontWeight: 'bold' },
+  caseTexte: { flex: 1, fontSize: 14, color: colors.text, lineHeight: 19 },
   ageErreur: {
     fontSize: 13,
     color: colors.dangerText,

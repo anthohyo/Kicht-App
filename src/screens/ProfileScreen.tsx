@@ -70,6 +70,8 @@ export default function ProfileScreen() {
   const [showVilleInput, setShowVilleInput] = useState(false);
   const [villeInput, setVilleInput] = useState('');
   const [detectedGeo, setDetectedGeo] = useState<Commune | null>(null);
+  const [villeEtudesInput, setVilleEtudesInput] = useState('');
+  const [geoEtudes, setGeoEtudes] = useState<Commune | null>(null);
 
   // Edit situation states
   const [showEditSituation, setShowEditSituation] = useState(false);
@@ -94,6 +96,10 @@ export default function ProfileScreen() {
         setProfile(p);
         setApiKey(p?.claudeApiKey || '');
         setVilleInput(p?.ville || '');
+        setVilleEtudesInput(p?.villeEtudes || '');
+        if (p?.villeEtudes && p?.departementEtudes && p?.regionEtudes) {
+          setGeoEtudes({ ville: p.villeEtudes, departement: p.departementEtudes, region: p.regionEtudes });
+        }
         if (p?.ville && p?.departement && p?.region) {
           setDetectedGeo({ ville: p.ville, departement: p.departement, region: p.region });
         }
@@ -160,6 +166,11 @@ export default function ProfileScreen() {
         ville: detectedGeo?.ville,
         departement: detectedGeo?.departement,
         region: detectedGeo?.region,
+        // Champ vidé = plus de ville d'études : sans ça, on ne pourrait jamais
+        // revenir en arrière après un déménagement ou un changement d'école.
+        villeEtudes: villeEtudesInput.trim() ? geoEtudes?.ville : undefined,
+        departementEtudes: villeEtudesInput.trim() ? geoEtudes?.departement : undefined,
+        regionEtudes: villeEtudesInput.trim() ? geoEtudes?.region : undefined,
       };
       await saveProfile(updated);
       setProfile(updated);
@@ -354,6 +365,9 @@ export default function ProfileScreen() {
           <InfoRow label="Type d'école" value={profile.schoolType ? SCHOOL_TYPE_LABELS[profile.schoolType] : '—'} />
         )}
         <InfoRow label="📍 Ville" value={profile.ville || 'Non renseignée'} />
+        {profile.villeEtudes && (
+          <InfoRow label="🎓 Ville d'études" value={profile.villeEtudes} />
+        )}
 
         {/* Modifier ma ville */}
         <TouchableOpacity role="button"
@@ -390,6 +404,24 @@ export default function ProfileScreen() {
               villeInput.length >= 3 && (
                 <Text style={styles.geoNotFound}>Aucune ville trouvée pour cette recherche</Text>
               )
+            )}
+            <Text style={[styles.editFieldLabel, { marginTop: spacing.md }]}>
+              Ville d'études ou de travail, si différente
+            </Text>
+            <TextInput
+              style={styles.apiInput}
+              placeholder="Laisse vide si c'est la même"
+              placeholderTextColor={colors.textMuted}
+              value={villeEtudesInput}
+              onChangeText={(v) => { setVilleEtudesInput(v); setGeoEtudes(detectGeo(v)); }}
+              autoCapitalize="none"
+              autoCorrect={false}
+              aria-label="Ville de tes études ou de ton travail"
+            />
+            {geoEtudes && villeEtudesInput.trim().length > 0 && (
+              <Text style={styles.geoDetected}>
+                {'✅ ' + geoEtudes.ville + ' · ' + geoEtudes.departement + ' · ' + geoEtudes.region}
+              </Text>
             )}
             <TouchableOpacity role="button"
               style={[styles.apiSaveBtn, !detectedGeo && { opacity: 0.5 }]}

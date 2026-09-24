@@ -13,7 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { UserProfile, RootStackParamList } from '../types';
 import { loadProfile, saveProfile } from '../utils/storage';
 import { simulerAides, AideResult, DERNIERE_MAJ_BAREMES, baremesPerimes } from '../data/aidesData';
-import { getAidesLocales, AideLocale } from '../data/aidesLocales';
+import { getAidesDomicileEtEtudes, AideLocale } from '../data/aidesLocales';
 import BoutonSignaler from '../components/BoutonSignaler';
 import { colors, radius, spacing } from '../theme';
 
@@ -50,7 +50,7 @@ export default function AidesScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [aides, setAides] = useState<AideResult[]>([]);
-  const [aidesLocales, setAidesLocales] = useState<AideLocale[]>([]);
+  const [aidesLocales, setAidesLocales] = useState<(AideLocale & { origine: 'domicile' | 'etudes' })[]>([]);
   const [vedetteExpanded, setVedetteExpanded] = useState(false);
   const [expandedSecondaryId, setExpandedSecondaryId] = useState<string | null>(null);
   const [showAllAides, setShowAllAides] = useState(false);
@@ -67,7 +67,15 @@ export default function AidesScreen() {
             return parseMontant(b.montantEstime) - parseMontant(a.montantEstime);
           });
           setAides(sorted);
-          setAidesLocales(getAidesLocales(p.ville, p.departement, p.region, p.status));
+          setAidesLocales(
+            getAidesDomicileEtEtudes(
+              { ville: p.ville, departement: p.departement, region: p.region },
+              p.villeEtudes
+                ? { ville: p.villeEtudes, departement: p.departementEtudes, region: p.regionEtudes }
+                : null,
+              p.status,
+            ),
+          );
         }
       });
     }, [])
@@ -382,6 +390,11 @@ export default function AidesScreen() {
                     <Text style={styles.secondaryEmoji} aria-hidden>{aide.emoji}</Text>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.secondaryName}>{aide.nom}</Text>
+                      {/* Sans cette mention, une aide de la ville d'études aurait
+                          l'air d'être une aide du domicile — et inversement. */}
+                      {aide.origine === 'etudes' && (
+                        <Text style={styles.origineEtudes}>Dans ta ville d'études</Text>
+                      )}
                       <Text style={styles.secondaryMontantLine}>{aide.montant}</Text>
                       {/* Un montant sans source vérifiée ne doit pas être présenté
                           comme un fait : les tarifs locaux changent chaque année. */}
@@ -552,6 +565,7 @@ const styles = StyleSheet.create({
   secondaryEmoji: { fontSize: 22 },
   secondaryName: { fontSize: 15, fontWeight: '600', color: colors.text },
   secondaryMontantLine: { fontSize: 13, color: colors.primaryLight, fontWeight: '600', marginTop: 3 },
+  origineEtudes: { fontSize: 11, color: colors.primaryLight, marginTop: 1, marginBottom: 1 },
   verifOk:   { fontSize: 11, color: colors.textMuted, marginTop: 3 },
   verifTodo: { fontSize: 11, color: colors.warning, marginTop: 3, fontWeight: '500' },
   secondaryDesc: { fontSize: 12, color: colors.textMuted, lineHeight: 18, marginTop: 6 },
