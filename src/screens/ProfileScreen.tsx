@@ -237,10 +237,19 @@ export default function ProfileScreen() {
         reader.readAsDataURL(file);
       };
       input.click();
-    } else {
-      Alert.alert('Photo de profil', 'Fonctionnalité disponible prochainement');
     }
   };
+
+  /**
+   * La photo n'est modifiable que sur le web, où le sélecteur de fichiers du
+   * navigateur suffit. Sur mobile il faudrait expo-image-picker, l'autorisation
+   * d'accès aux photos, et recopier le fichier pour qu'il survive au
+   * redémarrage — beaucoup de surface pour un élément décoratif dans une app
+   * qui parle d'argent. En attendant, l'avatar n'est simplement pas cliquable :
+   * un bouton qui répond « disponible prochainement » est une fonctionnalité
+   * factice, et c'est un motif de refus classique sur l'App Store.
+   */
+  const photoModifiable = Platform.OS === 'web';
 
   if (!profile) {
     return (
@@ -257,18 +266,30 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Avatar + Name */}
       <View style={styles.avatarSection}>
-        <TouchableOpacity role="button" aria-label="Changer ma photo de profil" onPress={handleAvatarPress} activeOpacity={0.8} style={styles.avatarWrapper}>
-          <View style={styles.avatar}>
-            {profile.photoUri ? (
-              <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} alt="Ta photo de profil" />
-            ) : (
-              <Text style={styles.avatarText}>{profile.firstName.charAt(0).toUpperCase()}</Text>
-            )}
+        {photoModifiable ? (
+          <TouchableOpacity role="button" aria-label="Changer ma photo de profil" onPress={handleAvatarPress} activeOpacity={0.8} style={styles.avatarWrapper}>
+            <View style={styles.avatar}>
+              {profile.photoUri ? (
+                <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} alt="Ta photo de profil" />
+              ) : (
+                <Text style={styles.avatarText}>{profile.firstName.charAt(0).toUpperCase()}</Text>
+              )}
+            </View>
+            <View style={styles.avatarOverlay}>
+              <Text style={styles.avatarOverlayIcon} aria-hidden>📷</Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.avatarWrapper}>
+            <View style={styles.avatar}>
+              {profile.photoUri ? (
+                <Image source={{ uri: profile.photoUri }} style={styles.avatarImage} alt="Ta photo de profil" />
+              ) : (
+                <Text style={styles.avatarText}>{profile.firstName.charAt(0).toUpperCase()}</Text>
+              )}
+            </View>
           </View>
-          <View style={styles.avatarOverlay}>
-            <Text style={styles.avatarOverlayIcon} aria-hidden>📷</Text>
-          </View>
-        </TouchableOpacity>
+        )}
         <Text style={styles.name}>{profile.firstName}</Text>
         <Text style={styles.statusBadge}>{STATUS_LABELS[profile.status]}</Text>
       </View>

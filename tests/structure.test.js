@@ -224,3 +224,14 @@ test('chaque famille d\'aides porte un bouton de signalement', () => {
   assert.ok(ecran.includes('BoutonSignaler'), 'aucun bouton de signalement sur l\'écran des aides');
   assert.equal((ecran.match(/<BoutonSignaler/g) || []).length, 2, 'les aides nationales ET locales doivent en porter un');
 });
+
+// Apple refuse les applications contenant des fonctions non opérationnelles
+// (App Store Review Guidelines, 2.1 et 2.2). Le profil affichait « Fonctionnalité
+// disponible prochainement » au toucher de la photo : soit une fonction marche,
+// soit elle n'est pas proposée.
+test('aucun écran ne promet une fonctionnalité qui n\'existe pas', () => {
+  const promesses = /disponible prochainement|bientôt disponible|fonctionnalité à venir|coming soon|en cours de développement/i;
+  for (const f of [...fichiers('src/screens'), ...fichiers('src/components')]) {
+    assert.doesNotMatch(sansCommentaires(lire(f)), promesses, `${f} annonce une fonctionnalité factice`);
+  }
+});
