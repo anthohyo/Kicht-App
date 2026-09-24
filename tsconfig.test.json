@@ -17,6 +17,8 @@
     "src/data/agendaDefaults.ts",
     "src/utils/rappels.ts",
     "src/utils/parrainAI.ts",
-    "src/utils/sauvegarde.ts"
+    "src/utils/sauvegarde.ts",
+    "src/legal.ts",
+    "src/utils/signalement.ts"
   ]
 }

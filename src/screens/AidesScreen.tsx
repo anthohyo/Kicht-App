@@ -14,6 +14,7 @@ import { UserProfile, RootStackParamList } from '../types';
 import { loadProfile, saveProfile } from '../utils/storage';
 import { simulerAides, AideResult, DERNIERE_MAJ_BAREMES, baremesPerimes } from '../data/aidesData';
 import { getAidesLocales, AideLocale } from '../data/aidesLocales';
+import BoutonSignaler from '../components/BoutonSignaler';
 import { colors, radius, spacing } from '../theme';
 
 // Mapping aide nationale ID → guide ID
@@ -281,8 +282,12 @@ export default function AidesScreen() {
             const badge = getBadge(aide.eligible);
             const isOpen = expandedSecondaryId === aide.id;
             return (
+              // Le bouton de signalement est rendu HORS de la carte : imbriqué
+              // dans la zone qui déplie, un appui dessus refermait la carte —
+              // et le comportement des touchables imbriqués diffère entre le web
+              // et le natif, donc autant ne pas en dépendre.
+              <View key={aide.id}>
               <TouchableOpacity role="button"
-                key={aide.id}
                 style={styles.secondaryCard}
                 onPress={() => setExpandedSecondaryId(isOpen ? null : aide.id)}
                 activeOpacity={0.8}
@@ -329,6 +334,14 @@ export default function AidesScreen() {
                   </View>
                 )}
               </TouchableOpacity>
+              {isOpen && (
+                <BoutonSignaler
+                  aide={aide.name}
+                  montantAffiche={aide.montantEstime}
+                  profile={profile}
+                />
+              )}
+              </View>
             );
           })}
         </>
@@ -356,8 +369,8 @@ export default function AidesScreen() {
             <>
               <Text style={styles.sectionTitle}>📍 Aides dans ta ville</Text>
               {localAides.slice(0, 3).map((aide) => (
+                <View key={aide.id}>
                 <TouchableOpacity role="link"
-                  key={aide.id}
                   style={styles.secondaryCard}
                   onPress={() => {
                     const url = aide.demarche.startsWith('http') ? aide.demarche : 'https://' + aide.demarche;
@@ -381,6 +394,13 @@ export default function AidesScreen() {
                     <Text style={styles.chevron}>→</Text>
                   </View>
                 </TouchableOpacity>
+                <BoutonSignaler
+                  aide={aide.nom}
+                  montantAffiche={aide.montant}
+                  verifieLe={aide.verifieLe}
+                  profile={profile}
+                />
+                </View>
               ))}
             </>
           )}

@@ -27,6 +27,13 @@ export const HEBERGEUR = {
 
 export const SITE_URL = 'https://kichtappv2.netlify.app';
 
+/**
+ * Version affichée dans les signalements d'erreur, pour savoir à quelle version
+ * correspond un montant contesté. Doit rester alignée sur app.json — un test
+ * échoue sinon.
+ */
+export const VERSION_APP = '1.0.0';
+
 /** Date de la dernière révision des textes légaux, affichée en bas de chaque page. */
 export const DERNIERE_MAJ_LEGAL = '20 septembre 2026';
 

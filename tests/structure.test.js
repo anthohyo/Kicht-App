@@ -182,3 +182,45 @@ test('aucune fiche ne recommande un courtier ou un produit commercial nommé', (
     assert.doesNotMatch(code, enseignes, `${f} cite une enseigne financière`);
   }
 });
+
+// Le signalement d'erreur est le seul mécanisme par lequel un montant périmé
+// remonte : sans lui, l'app affirme des chiffres que plus personne ne surveille.
+test('le signalement n\'expose que ce qui sert à vérifier', () => {
+  const { corpsSignalement, lienSignalement, objetSignalement } = require('../.test-build/src/utils/signalement.js');
+  const s = {
+    aide: 'Abonnement TCL 18-25 ans',
+    montantAffiche: '26 €/mois',
+    ville: 'Villeurbanne',
+    departement: '69',
+    verifieLe: '2026-09-17',
+  };
+  const corps = corpsSignalement(s, '1.0.0');
+  for (const attendu of ['Abonnement TCL 18-25 ans', '26 €/mois', 'Villeurbanne', '69', '2026-09-17', '1.0.0']) {
+    assert.ok(corps.includes(attendu), `le signalement omet ${attendu}`);
+  }
+  // Un signalement ne doit jamais obliger à livrer sa situation financière.
+  for (const interdit of ['salaire', 'revenu', 'loyer', 'prénom', 'âge']) {
+    assert.ok(!corps.toLowerCase().includes(interdit), `le signalement contient « ${interdit} »`);
+  }
+  // Le lien doit rester ouvrable : objet et corps encodés, adresse réelle.
+  const lien = lienSignalement(s, '1.0.0');
+  assert.match(lien, /^mailto:[^?]+@[^?]+\?subject=/);
+  assert.ok(!/\s/.test(lien), 'lien mailto non encodé');
+  assert.ok(objetSignalement(s).includes(s.aide));
+});
+
+// La version sert à savoir à quelle build correspond un montant contesté :
+// désalignée, elle envoie sur une fausse piste.
+test('la version affichée dans les signalements suit celle de app.json', () => {
+  const { VERSION_APP } = require('../.test-build/src/legal.js');
+  const { expo } = JSON.parse(lire('app.json'));
+  assert.equal(VERSION_APP, expo.version);
+});
+
+// Un bouton de signalement sans aide à signaler ne sert à rien : il doit être
+// posé sur les deux familles d'aides, nationales et locales.
+test('chaque famille d\'aides porte un bouton de signalement', () => {
+  const ecran = lire('src/screens/AidesScreen.tsx');
+  assert.ok(ecran.includes('BoutonSignaler'), 'aucun bouton de signalement sur l\'écran des aides');
+  assert.equal((ecran.match(/<BoutonSignaler/g) || []).length, 2, 'les aides nationales ET locales doivent en porter un');
+});
