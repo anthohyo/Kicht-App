@@ -275,3 +275,51 @@ test('seules les aides réellement liées aux études portent le marqueur', () =
     assert.ok(!aide.suitLesEtudes, `${aide.id} est départemental, il suit le domicile`);
   }
 });
+
+// La prime d'activité reposait sur une grille maison (200, 150 ou 80 €) sans
+// aucune source, qui ignorait la réforme d'avril 2026 : jusqu'à 55 € d'écart par
+// mois, et une exclusion à tort des revenus entre 1 800 et 1 960 €.
+const {
+  montantPrimeActivite, bonificationIndividuelle, plafondRevenusPrimeActivite, BAREME_PRIME_ACTIVITE,
+} = require('../.test-build/src/data/primeActivite.js');
+
+test('la prime d\'activité suit la formule officielle', () => {
+  // montant forfaitaire + 59,85 % des revenus + bonification − (revenus + forfait logement)
+  const attendu = (s) => {
+    const b = BAREME_PRIME_ACTIVITE;
+    const r = b.montantForfaitaire + b.tauxRevenusProfessionnels * s + bonificationIndividuelle(s)
+      - Math.max(b.montantForfaitaire, s + b.forfaitLogement);
+    return r >= b.versementMinimum ? Math.round(r) : 0;
+  };
+  for (const s of [700, 1144, 1300, 1452, 1800, 1900]) {
+    assert.equal(montantPrimeActivite(s), attendu(s), `écart à ${s} €`);
+  }
+  // Points de repère, recalculés à la main depuis le barème du 1er avril 2026.
+  assert.equal(montantPrimeActivite(1300), 182);
+  assert.equal(montantPrimeActivite(1800), 80);
+  assert.equal(montantPrimeActivite(0), 0);
+});
+
+test('la bonification respecte ses bornes officielles', () => {
+  const { seuil, plafond, maximum } = BAREME_PRIME_ACTIVITE.bonification;
+  assert.equal(bonificationIndividuelle(seuil), 0);
+  assert.equal(bonificationIndividuelle(plafond), maximum);
+  assert.equal(bonificationIndividuelle(plafond + 500), maximum);
+  assert.ok(bonificationIndividuelle((seuil + plafond) / 2) > 0);
+});
+
+test('le plafond de revenus découle du barème, pas d\'une valeur écrite à la main', () => {
+  const plafondCalcule = plafondRevenusPrimeActivite();
+  assert.ok(plafondCalcule > 1900 && plafondCalcule < 2000, `plafond inattendu : ${plafondCalcule}`);
+  // Un salarié juste sous le plafond y a droit : l'ancienne limite de 1 800 € l'excluait.
+  const salarie = simulerAides({ ...base, status: 'salarie', monthlySalary: 1900, expenses: depenses(500), housingType: 'seul' })
+    .find((a) => a.id === 'prime-activite');
+  assert.equal(salarie.eligible, 'oui');
+  assert.ok(!salarie.conditions.some((c) => c.includes('1 800')), 'condition périmée « 1 800 € » encore affichée');
+});
+
+test('pas de prime d\'activité avant 18 ans', () => {
+  const mineur = simulerAides({ ...base, age: 17, status: 'apprenti', monthlySalary: 1300, expenses: depenses(0), housingType: 'parents' })
+    .find((a) => a.id === 'prime-activite');
+  assert.equal(mineur.eligible, 'non');
+});

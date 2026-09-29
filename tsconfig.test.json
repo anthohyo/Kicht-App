@@ -12,6 +12,7 @@
   "files": [
     "src/types/index.ts",
     "src/data/geoFrance.ts",
+    "src/data/primeActivite.ts",
     "src/data/aidesData.ts",
     "src/data/aidesLocales.ts",
     "src/data/agendaDefaults.ts",

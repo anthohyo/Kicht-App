@@ -1,3 +1,4 @@
+import { montantPrimeActivite, plafondRevenusPrimeActivite } from './primeActivite';
 import { UserProfile } from '../types';
 
 /**
@@ -343,17 +344,13 @@ const NON_RECOURS_PRIME =
 const CONDITIONS_PRIME = [
       'Avoir plus de 18 ans',
       'Exercer une activité professionnelle (salarié, apprenti, auto-entrepreneur)',
-      'Revenus nets < ~1 800 €/mois (personne seule)',
+      `Revenus d'activité jusqu'à environ ${(Math.round(plafondRevenusPrimeActivite() / 10) * 10).toLocaleString('fr-FR')} €/mois (personne seule sans enfant)`,
       'Résider en France de manière stable',
     ];
     const LIEN_PRIME = 'https://www.caf.fr/allocataires/mes-services-en-ligne/faire-une-simulation';
 
-    const calcMontant = (s: number): number => {
-      if (s < 1200) return 200;
-      if (s < 1500) return 150;
-      if (s < 1800) return 80;
-      return 0;
-    };
+    // Calcul officiel (voir primeActivite.ts). Pas de prime avant 18 ans.
+    const calcMontant = (s: number): number => (profile.age >= 18 ? montantPrimeActivite(s) : 0);
 
     if (profile.status === 'service_civique' || profile.status === 'recherche_emploi') {
       // Ces revenus ne sont pas des revenus d'activité — non éligible
@@ -373,8 +370,8 @@ const CONDITIONS_PRIME = [
     } else if (profile.status === 'etudiant') {
       // Étudiant : éligible uniquement si le revenu vient d'un job, pas de la bourse CROUS
       // On ne peut pas savoir avec certitude → peut-être si dans la tranche
-      const inRange = salary >= SEUIL_APPRENTI && salary <= 1800;
-      const montant = inRange ? calcMontant(salary) : 0;
+      const montant = salary >= SEUIL_APPRENTI ? calcMontant(salary) : 0;
+      const inRange = montant > 0;
       aides.push({
         id: 'prime-activite',
         name: 'Prime d\'activité',
@@ -399,8 +396,8 @@ const CONDITIONS_PRIME = [
     ) {
       // Travailleurs — éligibilité directe selon le salaire
       const seuilMin = profile.status === 'apprenti' ? SEUIL_APPRENTI : 0;
-      const eligible = salary > 0 && salary >= seuilMin && salary <= 1800;
-      const montant = eligible ? calcMontant(salary) : 0;
+      const montant = salary > 0 && salary >= seuilMin ? calcMontant(salary) : 0;
+      const eligible = montant > 0;
       aides.push({
         id: 'prime-activite',
         name: 'Prime d\'activité',
@@ -418,8 +415,8 @@ const CONDITIONS_PRIME = [
       });
     } else {
       // Statut 'autre' ou inconnu — on oriente vers le simulateur
-      const probablyEligible = salary >= 600 && salary <= 1800;
-      const montant = probablyEligible ? calcMontant(salary) : 0;
+      const montant = calcMontant(salary);
+      const probablyEligible = montant > 0;
       aides.push({
         id: 'prime-activite',
         name: 'Prime d\'activité',
