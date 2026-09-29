@@ -235,3 +235,57 @@ test('aucun écran ne promet une fonctionnalité qui n\'existe pas', () => {
     assert.doesNotMatch(sansCommentaires(lire(f)), promesses, `${f} annonce une fonctionnalité factice`);
   }
 });
+
+// La lettre du Parrain passe par un formulaire hébergé par Brevo. La seule
+// chose à renseigner dans l'app est l'adresse PUBLIQUE de ce formulaire : une
+// clé d'API y serait extractible par n'importe qui, qui pourrait alors écrire
+// à toute la liste d'abonnés.
+test('la configuration de la newsletter ne contient jamais de clé', () => {
+  const { NEWSLETTER_URL } = require('../.test-build/src/legal.js');
+  assert.ok(NEWSLETTER_URL === '' || /^https:\/\/\S+$/.test(NEWSLETTER_URL),
+    'NEWSLETTER_URL doit être vide ou une adresse https');
+  assert.doesNotMatch(NEWSLETTER_URL, /xkeysib|xsmtpsib|api[-_]?key|token|secret/i,
+    'NEWSLETTER_URL ressemble à une clé d\'API');
+});
+
+// Tant que la lettre n'existe pas, la confidentialité doit rester absolue ;
+// dès qu'elle existe, elle doit être expliquée. Les deux états dépendent du
+// même interrupteur, pour qu'ils ne puissent pas diverger.
+test('les textes de confidentialité suivent l\'état réel de la newsletter', () => {
+  const ecran = lire('src/screens/ConfidentialiteScreen.tsx');
+  assert.match(ecran, /newsletterActive\(\)\s*\?[\s\S]*?:\s*'Aucun compte, aucune inscription, aucune adresse e-mail demandée\.'/,
+    'la promesse « aucune adresse e-mail » doit dépendre de newsletterActive()');
+  assert.match(ecran, /newsletterActive\(\) && \([\s\S]*?La lettre du Parrain/,
+    'la section consacrée à la lettre doit n\'apparaître que si elle est active');
+  // Le point d'inscription ne s'affiche pas tant que le formulaire n'existe pas.
+  assert.match(lire('src/components/InscriptionLettre.tsx'), /if \(!newsletterActive\(\)\) return null;/);
+});
+
+// Visale est la garantie d'Action Logement, et non de l'État. L'app l'a
+// présentée comme « caution gratuite de l'État » à six endroits : une erreur
+// d'attribution qui aurait pu envoyer un jeune chercher le mauvais guichet.
+test('Visale n\'est jamais attribuée à l\'État', () => {
+  for (const f of [...fichiers('src/screens'), 'src/data/aidesData.ts', 'src/data/parcours.ts', 'src/utils/parrainAI.ts']) {
+    const code = sansCommentaires(lire(f));
+    for (const phrase of code.match(/[^.\n]*Visale[^.\n]*/g) || []) {
+      assert.doesNotMatch(phrase, /de l\\?'État/, `${f} attribue Visale à l'État : « ${phrase.trim().slice(0, 80)} »`);
+    }
+  }
+  // Le motif lui-même, partout et quelle que soit la casse : la version en
+  // majuscules (« Caution GRATUITE de l'État ») avait échappé à un premier test
+  // qui ne cherchait que les phrases contenant le mot « Visale ».
+  for (const f of [...fichiers('src/screens'), ...fichiers('src/components'),
+    'src/data/aidesData.ts', 'src/data/parcours.ts', 'src/data/guides.ts', 'src/utils/parrainAI.ts']) {
+    assert.doesNotMatch(sansCommentaires(lire(f)), /caution\s+gratuite\s+de\s+l\\?'État/i,
+      `${f} présente une caution gratuite « de l'État »`);
+  }
+});
+
+// En meublé, le dépôt de garantie peut atteindre deux mois de loyer. L'app
+// annonçait « 1 mois (max légal) » sans distinction, alors que beaucoup
+// d'étudiants louent meublé.
+test('le dépôt de garantie distingue location vide et meublée', () => {
+  const parrain = lire('src/utils/parrainAI.ts');
+  assert.doesNotMatch(parrain, /1 mois de loyer hors charges \(max légal\)/);
+  assert.match(parrain, /2 mois\*\* en meublé/);
+});

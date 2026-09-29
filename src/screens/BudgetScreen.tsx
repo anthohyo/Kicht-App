@@ -91,7 +91,7 @@ function ResteAVivre({ transactions, isCurrentMonth }: { transactions: Transacti
     <View style={ravStyles.card}>
       <View style={ravStyles.header}>
         <Text style={ravStyles.title}>💡 Reste à vivre</Text>
-        {isCurrentMonth && <Text style={ravStyles.sub}>{joursRestants} jours restants</Text>}
+        {isCurrentMonth && <Text style={ravStyles.sub}>{joursRestants} {joursRestants > 1 ? 'jours restants' : 'jour restant'}</Text>}
       </View>
       <View style={ravStyles.row}>
         <View style={ravStyles.stat}>

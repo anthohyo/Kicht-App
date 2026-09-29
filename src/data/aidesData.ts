@@ -97,7 +97,7 @@ export function simulerAides(profile: UserProfile): AideResult[] {
         'Le logement doit être conventionné ou décent (la plupart le sont)',
       ],
       commentFaire: [
-        'AVANT de chercher : demande ta garantie Visale (caution gratuite de l\'État)',
+        'AVANT de chercher : demande ta garantie Visale (caution gratuite d\'Action Logement)',
         'Crée ton compte sur caf.fr dès maintenant, ça prend 10 minutes',
         'Garde sous la main : pièce d\'identité, RIB, et le bail dès signature',
         'Le mois de l\'emménagement : fais la demande d\'aide au logement sur caf.fr',
@@ -472,8 +472,8 @@ const CONDITIONS_PRIME = [
       eligible: chercheUnLogement ? 'oui' : 'peut-etre',
       montantEstime: 'Caution gratuite',
       description: chercheUnLogement
-        ? 'Caution GRATUITE de l\'État pour ton logement. Remplace le garant parental.'
-        : 'À retenir pour le jour où tu chercheras un logement : c\'est une caution gratuite de l\'État qui remplace le garant parental. Elle se demande AVANT les visites — un dossier avec Visale passe devant les autres.',
+        ? 'Caution GRATUITE d\'Action Logement pour ton logement. Remplace le garant parental.'
+        : 'À retenir pour le jour où tu chercheras un logement : c\'est une caution gratuite d\'Action Logement qui remplace le garant parental. Elle se demande AVANT les visites — un dossier avec Visale passe devant les autres.',
       conditions: [
         'Avoir entre 18 et 30 ans',
         'Chercher un logement dans le parc privé',

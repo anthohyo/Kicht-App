@@ -90,7 +90,7 @@ export default function HomeScreen() {
       return {
         emoji: '📦',
         title: 'Commence par ta garantie Visale',
-        sub: 'Caution gratuite de l\'État. À obtenir AVANT de visiter — c\'est ce qui fera accepter ton dossier.',
+        sub: 'Caution gratuite d\'Action Logement. À obtenir AVANT de visiter — c\'est ce qui fera accepter ton dossier.',
         onPress: () => navigation.navigate('Aides' as any),
       };
     }
@@ -201,7 +201,7 @@ export default function HomeScreen() {
           )}
           {isSerré && parJourStr && (
             <Text style={[styles.resteSubline, { color: colors.warning }]}>
-              {joursRestants} jours restants, soit environ {parJourStr} par jour.
+              {joursRestants} {joursRestants > 1 ? 'jours restants' : 'jour restant'}, soit environ {parJourStr} par jour.
             </Text>
           )}
           {isSerré && !parJourStr && (
@@ -211,7 +211,7 @@ export default function HomeScreen() {
           )}
           {!isDépassé && !isSerré && displayIncome > 0 && parJourStr && (
             <Text style={styles.resteSubline}>
-              {joursRestants} jours restants, soit environ {parJourStr} par jour.
+              {joursRestants} {joursRestants > 1 ? 'jours restants' : 'jour restant'}, soit environ {parJourStr} par jour.
             </Text>
           )}
           {!isDépassé && !isSerré && displayIncome > 0 && !parJourStr && (

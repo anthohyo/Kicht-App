@@ -34,6 +34,24 @@ export const SITE_URL = 'https://kichtappv2.netlify.app';
  */
 export const VERSION_APP = '1.0.0';
 
+/**
+ * Formulaire d'inscription à « La lettre du Parrain », hébergé par Brevo.
+ *
+ * VIDE tant que le formulaire n'existe pas. Dans ce cas l'app n'affiche aucun
+ * point d'inscription, et la politique de confidentialité continue d'affirmer —
+ * à juste titre — qu'aucune adresse e-mail n'est demandée. Dès qu'une adresse
+ * est renseignée ici, le bouton apparaît et les textes légaux changent avec lui.
+ *
+ * N'y mettre QUE l'adresse publique du formulaire, jamais une clé d'API : tout
+ * ce qui est dans l'app peut en être extrait, et une clé Brevo permettrait
+ * d'écrire à toute la liste. Un test refuse tout ce qui ressemble à une clé.
+ */
+export const NEWSLETTER_URL = '';
+
+export function newsletterActive(): boolean {
+  return NEWSLETTER_URL.startsWith('https://');
+}
+
 /** Date de la dernière révision des textes légaux, affichée en bas de chaque page. */
 export const DERNIERE_MAJ_LEGAL = '20 septembre 2026';
 

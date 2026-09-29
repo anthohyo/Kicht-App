@@ -89,7 +89,7 @@ export const parcoursList: Parcours[] = [
       },
       {
         title: 'S\'inscrire sur Visale.fr',
-        description: 'Caution gratuite de l\'État si tu as moins de 30 ans. Fais-le AVANT les visites.',
+        description: 'Caution gratuite d\'Action Logement, de 18 à 30 ans inclus. Fais-le AVANT les visites.',
         action: { screen: 'Aides', label: 'Simuler mes aides' },
       },
       {

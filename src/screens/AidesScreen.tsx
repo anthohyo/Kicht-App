@@ -15,6 +15,7 @@ import { loadProfile, saveProfile } from '../utils/storage';
 import { simulerAides, AideResult, DERNIERE_MAJ_BAREMES, baremesPerimes } from '../data/aidesData';
 import { getAidesDomicileEtEtudes, AideLocale } from '../data/aidesLocales';
 import BoutonSignaler from '../components/BoutonSignaler';
+import InscriptionLettre from '../components/InscriptionLettre';
 import { colors, radius, spacing } from '../theme';
 
 // Mapping aide nationale ID → guide ID
@@ -440,6 +441,8 @@ export default function AidesScreen() {
           )}
         </>
       )}
+
+      <InscriptionLettre />
 
       {/* ── Disclaimer + fraîcheur des barèmes ── */}
       <View style={styles.disclaimer}>

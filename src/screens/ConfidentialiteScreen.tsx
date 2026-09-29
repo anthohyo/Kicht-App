@@ -11,7 +11,7 @@ import { loadProfile } from '../utils/storage';
 import { colors, radius, spacing } from '../theme';
 import { construireSauvegarde, lireSauvegarde, nomFichier, PREFIXE, FichierSauvegarde } from '../utils/sauvegarde';
 import { resynchroniserRappels } from '../utils/notifications';
-import { CONTACT_EMAIL, EDITEUR, DERNIERE_MAJ_LEGAL, mailto } from '../legal';
+import { CONTACT_EMAIL, EDITEUR, DERNIERE_MAJ_LEGAL, mailto, newsletterActive } from '../legal';
 
 /**
  * Écran de confidentialité.
@@ -155,7 +155,11 @@ export default function ConfidentialiteScreen() {
       <Text style={styles.sectionTitle}>Ce que l'app ne fait pas</Text>
       <View style={styles.card}>
         {[
-          'Aucun compte, aucune inscription, aucune adresse e-mail demandée.',
+          // La promesse suit l'état réel : tant que la lettre n'existe pas, elle
+          // reste absolue ; ensuite, elle dit précisément où est l'exception.
+          newsletterActive()
+            ? 'Aucun compte, aucune inscription. Aucune adresse e-mail demandée dans l\'app — seulement si tu t\'abonnes à la lettre, sur une page à part.'
+            : 'Aucun compte, aucune inscription, aucune adresse e-mail demandée.',
           'Aucun traceur, aucune statistique d\'usage, aucun cookie publicitaire.',
           'Aucune revente ni partage de tes données — il n\'y a rien à vendre, rien ne sort d\'ici.',
           'Aucune publicité.',
@@ -268,6 +272,24 @@ export default function ConfidentialiteScreen() {
       </View>
 
       {/* ── Cookies : la question revient tout le temps, autant y répondre ici ── */}
+      {newsletterActive() && (
+        <>
+          <Text style={styles.sectionTitle}>La lettre du Parrain</Text>
+          <View style={styles.card}>
+            <Text style={styles.plainText}>
+              La lettre est facultative. Si tu t'y abonnes, ton adresse e-mail est recueillie sur une
+              page hébergée par Brevo, prestataire français, uniquement pour t'envoyer la lettre, une
+              fois par mois.
+              {'\n\n'}
+              Elle n'est jamais reliée à ce que tu saisis dans l'app : l'app ne voit pas ton adresse,
+              et la lettre ne sait rien de ta situation. Aucune mesure d'ouverture n'est faite. Chaque
+              envoi contient un lien de désinscription, et ton adresse est supprimée dès que tu
+              l'utilises.
+            </Text>
+          </View>
+        </>
+      )}
+
       <Text style={styles.sectionTitle}>Et les cookies ?</Text>
       <View style={styles.card}>
         <Text style={styles.plainText}>
