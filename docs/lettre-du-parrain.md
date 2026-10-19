@@ -15,7 +15,7 @@ confidentialité continue d'affirmer, à juste titre, qu'aucune adresse e-mail n
    - la **double confirmation** activée (preuve du consentement) ;
    - une case de consentement **non cochée** : « J'accepte de recevoir la lettre du Parrain,
      une fois par mois. Je peux me désinscrire à tout moment. » ;
-   - un lien vers `https://kichtappv2.netlify.app/confidentialite.html`.
+   - un lien vers `https://kicht-app.anthony-bayard69.workers.dev/confidentialite.html`.
 3. **Désactiver le suivi des ouvertures** dans Brevo. Depuis sa recommandation d'avril 2026,
    la CNIL exige un consentement spécifique pour les pixels qui mesurent l'ouverture des
    emails ([CNIL](https://www.cnil.fr/fr/recommandation-pixel-suivi-courriels)). On mesure
@@ -120,7 +120,7 @@ dépendent de décisions qui peuvent encore bouger.
 > Si tu touches déjà la prime d'activité, n'oublie pas ta **déclaration trimestrielle de
 > ressources** sur caf.fr : sans elle, le versement s'arrête.
 >
-> Simule tes aides dans KichtApp → kichtappv2.netlify.app
+> Simule tes aides dans KichtApp → kicht-app.anthony-bayard69.workers.dev
 >
 > Le Parrain
 >

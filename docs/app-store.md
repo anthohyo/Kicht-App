@@ -185,8 +185,8 @@ Quelques précisions pour faciliter la revue :
    français. L'application indique clairement qu'elle n'est affiliée à aucune
    administration et que seul l'organisme concerné décide des droits réels.
 
-6. Politique de confidentialité : https://kichtappv2.netlify.app/confidentialite.html
-   Mentions légales : https://kichtappv2.netlify.app/mentions-legales.html
+6. Politique de confidentialité : https://kicht-app.anthony-bayard69.workers.dev/confidentialite.html
+   Mentions légales : https://kicht-app.anthony-bayard69.workers.dev/mentions-legales.html
 
 Merci de votre lecture.
 ```
@@ -195,9 +195,9 @@ Merci de votre lecture.
 
 | Champ | Valeur |
 |---|---|
-| Privacy Policy URL | `https://kichtappv2.netlify.app/confidentialite.html` |
-| Support URL | `https://kichtappv2.netlify.app/mentions-legales.html` |
-| Marketing URL (facultatif) | `https://kichtappv2.netlify.app` |
+| Privacy Policy URL | `https://kicht-app.anthony-bayard69.workers.dev/confidentialite.html` |
+| Support URL | `https://kicht-app.anthony-bayard69.workers.dev/mentions-legales.html` |
+| Marketing URL (facultatif) | `https://kicht-app.anthony-bayard69.workers.dev` |
 
 L'URL d'assistance est obligatoire. La page des mentions légales fait l'affaire :
 elle porte l'adresse de contact et le bouton de signalement.

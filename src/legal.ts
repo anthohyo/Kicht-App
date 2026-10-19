@@ -18,14 +18,18 @@ export const CONTACT_EMAIL = 'anthony.bayard69@gmail.com';
 /** Éditeur et directeur de la publication (LCEN art. 6 III). */
 export const EDITEUR = 'Anthony Bayard';
 
-/** Hébergeur — source : conditions d'utilisation de Netlify, section 14. */
+/**
+ * Hébergeur du site et de la version web.
+ * Source : conditions d'utilisation de Cloudflare, section 15 (en vigueur au 1er août 2025),
+ * https://www.cloudflare.com/website-terms/
+ */
 export const HEBERGEUR = {
-  nom: 'Netlify, Inc.',
-  adresse: '101 2nd Street, San Francisco, CA 94105-2239, États-Unis',
-  site: 'https://www.netlify.com',
+  nom: 'Cloudflare, Inc.',
+  adresse: '101 Townsend St, San Francisco, CA 94107, États-Unis',
+  site: 'https://www.cloudflare.com',
 };
 
-export const SITE_URL = 'https://kichtappv2.netlify.app';
+export const SITE_URL = 'https://kicht-app.anthony-bayard69.workers.dev';
 
 /**
  * Version affichée dans les signalements d'erreur, pour savoir à quelle version
@@ -53,7 +57,7 @@ export function newsletterActive(): boolean {
 }
 
 /** Date de la dernière révision des textes légaux, affichée en bas de chaque page. */
-export const DERNIERE_MAJ_LEGAL = '20 septembre 2026';
+export const DERNIERE_MAJ_LEGAL = '19 octobre 2026';
 
 /** Lien « écrire à l'éditeur » avec un objet pré-rempli. */
 export function mailto(objet: string): string {

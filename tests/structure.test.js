@@ -289,3 +289,32 @@ test('le dépôt de garantie distingue location vide et meublée', () => {
   assert.doesNotMatch(parrain, /1 mois de loyer hors charges \(max légal\)/);
   assert.match(parrain, /2 mois\*\* en meublé/);
 });
+
+// Les mentions légales doivent nommer l'hébergeur qui sert réellement le site.
+// Après le passage de Netlify à Cloudflare, une ancienne mention resterait
+// fausse sans que personne ne le remarque — donc on le vérifie.
+test('aucune trace de l\'ancien hébergeur ne subsiste', () => {
+  const { HEBERGEUR, SITE_URL } = require('../.test-build/src/legal.js');
+  assert.equal(HEBERGEUR.nom, 'Cloudflare, Inc.');
+  assert.match(SITE_URL, /workers\.dev|pages\.dev|^https:\/\/[a-z0-9.-]+\.[a-z]{2,}$/);
+  const cibles = [
+    ...fichiers_dans('src/screens'), ...fichiers_dans('src/components'),
+    'src/legal.ts', 'public/confidentialite.html', 'public/mentions-legales.html',
+    'public/index.html', 'public/sitemap.xml', 'public/robots.txt',
+    'docs/app-store.md', 'docs/lettre-du-parrain.md', 'docs/risques-app-store.md',
+  ];
+  for (const f of cibles) {
+    for (const ligne of lire(f).split('\n')) {
+      // Une mention historique explicite (« ancien hébergeur… ») reste permise.
+      if (/netlify/i.test(ligne) && !/ancien|précédent|anciennement|Netlify.*(retiré|quitté)/i.test(ligne)) {
+        assert.fail(`${f} mentionne encore Netlify : « ${ligne.trim().slice(0, 90)} »`);
+      }
+    }
+  }
+});
+
+function fichiers_dans(dossier) {
+  return fs.readdirSync(path.join(racine, dossier))
+    .filter((f) => f.endsWith('.tsx') || f.endsWith('.ts'))
+    .map((f) => `${dossier}/${f}`);
+}

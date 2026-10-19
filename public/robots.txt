@@ -7,4 +7,4 @@ Allow: /
 Allow: /confidentialite.html
 Allow: /mentions-legales.html
 
-Sitemap: https://kichtappv2.netlify.app/sitemap.xml
+Sitemap: https://kicht-app.anthony-bayard69.workers.dev/sitemap.xml

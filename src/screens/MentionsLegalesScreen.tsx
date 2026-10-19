@@ -126,7 +126,7 @@ export default function MentionsLegalesScreen() {
           role="link"
           aria-label="Ouvrir le site de l'hébergeur"
         >
-          <Text style={[styles.texte, styles.lien, { marginTop: 6 }]}>netlify.com</Text>
+          <Text style={[styles.texte, styles.lien, { marginTop: 6 }]}>cloudflare.com</Text>
         </TouchableOpacity>
       </View>
 

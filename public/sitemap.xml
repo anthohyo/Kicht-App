@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kichtappv2.netlify.app/</loc>
+    <loc>https://kicht-app.anthony-bayard69.workers.dev/</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kichtappv2.netlify.app/confidentialite.html</loc>
+    <loc>https://kicht-app.anthony-bayard69.workers.dev/confidentialite.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://kichtappv2.netlify.app/mentions-legales.html</loc>
+    <loc>https://kicht-app.anthony-bayard69.workers.dev/mentions-legales.html</loc>
     <lastmod>2026-09-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
