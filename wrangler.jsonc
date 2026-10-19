@@ -1,0 +1,12 @@
+{
+  // Site statique servi par Cloudflare Workers (fichiers du dossier dist/).
+  // Cloudflare reconstruit le site à chaque push : la commande de build est
+  // « npx expo export --platform web » et la commande de déploiement « npx wrangler deploy ».
+  "name": "kicht-app",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
